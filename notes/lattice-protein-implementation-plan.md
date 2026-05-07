@@ -22,9 +22,11 @@ trellis/
 │   ├── trajectory_io.py        # Step 8: Output in trajectories repo FASTA format
 │   └── cache.py                # Step 9: Fitness cache (sequence → fitness + native state)
 ├── scripts/
-│   ├── generate_trajectories.py  # Main CLI entry point
-│   ├── analyze_landscape.py      # Landscape statistics and visualization
-│   └── validate_folding.py       # Correctness checks against known results
+│   ├── fold_sequence.py           # Fold a single sequence, print results
+│   ├── visualize_conformation.py  # Render a conformation on the 2D lattice
+│   ├── analyze_landscape.py       # Landscape statistics and visualization
+│   ├── validate_folding.py        # Correctness checks against known results
+│   └── generate_trajectories.py   # Main CLI entry point
 ├── tests/
 │   ├── test_lattice.py
 │   ├── test_energy.py
@@ -460,6 +462,66 @@ Cache fitness evaluations to avoid redundant folding. Many SSWM trajectories wil
 - The cache can grow large if many unique AA sequences are explored. For 10,000 trajectories of 100 steps each, expect up to ~10^6 unique AA sequences (though with significant overlap). At ~1 KB per FitnessResult, this is ~1 GB — manageable in memory.
 - Optionally persist cache to disk (pickle or sqlite) to resume interrupted runs.
 
+## Fold a single sequence — `scripts/fold_sequence.py`
+
+A diagnostic script for folding a single sequence and printing the result. This is the script you'll reach for constantly during development — "does this sequence actually fold the way I think it does?" Also the fastest way to sanity-check numba compilation (first call is slow, second is fast).
+
+### Usage
+
+```bash
+# Fold an amino acid sequence
+python scripts/fold_sequence.py --aa ACDEFGHIKLMNPQRSTVWY
+
+# Translate and fold a DNA sequence
+python scripts/fold_sequence.py --dna GCTTGTGATGAATTTGGTCATATCAAACTTATGAATCCGCAAAGAACTTCTGTTTGGTAC
+
+# Fold with a ligand
+python scripts/fold_sequence.py --aa ACDEFGHIKLMNPQRSTVWY --ligand-sequence FWYL
+
+# Read sequence from stdin
+echo "ACDEFGHIKLMNPQRSTVWY" | python scripts/fold_sequence.py --aa -
+```
+
+### Output
+
+Prints to stdout:
+
+- AA sequence (and DNA if provided)
+- Native energy (E_intra, and E_intra + E_binding if ligand present)
+- Ensemble-averaged binding energy ⟨E_binding⟩ (if ligand present)
+- Fitness (−⟨E_binding⟩)
+- Native conformation coordinates
+- Number of conformations enumerated
+- Wall time
+
+Optionally `--json` flag for machine-readable output.
+
+## Visualize a conformation — `scripts/visualize_conformation.py`
+
+Renders the native conformation on the 2D lattice as a matplotlib figure. Invaluable for debugging — when fold results look wrong, seeing the conformation instantly tells you whether the issue is in energy calculation, contact detection, or the walk itself. Also useful for paper figures eventually.
+
+### Usage
+
+```bash
+# Fold and visualize in one step
+python scripts/visualize_conformation.py --aa ACDEFGHIKLMNPQRSTVWY -o conformation.png
+
+# With ligand
+python scripts/visualize_conformation.py --aa ACDEFGHIKLMNPQRSTVWY --ligand-sequence FWYL -o conformation.png
+
+# Interactive display (no save)
+python scripts/visualize_conformation.py --aa ACDEFGHIKLMNPQRSTVWY --show
+```
+
+### Visual elements
+
+- Residues as colored circles (color by amino acid property — hydrophobic, polar, charged — or by single-letter identity)
+- Chain backbone bonds as solid lines between consecutive residues
+- Non-bonded contacts as dashed lines between contacting residue pairs
+- Ligand residues in a distinct color/shape, positioned at their fixed lattice sites
+- Residue index labels inside or adjacent to each circle
+- Grid lines showing the lattice
+
 ## Main CLI — `scripts/generate_trajectories.py`
 
 ### Usage
@@ -540,17 +602,19 @@ Build and test each step sequentially. Each step should be fully tested before m
 1. **`lattice.py`** — Geometry and self-avoiding walks
 2. **`energy.py`** — MJ matrix and energy computation
 3. **`fold.py`** — Branch-and-bound folding (the hard part; get this right and fast)
-4. **`ligand.py`** — Ligand placement and binding energy
-5. **`fitness.py`** — Combined fitness function
-6. **`genetic_code.py`** — DNA/AA translation and mutation enumeration
-7. **`sswm.py`** — SSWM trajectory generation
-8. **`trajectory_io.py`** — Output formatting compatible with trajectories repo
-9. **`cache.py`** — Fitness caching for efficiency
-10. **`scripts/analyze_landscape.py`** — Landscape diagnostics
-11. **`scripts/generate_trajectories.py`** — Main CLI
-12. **`scripts/validate_folding.py`** — Correctness validation against known results
+4. **`scripts/fold_sequence.py`** — CLI for folding individual sequences (useful immediately once Step 3 works)
+5. **`ligand.py`** — Ligand placement and binding energy
+6. **`scripts/visualize_conformation.py`** — Lattice conformation renderer (useful for debugging Steps 3–5)
+7. **`fitness.py`** — Combined fitness function
+8. **`genetic_code.py`** — DNA/AA translation and mutation enumeration
+9. **`sswm.py`** — SSWM trajectory generation
+10. **`trajectory_io.py`** — Output formatting compatible with trajectories repo
+11. **`cache.py`** — Fitness caching for efficiency
+12. **`scripts/analyze_landscape.py`** — Landscape diagnostics
+13. **`scripts/generate_trajectories.py`** — Main CLI
+14. **`scripts/validate_folding.py`** — Correctness validation against known results
 
-Steps 1–3 are the core computational engine. Steps 4–6 build the evolutionary model on top. Steps 7–9 generate the data. Steps 10–12 are the user-facing scripts.
+Steps 1–3 are the core computational engine. Steps 4 and 6 are diagnostic scripts that become useful the moment their underlying library code works. Steps 5–8 build the evolutionary model on top. Steps 9–11 generate the data. Steps 12–14 are the remaining user-facing scripts.
 
 ## Dependencies
 
