@@ -12,6 +12,7 @@ environment*
 
 # For Python #
 ##############
+*.egg-info/
 *.pyc
 .tox/
 .cache/
