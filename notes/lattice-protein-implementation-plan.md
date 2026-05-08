@@ -92,7 +92,9 @@ Compute conformation energies using the Miyazawa-Jernigan (MJ) contact potential
 
 ### Data
 
-The MJ matrix is a 20×20 symmetric matrix of pairwise residue-residue contact energies (in units of kT). Use the original 1996 Miyazawa-Jernigan matrix (Table V from Miyazawa & Jernigan, *J Mol Biol* 256:623-644, 1996). Store as a CSV file in `data/mj_matrix.csv` with single-letter amino acid codes as row/column headers.
+The MJ matrix is a 20×20 symmetric matrix of pairwise residue-residue contact energies (in units of kT). Use the 1985 Miyazawa-Jernigan matrix (Table V from Miyazawa & Jernigan, "Estimation of effective interresidue contact energies from protein crystal structures: Quasi-chemical approximation", *Macromolecules* 18:534–552, 1985). Values are taken from the `miyazawa_jernigan` dict in [`jbloomlab/latticeproteins/src/interactions.py`](https://github.com/jbloomlab/latticeproteins/blob/master/src/interactions.py), which uses the same matrix in published lattice-protein work. Store as a CSV file in `data/mj_matrix.csv` with single-letter amino acid codes as row/column headers.
+
+A 1996 update (Table V of Miyazawa & Jernigan, *J Mol Biol* 256:623–644, 1996) exists with revised values. Once the pipeline is end-to-end working, **revisit**: regenerate trajectories under both the 1985 and 1996 matrices and compare landscape statistics (fitness distribution, DFE shape, neutral-network connectivity, native-state diversity). If results are qualitatively similar, the choice doesn't matter; if they differ, document which we use and why.
 
 ### Key functions
 
@@ -107,7 +109,7 @@ The MJ matrix is a 20×20 symmetric matrix of pairwise residue-residue contact e
 ### Implementation notes
 
 - All energies are in reduced units where the MJ values are already in kT.
-- The MJ matrix has all negative entries (favorable contacts). The most negative entry (~-7.0 for Cys-Cys) provides the tightest bound for pruning.
+- Most MJ matrix entries are negative (favorable contacts), with a small number of mildly positive entries for like-charged or polarity-mismatched pairs (max ≈ +0.13 at K-K). The most negative entry (≈ −6.85 for Phe-Phe in MJ 1985; Cys-Cys is second at ≈ −5.44) provides the tightest bound for pruning.
 - A tighter bound can be computed by considering the actual amino acid identities of unplaced residues and the maximum contacts each can form, but the loose bound is usually sufficient for 20-mers.
 
 ### Tests

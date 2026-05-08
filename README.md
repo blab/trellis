@@ -18,7 +18,7 @@ The full design is in
 | Step | Module | Status |
 |------|--------|--------|
 | 1 | `trellis/lattice.py` — 2D lattice, SAW enumeration, contacts | ✅ done |
-| 2 | `trellis/energy.py` — MJ matrix, conformation energy | not started |
+| 2 | `trellis/energy.py` — MJ matrix, conformation energy | ✅ done |
 | 3 | `trellis/fold.py` — branch-and-bound folding (numba) | not started |
 | 4 | `trellis/ligand.py` — ligand placement, binding energy | not started |
 | 5 | `trellis/fitness.py` — ensemble-averaged fitness | not started |
@@ -56,6 +56,38 @@ The relation `unreduced = 8·reduced − 4` holds for n ≥ 2 (the unique
 fully-on-axis straight walk is its own x-axis reflection, so it has 4
 rotational images instead of 8).
 
+### Step 2: `energy.py`
+
+Provides:
+
+- `AA_ALPHABET` / `AA_INDEX` — the 20 standard amino acids in alphabetical
+  one-letter order, plus a letter→index lookup.
+- `load_mj_matrix(path=DEFAULT_MJ_PATH)` — load and cache the 20×20
+  Miyazawa-Jernigan contact-energy matrix as a read-only `float64`
+  ndarray.
+- `conformation_energy(sequence, conformation, mj_matrix)` — total
+  contact energy by summing `mj[aa_i, aa_j]` over `lattice.get_contacts`.
+- `max_contact_energy(n_remaining, mj_matrix)` — loose lower bound on
+  additional energy from unplaced residues, used for branch-and-bound
+  pruning in Step 3.
+- `partition_function(energies, temperature=1.0)` — naive `Σ exp(-E/T)`
+  for testing on small chains.
+
+The MJ matrix lives at `data/mj_matrix.csv` (20×20, alphabetical AA
+order, kT-like reduced units). Values come from the
+`miyazawa_jernigan` dict in
+[`jbloomlab/latticeproteins`](https://github.com/jbloomlab/latticeproteins/blob/master/src/interactions.py),
+which sources Table V of:
+
+> Miyazawa & Jernigan (1985). "Estimation of effective interresidue
+> contact energies from protein crystal structures: Quasi-chemical
+> approximation." *Macromolecules* 18:534–552.
+
+Matrix range: most attractive `F-F = -6.85`, most repulsive `K-K = +0.13`.
+A 1996 update of the MJ matrix exists; we may revisit and compare the
+two landscapes once the pipeline is end-to-end working — see the design
+notes for details.
+
 ## Install
 
 ```bash
@@ -70,10 +102,11 @@ Requires Python ≥ 3.11. Runtime dependency: `numpy`. Dev dependency: `pytest`.
 pytest
 ```
 
-Or just the lattice tests:
+Or a single module:
 
 ```bash
 pytest tests/test_lattice.py -v
+pytest tests/test_energy.py -v
 ```
 
 ## Repository layout
@@ -82,10 +115,15 @@ pytest tests/test_lattice.py -v
 trellis/
 ├── trellis/
 │   ├── __init__.py
-│   └── lattice.py           # Step 1 — implemented
+│   ├── lattice.py           # Step 1 — implemented
+│   └── energy.py            # Step 2 — implemented
 ├── tests/
 │   ├── __init__.py
-│   └── test_lattice.py
+│   ├── test_lattice.py
+│   └── test_energy.py
+├── data/
+│   ├── mj_matrix.csv        # MJ 1985 Table V, 20×20, alphabetical AA order
+│   └── README.md            # citation, source URL, source commit SHA
 ├── notes/
 │   └── lattice-protein-implementation-plan.md
 ├── pyproject.toml
