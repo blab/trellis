@@ -19,8 +19,8 @@ The full design is in
 |------|--------|--------|
 | 1 | `trellis/lattice.py` — 2D lattice, SAW enumeration, contacts | ✅ done |
 | 2 | `trellis/energy.py` — MJ matrix, conformation energy | ✅ done |
-| 3 | `trellis/fold.py` — branch-and-bound folding (numba) | not started |
-| 4 | `trellis/ligand.py` — ligand placement, binding energy | not started |
+| 3 | `trellis/fold.py` — branch-and-bound folding | ✅ done |
+| 4 | `trellis/ligand.py` — ligand placement, binding energy | ✅ done |
 | 5 | `trellis/fitness.py` — ensemble-averaged fitness | not started |
 | 6 | `trellis/genetic_code.py` — DNA ↔ AA, mutation enumeration | not started |
 | 7 | `trellis/sswm.py` — SSWM trajectory generation | not started |
@@ -87,6 +87,55 @@ Matrix range: most attractive `F-F = -6.85`, most repulsive `K-K = +0.13`.
 A 1996 update of the MJ matrix exists; we may revisit and compare the
 two landscapes once the pipeline is end-to-end working — see the design
 notes for details.
+
+### Step 3: `fold.py`
+
+Provides:
+
+- `FoldResult` — frozen dataclass with `native_conformation`,
+  `native_energy`, `partition_function`, `ensemble_binding_energy`, and
+  `n_conformations_enumerated`.
+- `fold(sequence, mj_matrix, ligand=None, temperature=1.0)` —
+  branch-and-bound folder that finds the native (lowest-energy)
+  conformation while accumulating the Boltzmann partition function Z and
+  ensemble-averaged binding energy in a single pass.
+
+Without a ligand, the folder uses the same symmetry reduction as
+`lattice._walk_reduced` (8-fold dihedral, corrected via `Z × 8 − 4`).
+With a ligand the symmetry is broken, so the folder uses unreduced
+enumeration and no correction.
+
+Energy pruning skips subtrees whose lower bound (current energy +
+`max_contact_energy` for remaining residues + binding bound) cannot
+improve on the best complete conformation found so far. For a 20-mer
+this prunes ~94% of the search tree, completing in ~14 seconds (pure
+Python, no numba).
+
+### Step 4: `ligand.py`
+
+Provides:
+
+- `Ligand` — frozen dataclass with `sequence` (amino acid string),
+  `positions` (lattice coordinates), and `sites` (frozenset for O(1)
+  collision lookup).
+- `create_ligand(sequence, anchor=(0, -1), direction="horizontal")` —
+  place a linear ligand on the lattice starting at an anchor position,
+  extending horizontally (along x-axis) or vertically (along y-axis).
+  Default placement puts a 4-residue ligand at `(0,−1)…(3,−1)`, one
+  step below the protein origin.
+- `binding_contacts(conformation, ligand)` — protein-ligand contact
+  pairs `(protein_idx, ligand_idx)` at Manhattan distance 1.
+- `binding_energy(protein_sequence, conformation, ligand, mj_matrix)` —
+  sum of MJ contact energies over all binding contacts.
+
+When a ligand is passed to `fold()`, the protein walk avoids ligand
+sites (collision detection), and binding energy is computed at each
+complete conformation and included in the Boltzmann weighting. The
+ensemble-averaged binding energy `⟨E_bind⟩` is the basis for the
+fitness function in Step 5 (fitness = `−⟨E_bind⟩`).
+
+See `notes/binding-thermodynamics.md` for a discussion of `⟨E_bind⟩`
+vs binding free energy `ΔG` and why `⟨E_bind⟩` was chosen.
 
 ## Install
 
