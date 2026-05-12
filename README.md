@@ -23,7 +23,7 @@ The full design is in
 | 4 | `trellis/ligand.py` — ligand placement, binding energy | ✅ done |
 | 5 | `trellis/fitness.py` — ensemble-averaged fitness | ✅ done |
 | 6 | `trellis/genetic_code.py` — DNA ↔ AA, mutation enumeration | ✅ done |
-| 7 | `trellis/sswm.py` — SSWM trajectory generation | not started |
+| 7 | `trellis/sswm.py` — SSWM trajectory generation | ✅ done |
 | 8 | `trellis/trajectory_io.py` — FASTA / tar.zst output | not started |
 | 9 | `trellis/cache.py` — fitness cache | not started |
 | — | `scripts/generate_trajectories.py` — main CLI | not started |
@@ -177,6 +177,30 @@ Provides:
   is the key deduplication for SSWM: many DNA mutations map to the same
   protein, so each unique AA sequence is folded only once.
 
+### Step 7: `sswm.py`
+
+Provides:
+
+- `Trajectory` — dataclass with `dna_sequences`, `aa_sequences`,
+  `fitness_values`, `mutation_types`, and `metadata`.
+- `fixation_probability(s, Ne)` — Kimura (1962) fixation probability
+  for a new mutation with selection coefficient `s` in a population of
+  effective size `Ne`. Handles edge cases: `s = 0` (neutral),
+  `s = −inf` (lethal), and numerically extreme `2·Ne·s`.
+- `generate_trajectory(start_dna, ligand, mj_matrix, n_steps=100,
+  Ne=1000, mu=1e-6, temperature=1.0, rng=None, fitness_cache=None)` —
+  generate a single SSWM trajectory. Each step enumerates all
+  single-nucleotide mutations, deduplicates by AA sequence (via
+  `mutant_aa_sequences`), folds each unique protein once, and samples
+  the next substitution proportional to Kimura fixation probability.
+  `mu` cancels from the sampling weights and is stored in metadata only.
+  An optional `dict[str, float]` cache avoids redundant folding across
+  steps.
+- `generate_start_sequence(n_codons, ligand, mj_matrix,
+  min_fitness=0.0, max_attempts=10000, rng=None)` — sample random
+  sense codons until the translated protein meets the fitness
+  threshold.
+
 ## Install
 
 ```bash
@@ -209,7 +233,8 @@ trellis/
 │   ├── fold.py              # Step 3 — branch-and-bound folding
 │   ├── ligand.py            # Step 4 — ligand placement, binding energy
 │   ├── fitness.py           # Step 5 — ensemble-averaged fitness
-│   └── genetic_code.py      # Step 6 — codon table, translation, mutations
+│   ├── genetic_code.py      # Step 6 — codon table, translation, mutations
+│   └── sswm.py              # Step 7 — SSWM trajectory generation
 ├── tests/
 │   ├── __init__.py
 │   ├── test_lattice.py
@@ -217,7 +242,8 @@ trellis/
 │   ├── test_fold.py
 │   ├── test_ligand.py
 │   ├── test_fitness.py
-│   └── test_genetic_code.py
+│   ├── test_genetic_code.py
+│   └── test_sswm.py
 ├── data/
 │   ├── mj_matrix.csv        # MJ 1985 Table V, 20×20, alphabetical AA order
 │   └── README.md            # citation, source URL, source commit SHA
