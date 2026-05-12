@@ -650,3 +650,15 @@ Once trajectories are generated and the model is fine-tuned on them, the primary
 3. **Synonymous vs. nonsynonymous**: Does the model correctly predict that synonymous mutations are more likely to be accepted (they're effectively neutral)?
 4. **Epistasis**: Does the predicted probability of mutation A change appropriately when mutation B is present vs. absent?
 5. **Multi-step forecasting**: Given a trajectory prefix, can the model predict multiple future steps that track the fitness gradient?
+
+## Optional improvements
+
+Known limitations of the current design that are not on the critical path but may be worth revisiting if landscape analysis or trajectory statistics reveal artifacts.
+
+### Multi-anchor binding evaluation
+
+The protein chain is always anchored at (0,0), which introduces a positional asymmetry relative to the ligand. Residues near the N-terminus have easy access to the left end of a horizontal ligand (near (0,−1)) but must spend backbone length to reach the right end (near (3,−1)). A protein anchored at (4,0) would have the reverse bias. This means the fitness landscape has an N-to-C directional asymmetry that is an artifact of the anchor choice, not a property of the sequence.
+
+In practice, a 20-residue chain has enough slack to find diverse binding geometries from a single anchor, and the resulting fitness landscape still has the properties needed for model evaluation (epistasis, synonymous/nonsynonymous distinction, fitness gradients). Real proteins have N-to-C directionality too, so this is not entirely unrealistic.
+
+If the landscape analysis reveals distorted trajectory statistics — for example, if SSWM trajectories systematically favor mutations near the N-terminus because those residues dominate ligand contacts — the fix would be to evaluate fitness as the best ⟨E_bind⟩ across several anchor positions (e.g., each lattice site adjacent to the ligand's bounding box). This multiplies folding cost by the number of anchor positions (~10–14 for a 4-residue ligand), which is significant but feasible with the pre-enumeration folding strategy (each anchor position would need its own `ConformationDatabase`, but scoring remains fast).
