@@ -1,4 +1,4 @@
-"""Standard genetic code: codon table and DNA-to-protein translation."""
+"""Standard genetic code: translation, mutation enumeration, classification."""
 
 NUCLEOTIDES = "ACGT"
 
@@ -39,3 +39,67 @@ def translate(dna_sequence: str) -> str:
             raise ValueError(f"invalid codon {codon!r} at position {i}")
         codons.append(CODON_TABLE[codon])
     return "".join(codons)
+
+
+def single_nt_mutations(
+    dna_sequence: str,
+) -> list[tuple[str, int, str, str]]:
+    """Enumerate all single-nucleotide mutations of *dna_sequence*.
+
+    Returns a list of ``(mutant_dna, position, ref_base, alt_base)``
+    tuples, ordered by position then by ``NUCLEOTIDES`` order.
+    """
+    for i, base in enumerate(dna_sequence):
+        if base not in NUCLEOTIDES:
+            raise ValueError(f"invalid base {base!r} at position {i}")
+    seq = list(dna_sequence)
+    mutations: list[tuple[str, int, str, str]] = []
+    for i, ref in enumerate(seq):
+        for alt in NUCLEOTIDES:
+            if alt == ref:
+                continue
+            seq[i] = alt
+            mutations.append(("".join(seq), i, ref, alt))
+            seq[i] = ref
+    return mutations
+
+
+def classify_mutation(dna_ref: str, dna_alt: str) -> str:
+    """Classify a single-nucleotide mutation.
+
+    Returns ``"synonymous"``, ``"nonsynonymous"``, or ``"nonsense"``.
+    """
+    if len(dna_ref) != len(dna_alt):
+        raise ValueError("sequences must be the same length")
+    if len(dna_ref) % 3 != 0:
+        raise ValueError(
+            f"sequence length {len(dna_ref)} is not divisible by 3"
+        )
+    diffs = [i for i in range(len(dna_ref)) if dna_ref[i] != dna_alt[i]]
+    if len(diffs) != 1:
+        raise ValueError(
+            f"sequences must differ at exactly 1 position, got {len(diffs)}"
+        )
+    aa_ref = translate(dna_ref)
+    aa_alt = translate(dna_alt)
+    if aa_ref == aa_alt:
+        return "synonymous"
+    if "*" in aa_alt and "*" not in aa_ref:
+        return "nonsense"
+    return "nonsynonymous"
+
+
+def mutant_aa_sequences(
+    dna_sequence: str,
+) -> dict[str, list[str]]:
+    """Group single-nt mutants by their translated AA sequence.
+
+    Returns ``{aa_sequence: [mutant_dna, ...]}``.  The wildtype DNA is
+    not included in any value list.  Synonymous mutants appear under
+    the wildtype AA key.
+    """
+    groups: dict[str, list[str]] = {}
+    for mutant_dna, _, _, _ in single_nt_mutations(dna_sequence):
+        aa = translate(mutant_dna)
+        groups.setdefault(aa, []).append(mutant_dna)
+    return groups

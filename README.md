@@ -22,7 +22,7 @@ The full design is in
 | 3 | `trellis/fold.py` — branch-and-bound folding | ✅ done |
 | 4 | `trellis/ligand.py` — ligand placement, binding energy | ✅ done |
 | 5 | `trellis/fitness.py` — ensemble-averaged fitness | ✅ done |
-| 6 | `trellis/genetic_code.py` — DNA ↔ AA, mutation enumeration | partial (`translate` only) |
+| 6 | `trellis/genetic_code.py` — DNA ↔ AA, mutation enumeration | ✅ done |
 | 7 | `trellis/sswm.py` — SSWM trajectory generation | not started |
 | 8 | `trellis/trajectory_io.py` — FASTA / tar.zst output | not started |
 | 9 | `trellis/cache.py` — fitness cache | not started |
@@ -158,10 +158,24 @@ and low fitness. A stably folded protein that contacts the ligand
 concentrates its weight on binding-competent conformations, yielding
 strong `⟨E_bind⟩` and high fitness.
 
-`genetic_code.py` currently provides only `translate()` and the
-`CODON_TABLE` (standard genetic code, 64 codons, stop codons as `"*"`).
-The remaining functions (`single_nt_mutations`, `classify_mutation`,
-`mutant_aa_sequences`) will be added in Step 6.
+### Step 6: `genetic_code.py`
+
+Provides:
+
+- `CODON_TABLE` — standard genetic code mapping all 64 codons to amino
+  acids (stop codons as `"*"`).
+- `NUCLEOTIDES` — `"ACGT"`.
+- `translate(dna_sequence)` — DNA to amino acid string. Length must be
+  divisible by 3; stop codons included as `"*"` in output.
+- `single_nt_mutations(dna_sequence)` — enumerate all single-nucleotide
+  mutations as `(mutant_dna, position, ref_base, alt_base)` tuples.
+  For a 60 nt sequence this yields 180 mutations.
+- `classify_mutation(dna_ref, dna_alt)` — classify a single-nucleotide
+  change as `"synonymous"`, `"nonsynonymous"`, or `"nonsense"`.
+- `mutant_aa_sequences(dna_sequence)` — group all single-nt mutants by
+  translated AA sequence. Returns `{aa_seq: [mutant_dna, ...]}`. This
+  is the key deduplication for SSWM: many DNA mutations map to the same
+  protein, so each unique AA sequence is folded only once.
 
 ## Install
 
@@ -195,7 +209,7 @@ trellis/
 │   ├── fold.py              # Step 3 — branch-and-bound folding
 │   ├── ligand.py            # Step 4 — ligand placement, binding energy
 │   ├── fitness.py           # Step 5 — ensemble-averaged fitness
-│   └── genetic_code.py      # Step 6 — codon table, translate (partial)
+│   └── genetic_code.py      # Step 6 — codon table, translation, mutations
 ├── tests/
 │   ├── __init__.py
 │   ├── test_lattice.py
