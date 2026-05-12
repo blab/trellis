@@ -21,8 +21,8 @@ The full design is in
 | 2 | `trellis/energy.py` — MJ matrix, conformation energy | ✅ done |
 | 3 | `trellis/fold.py` — branch-and-bound folding | ✅ done |
 | 4 | `trellis/ligand.py` — ligand placement, binding energy | ✅ done |
-| 5 | `trellis/fitness.py` — ensemble-averaged fitness | not started |
-| 6 | `trellis/genetic_code.py` — DNA ↔ AA, mutation enumeration | not started |
+| 5 | `trellis/fitness.py` — ensemble-averaged fitness | ✅ done |
+| 6 | `trellis/genetic_code.py` — DNA ↔ AA, mutation enumeration | partial (`translate` only) |
 | 7 | `trellis/sswm.py` — SSWM trajectory generation | not started |
 | 8 | `trellis/trajectory_io.py` — FASTA / tar.zst output | not started |
 | 9 | `trellis/cache.py` — fitness cache | not started |
@@ -137,6 +137,32 @@ fitness function in Step 5 (fitness = `−⟨E_bind⟩`).
 See `notes/binding-thermodynamics.md` for a discussion of `⟨E_bind⟩`
 vs binding free energy `ΔG` and why `⟨E_bind⟩` was chosen.
 
+### Step 5: `fitness.py`
+
+Provides:
+
+- `FitnessResult` — frozen dataclass with `fitness`, `fold_result`
+  (`FoldResult | None`), `aa_sequence`, and `dna_sequence`.
+- `compute_fitness(dna_sequence, ligand, mj_matrix, temperature=1.0)` —
+  translates DNA to amino acids via `genetic_code.translate()`, folds
+  with the ligand, and returns fitness = `−⟨E_bind⟩` (higher = fitter).
+  Stop codons yield `fitness = −inf` and `fold_result = None`.
+- `compute_fitness_aa(aa_sequence, ligand, mj_matrix, temperature=1.0)` —
+  convenience function that skips translation, useful for direct
+  amino-acid-level evaluation and the fitness cache (Step 9).
+
+Fitness requires no separate stability criterion. The ensemble average
+handles stability naturally: an unstable protein spreads its Boltzmann
+weight across many non-binding conformations, yielding a weak `⟨E_bind⟩`
+and low fitness. A stably folded protein that contacts the ligand
+concentrates its weight on binding-competent conformations, yielding
+strong `⟨E_bind⟩` and high fitness.
+
+`genetic_code.py` currently provides only `translate()` and the
+`CODON_TABLE` (standard genetic code, 64 codons, stop codons as `"*"`).
+The remaining functions (`single_nt_mutations`, `classify_mutation`,
+`mutant_aa_sequences`) will be added in Step 6.
+
 ## Install
 
 ```bash
@@ -164,17 +190,26 @@ pytest tests/test_energy.py -v
 trellis/
 ├── trellis/
 │   ├── __init__.py
-│   ├── lattice.py           # Step 1 — implemented
-│   └── energy.py            # Step 2 — implemented
+│   ├── lattice.py           # Step 1 — 2D lattice, SAW enumeration
+│   ├── energy.py            # Step 2 — MJ matrix, conformation energy
+│   ├── fold.py              # Step 3 — branch-and-bound folding
+│   ├── ligand.py            # Step 4 — ligand placement, binding energy
+│   ├── fitness.py           # Step 5 — ensemble-averaged fitness
+│   └── genetic_code.py      # Step 6 — codon table, translate (partial)
 ├── tests/
 │   ├── __init__.py
 │   ├── test_lattice.py
-│   └── test_energy.py
+│   ├── test_energy.py
+│   ├── test_fold.py
+│   ├── test_ligand.py
+│   ├── test_fitness.py
+│   └── test_genetic_code.py
 ├── data/
 │   ├── mj_matrix.csv        # MJ 1985 Table V, 20×20, alphabetical AA order
 │   └── README.md            # citation, source URL, source commit SHA
 ├── notes/
-│   └── lattice-protein-implementation-plan.md
+│   ├── lattice-protein-implementation-plan.md
+│   └── binding-thermodynamics.md
 ├── pyproject.toml
 ├── LICENSE.md
 └── README.md
