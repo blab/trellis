@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Trellis: SSWM Trajectory Viewer</title>
+        <style>
+            body {
+                font-family:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
+                    Arial, sans-serif;
+                margin: 0;
+                padding: 20px;
+                background-color: #f5f5f5;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                background: white;
+                padding: 30px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            h1 {
+                color: #333;
+                border-bottom: 2px solid #e1e4e8;
+                padding-bottom: 10px;
+                margin-top: 0;
+            }
+
+            h2 {
+                color: #555;
+                margin-top: 30px;
+                border-bottom: 1px solid #e1e4e8;
+                padding-bottom: 8px;
+            }
+
+            .metrics {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 10px;
+                margin: 10px 0;
+            }
+
+            .metric {
+                padding: 6px 0;
+            }
+
+            .metric-label {
+                font-size: 11px;
+                color: #888;
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+            }
+
+            .metric-value {
+                font-size: 16px;
+                font-weight: 600;
+                color: #333;
+                margin-top: 2px;
+            }
+
+            .plot-container {
+                margin: 20px 0;
+                padding: 20px;
+                background: #fafafa;
+                border-radius: 8px;
+            }
+
+            .legend {
+                display: flex;
+                gap: 20px;
+                font-size: 12px;
+                color: #555;
+                margin-top: 8px;
+                flex-wrap: wrap;
+            }
+
+            .legend-item {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .legend-swatch {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                display: inline-block;
+            }
+
+            .legend-swatch.square {
+                border-radius: 2px;
+            }
+
+            #step-detail {
+                margin-top: 12px;
+                padding: 10px 14px;
+                background: #f0f8ff;
+                border-left: 4px solid #0969da;
+                border-radius: 4px;
+                font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+                font-size: 12px;
+                color: #333;
+                min-height: 18px;
+            }
+
+            #lattice-grid {
+                display: grid;
+                grid-template-columns: repeat(6, 1fr);
+                gap: 8px;
+            }
+
+            .lattice-panel {
+                background: white;
+                border: 2px solid transparent;
+                border-radius: 4px;
+                padding: 4px;
+                box-sizing: border-box;
+                cursor: pointer;
+                transition: border-color 0.1s;
+            }
+
+            .lattice-panel.highlighted {
+                border-color: #0969da;
+            }
+
+            .lattice-panel svg {
+                display: block;
+                width: 100%;
+                height: auto;
+            }
+
+            .lattice-label {
+                font-size: 11px;
+                color: #666;
+                text-align: center;
+                margin-top: 2px;
+            }
+
+            #tooltip {
+                position: absolute;
+                pointer-events: none;
+                background: rgba(33, 33, 33, 0.92);
+                color: white;
+                padding: 8px 10px;
+                border-radius: 4px;
+                font-size: 12px;
+                line-height: 1.5;
+                opacity: 0;
+                transition: opacity 0.1s;
+                z-index: 100;
+                font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            }
+
+            .axis text {
+                font-size: 11px;
+                fill: #555;
+            }
+
+            .axis-label {
+                font-size: 12px;
+                fill: #333;
+            }
+
+            .traj-dot {
+                cursor: pointer;
+            }
+
+            .traj-dot.sampled {
+                stroke: #333;
+                stroke-width: 1;
+            }
+
+            .traj-dot.highlighted {
+                stroke: #0969da;
+                stroke-width: 2;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Trellis: SSWM Trajectory Viewer</h1>
+
+            <div id="metadata-bar" class="metrics"></div>
+
+            <h2>Fitness trajectory</h2>
+            <div class="plot-container">
+                <div id="fitness-plot"></div>
+                <div class="legend" id="fitness-legend">
+                    <div class="legend-item">
+                        <span class="legend-swatch" style="background:#999"></span>Start
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch" style="background:#4393c3"></span>Synonymous
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch" style="background:#d6604d"></span>Nonsynonymous
+                    </div>
+                </div>
+            </div>
+
+            <h2>Lattice conformations</h2>
+            <div class="plot-container">
+                <div id="lattice-grid"></div>
+                <div class="legend" id="lattice-legend">
+                    <div class="legend-item">
+                        <span class="legend-swatch" style="background:#fc8d59"></span>Hydrophobic
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch" style="background:#91bfdb"></span>Polar
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch" style="background:#fee090"></span>Charged
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-swatch square" style="background:#756bb1"></span>Ligand
+                    </div>
+                    <div class="legend-item">
+                        <span style="display:inline-block;width:18px;border-top:2px solid #333"></span>Backbone
+                    </div>
+                    <div class="legend-item">
+                        <span style="display:inline-block;width:18px;border-top:1.5px dashed #ccc"></span>Intra contact
+                    </div>
+                    <div class="legend-item">
+                        <span style="display:inline-block;width:18px;border-top:1.5px dashed #e6550d"></span>Binding contact
+                    </div>
+                </div>
+                <div id="step-detail">Hover a trajectory dot or lattice panel for details.</div>
+            </div>
+        </div>
+
+        <div id="tooltip"></div>
+
+        <script type="module">
+            import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+
+            const DATA_PATH = "../results/trajectory_data.json";
+
+            const HYDROPHOBIC = new Set(["A", "F", "I", "L", "M", "V", "W", "Y"]);
+            const POLAR = new Set(["C", "G", "N", "P", "Q", "S", "T"]);
+            const CHARGED = new Set(["D", "E", "H", "K", "R"]);
+
+            function aaColor(aa) {
+                if (HYDROPHOBIC.has(aa)) return "#fc8d59";
+                if (POLAR.has(aa)) return "#91bfdb";
+                if (CHARGED.has(aa)) return "#fee090";
+                return "#ccc";
+            }
+
+            function mutationColor(t) {
+                if (t === null) return "#999";
+                if (t === "synonymous") return "#4393c3";
+                if (t === "nonsynonymous") return "#d6604d";
+                return "#000";
+            }
+
+            const tooltip = d3.select("#tooltip");
+
+            function showTooltip(html, event) {
+                tooltip
+                    .html(html)
+                    .style("opacity", 1)
+                    .style("left", event.pageX + 12 + "px")
+                    .style("top", event.pageY + 12 + "px");
+            }
+
+            function hideTooltip() {
+                tooltip.style("opacity", 0);
+            }
+
+            let data = null;
+            let sampledSteps = []; // step indices shown as panels
+            let stepToPanel = new Map(); // step -> nearest sampled step
+
+            async function loadData() {
+                const resp = await fetch(DATA_PATH);
+                data = await resp.json();
+                renderAll();
+            }
+
+            function renderAll() {
+                renderMetadata();
+                computeSampling();
+                renderFitness();
+                renderLattices();
+            }
+
+            function renderMetadata() {
+                const m = data.metadata;
+                const items = [
+                    ["Codons", m.n_codons],
+                    ["Steps", m.n_steps],
+                    ["Ne", m.Ne],
+                    ["Temperature", m.temperature],
+                    ["Ligand", m.ligand_sequence],
+                    ["Seed", m.seed],
+                ];
+                const sel = d3.select("#metadata-bar");
+                sel.selectAll("div.metric")
+                    .data(items)
+                    .join("div")
+                    .attr("class", "metric")
+                    .html(
+                        (d) =>
+                            `<div class="metric-label">${d[0]}</div><div class="metric-value">${d[1]}</div>`,
+                    );
+            }
+
+            function computeSampling() {
+                const n = data.steps.length;
+                const maxPanels = 24;
+                if (n <= maxPanels) {
+                    sampledSteps = d3.range(n);
+                } else {
+                    const stride = Math.max(1, Math.floor((n - 1) / (maxPanels - 1)));
+                    const idxSet = new Set();
+                    for (let i = 0; i < n; i += stride) idxSet.add(i);
+                    idxSet.add(n - 1);
+                    sampledSteps = Array.from(idxSet).sort((a, b) => a - b).slice(0, maxPanels);
+                    // ensure last step is included
+                    if (!sampledSteps.includes(n - 1)) {
+                        sampledSteps[sampledSteps.length - 1] = n - 1;
+                    }
+                }
+                // Map every step to its nearest sampled step
+                stepToPanel.clear();
+                for (let i = 0; i < n; i++) {
+                    let best = sampledSteps[0];
+                    let bestDist = Math.abs(i - best);
+                    for (const s of sampledSteps) {
+                        const d = Math.abs(i - s);
+                        if (d < bestDist) {
+                            bestDist = d;
+                            best = s;
+                        }
+                    }
+                    stepToPanel.set(i, best);
+                }
+            }
+
+            function renderFitness() {
+                const container = d3.select("#fitness-plot");
+                container.selectAll("*").remove();
+
+                const width = 1100;
+                const height = 260;
+                const margin = { top: 12, right: 16, bottom: 40, left: 56 };
+                const innerW = width - margin.left - margin.right;
+                const innerH = height - margin.top - margin.bottom;
+
+                const svg = container
+                    .append("svg")
+                    .attr("viewBox", `0 0 ${width} ${height}`)
+                    .attr("width", "100%")
+                    .style("max-width", width + "px");
+
+                const g = svg
+                    .append("g")
+                    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+                const x = d3
+                    .scaleLinear()
+                    .domain([0, d3.max(data.steps, (d) => d.step)])
+                    .range([0, innerW]);
+
+                const yExtent = d3.extent(data.steps, (d) => d.fitness);
+                const yPad = (yExtent[1] - yExtent[0]) * 0.1 || 1;
+                const y = d3
+                    .scaleLinear()
+                    .domain([yExtent[0] - yPad, yExtent[1] + yPad])
+                    .range([innerH, 0]);
+
+                // Axes
+                g.append("g")
+                    .attr("class", "axis")
+                    .attr("transform", `translate(0,${innerH})`)
+                    .call(d3.axisBottom(x).ticks(Math.min(10, data.steps.length)));
+                g.append("g").attr("class", "axis").call(d3.axisLeft(y));
+
+                g.append("text")
+                    .attr("class", "axis-label")
+                    .attr("x", innerW / 2)
+                    .attr("y", innerH + 32)
+                    .attr("text-anchor", "middle")
+                    .text("Step");
+                g.append("text")
+                    .attr("class", "axis-label")
+                    .attr("transform", "rotate(-90)")
+                    .attr("x", -innerH / 2)
+                    .attr("y", -40)
+                    .attr("text-anchor", "middle")
+                    .text("Fitness (−⟨E_bind⟩)");
+
+                // Line
+                const line = d3
+                    .line()
+                    .x((d) => x(d.step))
+                    .y((d) => y(d.fitness));
+                g.append("path")
+                    .datum(data.steps)
+                    .attr("fill", "none")
+                    .attr("stroke", "#999")
+                    .attr("stroke-width", 1)
+                    .attr("d", line);
+
+                // Dots
+                const sampledSet = new Set(sampledSteps);
+                g.selectAll("circle.traj-dot")
+                    .data(data.steps)
+                    .join("circle")
+                    .attr("class", (d) =>
+                        sampledSet.has(d.step) ? "traj-dot sampled" : "traj-dot",
+                    )
+                    .attr("cx", (d) => x(d.step))
+                    .attr("cy", (d) => y(d.fitness))
+                    .attr("r", (d) => (sampledSet.has(d.step) ? 5 : 3.5))
+                    .attr("fill", (d) => mutationColor(d.mutation_type))
+                    .attr("data-step", (d) => d.step)
+                    .on("mouseover", function (event, d) {
+                        onStepHover(d.step, event);
+                    })
+                    .on("mousemove", function (event, d) {
+                        showTooltip(tooltipHtml(d.step), event);
+                    })
+                    .on("mouseout", function () {
+                        onStepUnhover();
+                    });
+            }
+
+            function tooltipHtml(stepIdx) {
+                const s = data.steps[stepIdx];
+                const prev = stepIdx > 0 ? data.steps[stepIdx - 1] : null;
+                const delta = prev
+                    ? (s.fitness - prev.fitness).toFixed(3)
+                    : null;
+                const conf = data.conformations[s.aa_sequence];
+                const nBind = conf ? conf.binding_contacts.length : 0;
+                return [
+                    `<b>Step ${s.step}</b>`,
+                    `Fitness: ${s.fitness.toFixed(3)}${delta !== null ? ` (Δ ${delta >= 0 ? "+" : ""}${delta})` : ""}`,
+                    `AA: ${s.aa_sequence}`,
+                    `Mutation: ${s.mutation_type ?? "—"}`,
+                    `Binding contacts: ${nBind}`,
+                ].join("<br>");
+            }
+
+            function detailLine(stepIdx) {
+                const s = data.steps[stepIdx];
+                const prev = stepIdx > 0 ? data.steps[stepIdx - 1] : null;
+                const delta = prev
+                    ? (s.fitness - prev.fitness).toFixed(3)
+                    : "—";
+                const conf = data.conformations[s.aa_sequence];
+                const nBind = conf ? conf.binding_contacts.length : 0;
+                const deltaStr =
+                    prev && delta !== "—"
+                        ? `${delta >= 0 ? "+" : ""}${delta}`
+                        : "—";
+                return `Step ${s.step}  |  AA: ${s.aa_sequence}  |  Fitness: ${s.fitness.toFixed(3)}  |  ΔFitness: ${deltaStr}  |  Mutation: ${s.mutation_type ?? "—"}  |  Binding contacts: ${nBind}`;
+            }
+
+            function onStepHover(stepIdx, event) {
+                // highlight nearest panel
+                const panelStep = stepToPanel.get(stepIdx);
+                d3.selectAll(".lattice-panel").classed("highlighted", false);
+                d3.select(`.lattice-panel[data-step="${panelStep}"]`).classed(
+                    "highlighted",
+                    true,
+                );
+                // bump the dot
+                d3.selectAll(".traj-dot").classed("highlighted", false);
+                d3.select(`.traj-dot[data-step="${stepIdx}"]`).classed(
+                    "highlighted",
+                    true,
+                );
+                // update detail line
+                d3.select("#step-detail").text(detailLine(stepIdx));
+            }
+
+            function onPanelHover(stepIdx, event) {
+                d3.selectAll(".lattice-panel").classed("highlighted", false);
+                d3.select(`.lattice-panel[data-step="${stepIdx}"]`).classed(
+                    "highlighted",
+                    true,
+                );
+                d3.selectAll(".traj-dot").classed("highlighted", false);
+                d3.select(`.traj-dot[data-step="${stepIdx}"]`).classed(
+                    "highlighted",
+                    true,
+                );
+                d3.select("#step-detail").text(detailLine(stepIdx));
+                showTooltip(tooltipHtml(stepIdx), event);
+            }
+
+            function onStepUnhover() {
+                hideTooltip();
+                // leave highlight on last-hovered panel/dot? clear it for cleanliness
+                d3.selectAll(".lattice-panel").classed("highlighted", false);
+                d3.selectAll(".traj-dot").classed("highlighted", false);
+            }
+
+            function renderLattices() {
+                const grid = d3.select("#lattice-grid");
+                grid.selectAll("*").remove();
+
+                const panels = grid
+                    .selectAll("div.lattice-panel")
+                    .data(sampledSteps)
+                    .join("div")
+                    .attr("class", "lattice-panel")
+                    .attr("data-step", (s) => s)
+                    .on("mouseover", function (event, s) {
+                        onPanelHover(s, event);
+                    })
+                    .on("mousemove", function (event, s) {
+                        showTooltip(tooltipHtml(s), event);
+                    })
+                    .on("mouseout", function () {
+                        onStepUnhover();
+                    });
+
+                panels.each(function (stepIdx) {
+                    drawLattice(d3.select(this), stepIdx);
+                });
+            }
+
+            function drawLattice(panelSel, stepIdx) {
+                const step = data.steps[stepIdx];
+                const conf = data.conformations[step.aa_sequence];
+                if (!conf) return;
+
+                const size = 180; // SVG viewport size
+                const padding = 12;
+
+                // Bounding box from protein + ligand
+                const allPts = conf.conformation.concat(data.ligand.positions);
+                const xs = allPts.map((p) => p[0]);
+                const ys = allPts.map((p) => p[1]);
+                const xMin = Math.min(...xs) - 1;
+                const xMax = Math.max(...xs) + 1;
+                const yMin = Math.min(...ys) - 1;
+                const yMax = Math.max(...ys) + 1;
+                const span = Math.max(xMax - xMin, yMax - yMin);
+                // center coordinates so aspect ratio is preserved
+                const xMid = (xMin + xMax) / 2;
+                const yMid = (yMin + yMax) / 2;
+                const half = span / 2;
+                const xDom = [xMid - half, xMid + half];
+                const yDom = [yMid - half, yMid + half];
+
+                const xs2 = d3
+                    .scaleLinear()
+                    .domain(xDom)
+                    .range([padding, size - padding]);
+                const ys2 = d3
+                    .scaleLinear()
+                    .domain(yDom)
+                    .range([size - padding, padding]); // y inverted
+
+                const svg = panelSel
+                    .append("svg")
+                    .attr("viewBox", `0 0 ${size} ${size}`)
+                    .attr("preserveAspectRatio", "xMidYMid meet");
+
+                // 1. Grid lines (faint)
+                const gridG = svg.append("g").attr("class", "grid");
+                for (let i = Math.ceil(xDom[0]); i <= Math.floor(xDom[1]); i++) {
+                    gridG
+                        .append("line")
+                        .attr("x1", xs2(i))
+                        .attr("x2", xs2(i))
+                        .attr("y1", ys2(yDom[0]))
+                        .attr("y2", ys2(yDom[1]))
+                        .attr("stroke", "#eee")
+                        .attr("stroke-width", 0.5);
+                }
+                for (let j = Math.ceil(yDom[0]); j <= Math.floor(yDom[1]); j++) {
+                    gridG
+                        .append("line")
+                        .attr("x1", xs2(xDom[0]))
+                        .attr("x2", xs2(xDom[1]))
+                        .attr("y1", ys2(j))
+                        .attr("y2", ys2(j))
+                        .attr("stroke", "#eee")
+                        .attr("stroke-width", 0.5);
+                }
+
+                const widthScale = d3
+                    .scaleLinear()
+                    .domain([0, 7])
+                    .range([0.5, 3])
+                    .clamp(true);
+
+                // 2. Intra-protein contacts (dashed light gray)
+                svg.append("g")
+                    .attr("class", "intra-contacts")
+                    .selectAll("line")
+                    .data(conf.intra_contacts)
+                    .join("line")
+                    .attr("x1", (d) => xs2(conf.conformation[d[0]][0]))
+                    .attr("y1", (d) => ys2(conf.conformation[d[0]][1]))
+                    .attr("x2", (d) => xs2(conf.conformation[d[1]][0]))
+                    .attr("y2", (d) => ys2(conf.conformation[d[1]][1]))
+                    .attr("stroke", "#ccc")
+                    .attr("stroke-dasharray", "2,2")
+                    .attr("stroke-width", (d, i) =>
+                        widthScale(Math.abs(conf.intra_contact_energies[i])),
+                    );
+
+                // 3. Binding contacts (dashed orange)
+                svg.append("g")
+                    .attr("class", "binding-contacts")
+                    .selectAll("line")
+                    .data(conf.binding_contacts)
+                    .join("line")
+                    .attr("x1", (d) => xs2(conf.conformation[d[0]][0]))
+                    .attr("y1", (d) => ys2(conf.conformation[d[0]][1]))
+                    .attr("x2", (d) => xs2(data.ligand.positions[d[1]][0]))
+                    .attr("y2", (d) => ys2(data.ligand.positions[d[1]][1]))
+                    .attr("stroke", "#e6550d")
+                    .attr("stroke-dasharray", "2,2")
+                    .attr("stroke-width", (d, i) =>
+                        widthScale(Math.abs(conf.binding_contact_energies[i])),
+                    );
+
+                // 4. Backbone (solid dark gray)
+                const backbone = d3
+                    .line()
+                    .x((p) => xs2(p[0]))
+                    .y((p) => ys2(p[1]));
+                svg.append("path")
+                    .attr("d", backbone(conf.conformation))
+                    .attr("fill", "none")
+                    .attr("stroke", "#333")
+                    .attr("stroke-width", 2);
+
+                // 5. Ligand squares
+                const cellWidth = xs2(1) - xs2(0);
+                const sqSide = Math.max(8, Math.min(18, cellWidth * 0.5));
+                const ligG = svg.append("g").attr("class", "ligand");
+                data.ligand.positions.forEach((pos, k) => {
+                    const cx = xs2(pos[0]);
+                    const cy = ys2(pos[1]);
+                    ligG
+                        .append("rect")
+                        .attr("x", cx - sqSide / 2)
+                        .attr("y", cy - sqSide / 2)
+                        .attr("width", sqSide)
+                        .attr("height", sqSide)
+                        .attr("fill", "#756bb1")
+                        .attr("stroke", "#333")
+                        .attr("stroke-width", 0.5);
+                    ligG
+                        .append("text")
+                        .attr("x", cx)
+                        .attr("y", cy)
+                        .attr("text-anchor", "middle")
+                        .attr("dominant-baseline", "central")
+                        .attr("font-size", 8)
+                        .attr("fill", "white")
+                        .text(data.ligand.sequence[k]);
+                });
+
+                // 6. Protein residues
+                const aa = step.aa_sequence;
+                const resR = Math.max(5, Math.min(10, cellWidth * 0.3));
+                const resG = svg.append("g").attr("class", "residues");
+                conf.conformation.forEach((pos, i) => {
+                    const cx = xs2(pos[0]);
+                    const cy = ys2(pos[1]);
+                    resG
+                        .append("circle")
+                        .attr("cx", cx)
+                        .attr("cy", cy)
+                        .attr("r", resR)
+                        .attr("fill", aaColor(aa[i]))
+                        .attr("stroke", "#333")
+                        .attr("stroke-width", 0.7);
+                    resG
+                        .append("text")
+                        .attr("x", cx)
+                        .attr("y", cy)
+                        .attr("text-anchor", "middle")
+                        .attr("dominant-baseline", "central")
+                        .attr("font-size", 8)
+                        .attr("fill", "#222")
+                        .text(aa[i]);
+                });
+
+                // 7. Panel label below SVG
+                panelSel
+                    .append("div")
+                    .attr("class", "lattice-label")
+                    .text(`Step ${stepIdx}  ·  f=${step.fitness.toFixed(2)}`);
+            }
+
+            loadData().catch((err) => {
+                d3.select("body").append("pre").text("Error loading data: " + err);
+                console.error(err);
+            });
+        </script>
+    </body>
+</html>

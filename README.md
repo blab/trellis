@@ -201,6 +201,14 @@ Provides:
   sense codons until the translated protein meets the fitness
   threshold.
 
+## Visualization
+
+A D3 dashboard for inspecting individual trajectories lives in
+[`viz/`](viz/). Run `scripts/visualize_trajectory.py` to generate a
+JSON snapshot of a short SSWM run, then serve the repo root with
+`python -m http.server` and open `viz/trajectory_dashboard.html` in a
+browser. See [`viz/README.md`](viz/README.md) for details.
+
 ## Install
 
 ```bash
@@ -244,11 +252,17 @@ trellis/
 │   ├── test_fitness.py
 │   ├── test_genetic_code.py
 │   └── test_sswm.py
+├── scripts/
+│   └── visualize_trajectory.py  # run an SSWM trajectory, write JSON for the dashboard
+├── viz/
+│   ├── trajectory_dashboard.html  # D3 dashboard (reads ../results/trajectory_data.json)
+│   └── README.md
 ├── data/
 │   ├── mj_matrix.csv        # MJ 1985 Table V, 20×20, alphabetical AA order
 │   └── README.md            # citation, source URL, source commit SHA
 ├── notes/
 │   ├── lattice-protein-implementation-plan.md
+│   ├── trajectory-visualization-plan.md
 │   └── binding-thermodynamics.md
 ├── pyproject.toml
 ├── LICENSE.md
