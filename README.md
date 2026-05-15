@@ -26,6 +26,7 @@ The full design is in
 | 7 | `trellis/sswm.py` — SSWM trajectory generation | ✅ done |
 | 8 | `trellis/trajectory_io.py` — FASTA / tar.zst output | ✅ done |
 | 9 | `trellis/cache.py` — fitness cache | ✅ done |
+| 11 | `scripts/generate_trajectories.py` — bulk trajectory CLI | ✅ done |
 
 ### Step 1: `lattice.py`
 
@@ -232,6 +233,25 @@ Provides:
   - `__contains__` / `__len__` — support `in` checks and `len()`.
   - `stats()` — cache entries, hits, misses, and hit rate.
 
+### Step 11: `scripts/generate_trajectories.py`
+
+Bulk trajectory generation CLI. Runs SSWM trajectories in parallel via
+`ProcessPoolExecutor`, splits into train/test sets via
+`trajectory_io.train_test_split`, writes intermediate FASTA files via
+`trajectory_io.write_trajectory_fasta`, and packages them into
+`forwards-{split}-{NNN}.tar.zst` shards via
+`trajectory_io.package_shards`.
+
+Key design choices:
+
+- **Process-level isolation** — each worker loads its own MJ matrix,
+  creates its own `Ligand` and `FitnessCache`. No shared mutable state.
+- **Reproducible parallelism** — `SeedSequence.spawn()` creates
+  statistically independent per-trajectory RNG streams. Results are
+  deterministic for a given seed regardless of worker count.
+- **Metadata** — `metadata.json` in the output directory records all
+  parameters needed to reproduce the dataset.
+
 ## Fold a single sequence
 
 `scripts/fold_sequence.py` folds a single amino acid or DNA sequence
@@ -259,13 +279,70 @@ echo "ACDEFG" | python scripts/fold_sequence.py --aa -
 A 20-residue chain takes ~15 seconds (pure Python, no numba). Shorter
 chains (6–10 residues) complete instantly.
 
-## Visualization
+## Generate and visualize a single trajectory
 
-A D3 dashboard for inspecting individual trajectories lives in
-[`viz/`](viz/). Run `scripts/generate_viz_trajectory.py` to generate a
-JSON snapshot of a short SSWM run, then serve the repo root with
-`python -m http.server` and open `viz/trajectory_dashboard.html` in a
-browser. See [`viz/README.md`](viz/README.md) for details.
+`scripts/generate_viz_trajectory.py` runs a short SSWM trajectory and
+writes a JSON snapshot for the interactive D3 dashboard.
+
+```bash
+python scripts/generate_viz_trajectory.py
+```
+
+This runs from defaults (`--n-codons 10 --n-steps 30 --Ne 100
+--temperature 1.0 --seed 42 --ligand-sequence FWYL`) and writes
+`viz/viz_trajectory_data.json`. Serve the repo root over HTTP and open
+`viz/trajectory_dashboard.html` in a browser:
+
+```bash
+python -m http.server 8000
+# open http://localhost:8000/viz/trajectory_dashboard.html
+```
+
+The dashboard shows a fitness-vs-step plot, small-multiple lattice
+diagrams of native conformations, and mutation-type annotations. See
+[`viz/README.md`](viz/README.md) for details.
+
+## Generate trajectories
+
+`scripts/generate_trajectories.py` is the main CLI for bulk trajectory
+generation. It runs SSWM trajectories in parallel, splits into
+train/test sets, and packages them as compressed FASTA shards
+compatible with [blab/trajectories](https://github.com/blab/trajectories).
+
+```bash
+# Generate 1000 trajectories with default parameters
+# Output defaults to results/trellis-20aa-FWYL/
+python scripts/generate_trajectories.py \
+    --n-trajectories 1000 \
+    --n-steps 100 \
+    --chain-length 20 \
+    --ligand-sequence FWYL \
+    --Ne 1000 \
+    --n-workers 8 \
+    --seed 42
+
+# Generate with a different ligand
+# Output defaults to results/trellis-20aa-FWY/
+python scripts/generate_trajectories.py \
+    --n-trajectories 1000 \
+    --ligand-sequence FWY \
+    --ligand-anchor 0,-1 \
+    --ligand-direction horizontal
+```
+
+Output:
+
+```
+results/trellis-20aa-FWYL/
+├── forwards-train-000.tar.zst
+├── forwards-test-000.tar.zst
+└── metadata.json
+```
+
+Each worker process loads its own MJ matrix, ligand, and fitness cache,
+so there is no shared mutable state. Per-trajectory RNG streams are
+created via `SeedSequence.spawn()` for reproducibility regardless of
+worker count.
 
 ## Install
 
@@ -315,10 +392,12 @@ trellis/
 │   ├── test_trajectory_io.py
 │   └── test_cache.py
 ├── scripts/
-│   ├── generate_viz_trajectory.py  # run an SSWM trajectory, write JSON for the dashboard
-│   └── fold_sequence.py         # fold a single sequence, print results
+│   ├── generate_trajectories.py     # Step 11 — bulk parallel trajectory generation
+│   ├── generate_viz_trajectory.py   # run an SSWM trajectory, write JSON for the dashboard
+│   ├── inspect_shard.py            # inspect / extract a tar.zst shard
+│   └── fold_sequence.py            # fold a single sequence, print results
 ├── viz/
-│   ├── trajectory_dashboard.html  # D3 dashboard (reads ../results/trajectory_data.json)
+│   ├── trajectory_dashboard.html  # D3 dashboard (reads viz_trajectory_data.json)
 │   └── README.md
 ├── data/
 │   ├── mj_matrix.csv        # MJ 1985 Table V, 20×20, alphabetical AA order

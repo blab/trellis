@@ -40,7 +40,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--temperature", type=float, default=1.0)
     p.add_argument("--min-fitness", type=float, default=0.0)
     p.add_argument("--seed", type=int, default=42)
-    p.add_argument("--output", type=str, default="results/trajectory_data.json")
+    p.add_argument("--output", type=str, default="viz/viz_trajectory_data.json")
     return p.parse_args()
 
 

@@ -7,11 +7,11 @@ Build a two-part visualization system: a Python script that runs a short SSWM tr
 ## Architecture
 
 ```
-scripts/visualize_trajectory.py    → results/trajectory_data.json
-viz/trajectory_dashboard.html      ← reads trajectory_data.json
+scripts/visualize_trajectory.py    → viz/viz_trajectory_data.json
+viz/trajectory_dashboard.html      ← reads viz_trajectory_data.json
 ```
 
-Open `viz/trajectory_dashboard.html` in a browser, it loads `../results/trajectory_data.json` via fetch.
+Open `viz/trajectory_dashboard.html` in a browser, it loads `../viz/viz_trajectory_data.json` via fetch.
 
 ## 1. Python script: `scripts/visualize_trajectory.py`
 
@@ -30,7 +30,7 @@ python scripts/visualize_trajectory.py \
     --Ne 1000 \
     --temperature 1.0 \
     --seed 42 \
-    --output results/trajectory_data.json
+    --output viz/viz_trajectory_data.json
 ```
 
 Defaults: `--n-codons 12` (shorter chain for speed — 20 residues would be slow without pre-enumeration), `--n-steps 50`, `--Ne 1000`, `--temperature 1.0`.
@@ -229,7 +229,7 @@ Follow the VAE dashboard conventions:
 ### Data loading
 
 ```javascript
-const DATA_PATH = "../results/trajectory_data.json";
+const DATA_PATH = "../viz/viz_trajectory_data.json";
 let data = null;
 
 async function loadData() {
@@ -359,7 +359,7 @@ trellis/
 ├── viz/
 │   └── trajectory_dashboard.html
 └── results/                         # gitignored
-    └── trajectory_data.json
+    └── viz_trajectory_data.json
 ```
 
 The `viz/` directory is new. The `results/` directory is for generated artifacts and should be in `.gitignore`. To use: run the script, then serve the repo root with `python -m http.server` and open `viz/trajectory_dashboard.html` in the browser.

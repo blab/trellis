@@ -2,6 +2,7 @@
 
 # Generated artifacts
 results/
+viz_trajectory_data.json
 
 # Errors from tests
 *.err

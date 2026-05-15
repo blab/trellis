@@ -13,7 +13,7 @@ plot and small-multiple lattice diagrams of each native conformation.
 
    This runs from defaults (`--n-codons 10 --n-steps 30 --Ne 100
    --temperature 1.0 --seed 42 --ligand-sequence FWYL`) and writes
-   `results/trajectory_data.json`.
+   `viz/viz_trajectory_data.json`.
 
    Shorter chains (`--n-codons 8`) run in seconds, while 12-codons takes a 
    few minutes because every unique AA neighbour of every step is folded.
