@@ -250,15 +250,28 @@ Provides:
   `ConformationDatabase`. With a ligand, uses unreduced enumeration and
   filters out walks that collide with ligand sites. Without a ligand,
   uses symmetry-reduced enumeration.
-- `fold(sequence, mj_matrix, ligand=None, temperature=1.0, db=None)` —
-  fold a sequence using a precomputed database. Returns the same
-  `FoldResult` as `fold.py`. If `db` is None, enumerates on the fly.
+- `fold(sequence, mj_matrix, ligand=None, temperature=1.0, db=None,
+  recover_conformation=True)` — fold a sequence using a precomputed
+  database. Returns the same `FoldResult` as `fold.py`. If `db` is
+  None, enumerates on the fly. Set `recover_conformation=False` to
+  skip coordinate recovery when only fitness is needed.
 - `save_database(db, path)` / `load_database(path)` — persist and
   reload a `ConformationDatabase` as compressed `.npz`.
 
-Pure Python scoring is ~1.4× faster than branch-and-bound for batch
-folding (the SSWM use case). Numba acceleration of the scoring loop
-is planned for a future iteration.
+The scoring loop is numba JIT-compiled. Benchmark (10 random sequences,
+FWYL ligand, scoring only — excludes one-time enumeration):
+
+| Chain | B&B (10 seqs) | Numba scoring (10 seqs) | Speedup |
+|-------|--------------|------------------------|---------|
+| 8-mer | 0.041s | 0.0004s | 100× |
+| 10-mer | 0.37s | 0.001s | 370× |
+| 12-mer | 3.2s | 0.007s | 460× |
+| 14-mer | 26.5s | 0.050s | 530× |
+| 16-mer | 228s | 0.41s | 555× |
+
+Enumeration is a one-time cost (5s for 14-mer, 46s for 16-mer). For
+SSWM trajectories that fold ~60 sequences per step over 100 steps,
+the enumeration cost is amortized over thousands of fold calls.
 
 ### Step 11: `scripts/generate_trajectories.py`
 
@@ -377,7 +390,7 @@ worker count.
 pip install -e ".[dev]"
 ```
 
-Requires Python ≥ 3.11. Runtime dependencies: `numpy`, `zstandard`. Dev dependency: `pytest`.
+Requires Python ≥ 3.11. Runtime dependencies: `numpy`, `numba`, `zstandard`. Dev dependency: `pytest`.
 
 ## Run tests
 

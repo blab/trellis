@@ -37,21 +37,26 @@ def random_sequences(n_seq: int, chain_length: int, rng) -> list[str]:
     return ["".join(rng.choice(aa, size=chain_length)) for _ in range(n_seq)]
 
 
-def benchmark_one(chain_length, n_sequences, ligand, mj, rng):
+def benchmark_one(chain_length, n_sequences, ligand, mj, rng, warmup_done=False):
     seqs = random_sequences(n_sequences, chain_length, rng)
+
+    # Pre-enumeration: enumerate
+    t0 = time.perf_counter()
+    db = enumerate_conformations(chain_length, ligand)
+    t_enum = time.perf_counter() - t0
+
+    # Warm up numba JIT on first call (excluded from timing)
+    if not warmup_done:
+        fold_enum(seqs[0], mj, ligand, db=db)
 
     # Branch-and-bound: batch fold
     t0 = time.perf_counter()
     bb_results = [fold_bb(s, mj, ligand) for s in seqs]
     t_bb = time.perf_counter() - t0
 
-    # Pre-enumeration: enumerate + batch fold
+    # Pre-enumeration + numba: batch fold
     t0 = time.perf_counter()
-    db = enumerate_conformations(chain_length, ligand)
-    t_enum = time.perf_counter() - t0
-
-    t0 = time.perf_counter()
-    en_results = [fold_enum(s, mj, ligand, db=db) for s in seqs]
+    en_results = [fold_enum(s, mj, ligand, db=db, recover_conformation=False) for s in seqs]
     t_score = time.perf_counter() - t0
 
     # Correctness check
@@ -77,7 +82,7 @@ def benchmark_one(chain_length, n_sequences, ligand, mj, rng):
 def print_result(r):
     print(f"\nChain length: {r['chain_length']}, Sequences: {r['n_sequences']}, "
           f"Conformations: {r['n_conformations']:,}")
-    print(f"{'':30s} {'Branch-and-bound':>18s} {'Pre-enumeration':>18s}")
+    print(f"{'':30s} {'Branch-and-bound':>18s} {'Enum + numba':>18s}")
     print(f"{'':30s} {'─' * 18:>18s} {'─' * 18:>18s}")
     print(f"{'Enumeration time':30s} {'N/A':>18s} {r['t_enum']:>17.3f}s")
     print(f"{'Per-sequence fold':30s} {r['t_bb_per_seq']:>17.3f}s {r['t_score_per_seq']:>17.3f}s")
@@ -118,17 +123,22 @@ def main():
     lig_str = args.ligand_sequence or "none"
     print(f"Ligand: {lig_str}")
 
+    # Warm up numba JIT before any timed runs
+    print("warming up numba JIT ...", flush=True)
+    warmup_db = enumerate_conformations(4, ligand)
+    fold_enum("ACDE", mj, ligand, db=warmup_db)
+
     if args.sweep:
         rng = np.random.default_rng(args.seed)
         results = []
         for n in [6, 8, 10, 12, 14]:
             print(f"  benchmarking {n}-mer ...", flush=True)
-            r = benchmark_one(n, args.n_sequences, ligand, mj, rng)
+            r = benchmark_one(n, args.n_sequences, ligand, mj, rng, warmup_done=True)
             results.append(r)
         print_sweep(results)
     else:
         rng = np.random.default_rng(args.seed)
-        r = benchmark_one(args.chain_length, args.n_sequences, ligand, mj, rng)
+        r = benchmark_one(args.chain_length, args.n_sequences, ligand, mj, rng, warmup_done=True)
         print_result(r)
 
 

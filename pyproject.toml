@@ -7,7 +7,7 @@ name = "trellis"
 version = "0.0.1"
 description = "Lattice protein synthetic data for evolutionary trajectory models"
 requires-python = ">=3.11"
-dependencies = ["numpy", "zstandard"]
+dependencies = ["numpy", "numba", "zstandard"]
 
 [project.optional-dependencies]
 dev = ["pytest"]

@@ -20,6 +20,8 @@ environment*
 *.pyc
 .tox/
 .cache/
+.pytest_cache/
+__pycache__/
 
 # Compiled source #
 ###################

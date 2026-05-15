@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from math import exp, inf
 import warnings
 
+import numba
 import numpy as np
 
 from trellis.energy import AA_INDEX
@@ -102,17 +103,66 @@ def _recover_native_conformation(
     raise RuntimeError(f"conformation index {best_idx} out of range")
 
 
+@numba.njit(cache=True)
+def _score_conformations(
+    aa_indices: np.ndarray,
+    lig_indices: np.ndarray,
+    mj_matrix: np.ndarray,
+    contact_pairs: np.ndarray,
+    contact_offsets: np.ndarray,
+    binding_pairs: np.ndarray,
+    binding_offsets: np.ndarray,
+    temperature: float,
+) -> tuple[float, float, float, int]:
+    """Score all conformations. Returns (best_energy, Z_sum, binding_weighted_sum, best_idx)."""
+    best_energy = np.inf
+    best_idx = -1
+    Z_sum = 0.0
+    binding_weighted_sum = 0.0
+    n_conf = len(contact_offsets) - 1
+
+    for k in range(n_conf):
+        e_intra = 0.0
+        for c in range(contact_offsets[k], contact_offsets[k + 1]):
+            i = contact_pairs[c, 0]
+            j = contact_pairs[c, 1]
+            e_intra += mj_matrix[aa_indices[i], aa_indices[j]]
+
+        e_bind = 0.0
+        for c in range(binding_offsets[k], binding_offsets[k + 1]):
+            i = binding_pairs[c, 0]
+            l = binding_pairs[c, 1]
+            e_bind += mj_matrix[aa_indices[i], lig_indices[l]]
+
+        total = e_intra + e_bind
+        boltz = np.exp(-total / temperature)
+        Z_sum += boltz
+        binding_weighted_sum += e_bind * boltz
+
+        if total < best_energy:
+            best_energy = total
+            best_idx = k
+
+    return best_energy, Z_sum, binding_weighted_sum, best_idx
+
+
 def fold(
     sequence: str,
     mj_matrix: np.ndarray,
     ligand: Ligand | None = None,
     temperature: float = 1.0,
     db: ConformationDatabase | None = None,
+    recover_conformation: bool = True,
 ) -> FoldResult:
     """Fold *sequence* using pre-enumerated conformations.
 
     If *db* is None, conformations are enumerated on the fly (slow for
     repeated calls — pass a prebuilt database instead).
+
+    Set *recover_conformation* to False to skip the costly re-enumeration
+    of SAWs to find native coordinates. The returned
+    ``native_conformation`` will be ``()``.  Use this when only fitness
+    (ensemble binding energy) is needed.
     """
     n = len(sequence)
     if n < 1:
@@ -134,38 +184,19 @@ def fold(
             f"database chain_length {db.chain_length} != sequence length {n}"
         )
 
-    aa_indices = [AA_INDEX[aa] for aa in sequence]
-    lig_indices = [AA_INDEX[aa] for aa in ligand.sequence] if ligand is not None else []
+    aa_idx = np.array([AA_INDEX[aa] for aa in sequence], dtype=np.int32)
+    lig_idx = (
+        np.array([AA_INDEX[aa] for aa in ligand.sequence], dtype=np.int32)
+        if ligand is not None
+        else np.empty(0, dtype=np.int32)
+    )
 
-    best_energy = inf
-    best_idx = -1
-    Z_sum = 0.0
-    binding_weighted_sum = 0.0
-
-    cp = db.contact_pairs
-    co = db.contact_offsets
-    bp = db.binding_pairs
-    bo = db.binding_offsets
-
-    for k in range(db.n_conformations):
-        e_intra = 0.0
-        for c in range(co[k], co[k + 1]):
-            i, j = cp[c]
-            e_intra += mj_matrix[aa_indices[i], aa_indices[j]]
-
-        e_bind = 0.0
-        for c in range(bo[k], bo[k + 1]):
-            i, l = bp[c]
-            e_bind += mj_matrix[aa_indices[i], lig_indices[l]]
-
-        total = e_intra + e_bind
-        boltz = exp(-total / temperature)
-        Z_sum += boltz
-        binding_weighted_sum += e_bind * boltz
-
-        if total < best_energy:
-            best_energy = total
-            best_idx = k
+    best_energy, Z_sum, binding_weighted_sum, best_idx = _score_conformations(
+        aa_idx, lig_idx, mj_matrix,
+        db.contact_pairs, db.contact_offsets,
+        db.binding_pairs, db.binding_offsets,
+        temperature,
+    )
 
     if db.reduced_symmetry:
         Z_full = Z_sum * 8 - 4
@@ -174,9 +205,12 @@ def fold(
 
     ensemble_binding = binding_weighted_sum / Z_sum if Z_sum > 0 else 0.0
 
-    native_conf = _recover_native_conformation(
-        best_idx, db.chain_length, db.ligand, db.reduced_symmetry,
-    )
+    if recover_conformation:
+        native_conf = _recover_native_conformation(
+            best_idx, db.chain_length, db.ligand, db.reduced_symmetry,
+        )
+    else:
+        native_conf = ()
 
     return FoldResult(
         native_conformation=native_conf,
