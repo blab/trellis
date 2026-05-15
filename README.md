@@ -26,7 +26,6 @@ The full design is in
 | 7 | `trellis/sswm.py` — SSWM trajectory generation | ✅ done |
 | 8 | `trellis/trajectory_io.py` — FASTA / tar.zst output | ✅ done |
 | 9 | `trellis/cache.py` — fitness cache | ✅ done |
-| — | `scripts/generate_trajectories.py` — main CLI | not started |
 
 ### Step 1: `lattice.py`
 
@@ -233,6 +232,33 @@ Provides:
   - `__contains__` / `__len__` — support `in` checks and `len()`.
   - `stats()` — cache entries, hits, misses, and hit rate.
 
+## Fold a single sequence
+
+`scripts/fold_sequence.py` folds a single amino acid or DNA sequence
+and prints native energy, partition function, conformation coordinates,
+and wall time. With a ligand, it also reports ensemble-averaged binding
+energy and fitness.
+
+```bash
+# Fold an amino acid sequence
+python scripts/fold_sequence.py --aa ACDEFGHIKLMNPQRSTVWY
+
+# Translate and fold a DNA sequence
+python scripts/fold_sequence.py --dna GCTTGTGATGAATTTGGTCATATCAAACTTATGAATCCGCAAAGAACTTCTGTTTGGTAC
+
+# Fold with a ligand (reports binding energy and fitness)
+python scripts/fold_sequence.py --aa ACDEFGHIKLMNPQRSTVWY --ligand-sequence FWYL
+
+# Machine-readable JSON output
+python scripts/fold_sequence.py --aa ACDEFG --json
+
+# Read sequence from stdin
+echo "ACDEFG" | python scripts/fold_sequence.py --aa -
+```
+
+A 20-residue chain takes ~15 seconds (pure Python, no numba). Shorter
+chains (6–10 residues) complete instantly.
+
 ## Visualization
 
 A D3 dashboard for inspecting individual trajectories lives in
@@ -289,7 +315,8 @@ trellis/
 │   ├── test_trajectory_io.py
 │   └── test_cache.py
 ├── scripts/
-│   └── generate_trajectory.py   # run an SSWM trajectory, write JSON for the dashboard
+│   ├── generate_trajectory.py   # run an SSWM trajectory, write JSON for the dashboard
+│   └── fold_sequence.py         # fold a single sequence, print results
 ├── viz/
 │   ├── trajectory_dashboard.html  # D3 dashboard (reads ../results/trajectory_data.json)
 │   └── README.md
