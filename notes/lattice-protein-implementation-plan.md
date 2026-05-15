@@ -404,37 +404,22 @@ Where:
 - `branch_hamming` is the DNA Hamming distance from the previous sequence
 - Sequences are DNA (not AA)
 
-### Pairwise format
-
-Additionally generate pairwise trajectory files (tip-to-tip pairs sampled from different trajectories that share the same starting sequence):
-
-```
->TipA|0|0
-ATCGATCG...
->TipB|12|12
-ATCAATCG...
-```
-
 ### Key functions
 
 - `write_trajectory_fasta(trajectory: Trajectory, output_path: str, trajectory_id: str)`: Write a single trajectory as a FASTA file.
 
-- `write_pairwise_fasta(seq_a: str, seq_b: str, output_path: str, pair_id: str)`: Write a pairwise trajectory file.
-
 - `package_shards(trajectory_dir: str, output_dir: str, max_per_shard: int = 10000)`: Package FASTA files into compressed tar.zst shards matching the S3 naming convention (`forwards-train-000.tar.zst`, etc.).
 
-- `train_test_split(trajectories: list[Trajectory], test_fraction: float = 0.1) -> tuple[list, list]`: Split trajectories into train and test sets. Since these are synthetic (no phylogenetic tree to excise clades from), use a simpler strategy: hold out entire trajectories that share starting sequences, so the test set contains genuinely unseen evolutionary lineages starting from unseen proteins.
+- `train_test_split(trajectories: list[Trajectory], test_fraction: float = 0.1) -> tuple[list, list]`: Split trajectories into train and test sets. Since these are synthetic (no phylogenetic tree to excise clades from), use a simpler strategy: hold out entire trajectories with different initial starting points, so the test set contains genuinely unseen evolutionary lineages starting from unseen proteins.
 
 ### Dataset naming convention
 
-Use the prefix `lattice-` for all synthetic datasets:
+Use the prefix `trellis-trajectories-` for all synthetic datasets:
 
 ```
-lattice-20aa-4lig/          # 20-residue protein, 4-residue ligand
+trellis-20aa-FWYL/          # 20-residue protein, 4-residue ligand sequence spelled out
   forwards-train-000.tar.zst
   forwards-test-000.tar.zst
-  pairwise-train-000.tar.zst
-  pairwise-test-000.tar.zst
   metadata.json             # Ligand sequence, positions, Ne, mu, temperature, etc.
 ```
 
@@ -464,7 +449,7 @@ Cache fitness evaluations to avoid redundant folding. Many SSWM trajectories wil
 - The cache can grow large if many unique AA sequences are explored. For 10,000 trajectories of 100 steps each, expect up to ~10^6 unique AA sequences (though with significant overlap). At ~1 KB per FitnessResult, this is ~1 GB — manageable in memory.
 - Optionally persist cache to disk (pickle or sqlite) to resume interrupted runs.
 
-## Fold a single sequence — `scripts/fold_sequence.py`
+## Step 10: Fold a single sequence — `scripts/fold_sequence.py`
 
 A diagnostic script for folding a single sequence and printing the result. This is the script you'll reach for constantly during development — "does this sequence actually fold the way I think it does?" Also the fastest way to sanity-check numba compilation (first call is slow, second is fast).
 
@@ -498,33 +483,7 @@ Prints to stdout:
 
 Optionally `--json` flag for machine-readable output.
 
-## Visualize a conformation — `scripts/visualize_conformation.py`
-
-Renders the native conformation on the 2D lattice as a matplotlib figure. Invaluable for debugging — when fold results look wrong, seeing the conformation instantly tells you whether the issue is in energy calculation, contact detection, or the walk itself. Also useful for paper figures eventually.
-
-### Usage
-
-```bash
-# Fold and visualize in one step
-python scripts/visualize_conformation.py --aa ACDEFGHIKLMNPQRSTVWY -o conformation.png
-
-# With ligand
-python scripts/visualize_conformation.py --aa ACDEFGHIKLMNPQRSTVWY --ligand-sequence FWYL -o conformation.png
-
-# Interactive display (no save)
-python scripts/visualize_conformation.py --aa ACDEFGHIKLMNPQRSTVWY --show
-```
-
-### Visual elements
-
-- Residues as colored circles (color by amino acid property — hydrophobic, polar, charged — or by single-letter identity)
-- Chain backbone bonds as solid lines between consecutive residues
-- Non-bonded contacts as dashed lines between contacting residue pairs
-- Ligand residues in a distinct color/shape, positioned at their fixed lattice sites
-- Residue index labels inside or adjacent to each circle
-- Grid lines showing the lattice
-
-## Main CLI — `scripts/generate_trajectories.py`
+## Step 11: Main CLI — `scripts/generate_trajectories.py`
 
 ### Usage
 
@@ -552,11 +511,9 @@ python scripts/generate_trajectories.py \
 ### Output
 
 ```
-output/lattice-20aa-4lig/
+output/trellis-20aa-FWYL/
 ├── forwards-train-000.tar.zst
 ├── forwards-test-000.tar.zst
-├── pairwise-train-000.tar.zst
-├── pairwise-test-000.tar.zst
 ├── metadata.json           # Full parameter record
 └── landscape_stats.json    # Fitness distribution, synonymous fraction, etc.
 ```
@@ -583,7 +540,7 @@ output/lattice-20aa-4lig/
 }
 ```
 
-## Landscape analysis — `scripts/analyze_landscape.py`
+## Step 12: Landscape analysis — `scripts/analyze_landscape.py`
 
 A diagnostic script to characterize the fitness landscape before generating trajectories. Run this first to tune parameters.
 
