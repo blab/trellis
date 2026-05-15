@@ -26,6 +26,7 @@ The full design is in
 | 7 | `trellis/sswm.py` — SSWM trajectory generation | ✅ done |
 | 8 | `trellis/trajectory_io.py` — FASTA / tar.zst output | ✅ done |
 | 9 | `trellis/cache.py` — fitness cache | ✅ done |
+| — | `trellis/fold_enum.py` — exhaustive pre-enumeration folding | ✅ done |
 | 11 | `scripts/generate_trajectories.py` — bulk trajectory CLI | ✅ done |
 
 ### Step 1: `lattice.py`
@@ -233,6 +234,32 @@ Provides:
   - `__contains__` / `__len__` — support `in` checks and `len()`.
   - `stats()` — cache entries, hits, misses, and hit rate.
 
+### `fold_enum.py`
+
+Alternative to `fold.py` that pre-enumerates all self-avoiding walks for
+a given chain length and ligand once, storing contact lists in CSR-like
+numpy arrays. Scoring a new sequence reduces to summing MJ lookups over
+precomputed contacts — no geometry re-discovery.
+
+Provides:
+
+- `ConformationDatabase` — dataclass holding precomputed intra-protein
+  and protein-ligand contact lists in CSR layout (`contact_pairs` /
+  `contact_offsets`, `binding_pairs` / `binding_offsets`).
+- `enumerate_conformations(chain_length, ligand=None)` — build a
+  `ConformationDatabase`. With a ligand, uses unreduced enumeration and
+  filters out walks that collide with ligand sites. Without a ligand,
+  uses symmetry-reduced enumeration.
+- `fold(sequence, mj_matrix, ligand=None, temperature=1.0, db=None)` —
+  fold a sequence using a precomputed database. Returns the same
+  `FoldResult` as `fold.py`. If `db` is None, enumerates on the fly.
+- `save_database(db, path)` / `load_database(path)` — persist and
+  reload a `ConformationDatabase` as compressed `.npz`.
+
+Pure Python scoring is ~1.4× faster than branch-and-bound for batch
+folding (the SSWM use case). Numba acceleration of the scoring loop
+is planned for a future iteration.
+
 ### Step 11: `scripts/generate_trajectories.py`
 
 Bulk trajectory generation CLI. Runs SSWM trajectories in parallel via
@@ -379,7 +406,8 @@ trellis/
 │   ├── genetic_code.py      # Step 6 — codon table, translation, mutations
 │   ├── sswm.py              # Step 7 — SSWM trajectory generation
 │   ├── trajectory_io.py     # Step 8 — FASTA / tar.zst output
-│   └── cache.py             # Step 9 — fitness cache
+│   ├── cache.py             # Step 9 — fitness cache
+│   └── fold_enum.py         # exhaustive pre-enumeration folding
 ├── tests/
 │   ├── __init__.py
 │   ├── test_lattice.py
@@ -390,12 +418,14 @@ trellis/
 │   ├── test_genetic_code.py
 │   ├── test_sswm.py
 │   ├── test_trajectory_io.py
-│   └── test_cache.py
+│   ├── test_cache.py
+│   └── test_fold_enum.py
 ├── scripts/
 │   ├── generate_trajectories.py     # Step 11 — bulk parallel trajectory generation
 │   ├── generate_viz_trajectory.py   # run an SSWM trajectory, write JSON for the dashboard
 │   ├── inspect_shard.py            # inspect / extract a tar.zst shard
-│   └── fold_sequence.py            # fold a single sequence, print results
+│   ├── fold_sequence.py            # fold a single sequence, print results
+│   └── benchmark_folding.py        # branch-and-bound vs pre-enumeration comparison
 ├── viz/
 │   ├── trajectory_dashboard.html  # D3 dashboard (reads viz_trajectory_data.json)
 │   └── README.md
@@ -404,6 +434,7 @@ trellis/
 │   └── README.md            # citation, source URL, source commit SHA
 ├── notes/
 │   ├── lattice-protein-implementation-plan.md
+│   ├── exhaustive-enumeration-plan.md
 │   ├── trajectory-visualization-plan.md
 │   └── binding-thermodynamics.md
 ├── pyproject.toml
