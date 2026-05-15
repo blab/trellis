@@ -262,7 +262,7 @@ chains (6–10 residues) complete instantly.
 ## Visualization
 
 A D3 dashboard for inspecting individual trajectories lives in
-[`viz/`](viz/). Run `scripts/generate_trajectory.py` to generate a
+[`viz/`](viz/). Run `scripts/generate_viz_trajectory.py` to generate a
 JSON snapshot of a short SSWM run, then serve the repo root with
 `python -m http.server` and open `viz/trajectory_dashboard.html` in a
 browser. See [`viz/README.md`](viz/README.md) for details.
@@ -315,7 +315,7 @@ trellis/
 │   ├── test_trajectory_io.py
 │   └── test_cache.py
 ├── scripts/
-│   ├── generate_trajectory.py   # run an SSWM trajectory, write JSON for the dashboard
+│   ├── generate_viz_trajectory.py  # run an SSWM trajectory, write JSON for the dashboard
 │   └── fold_sequence.py         # fold a single sequence, print results
 ├── viz/
 │   ├── trajectory_dashboard.html  # D3 dashboard (reads ../results/trajectory_data.json)

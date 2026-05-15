@@ -8,7 +8,7 @@ plot and small-multiple lattice diagrams of each native conformation.
 1. Generate trajectory data:
 
    ```bash
-   python scripts/generate_trajectory.py
+   python scripts/generate_viz_trajectory.py
    ```
 
    This runs from defaults (`--n-codons 10 --n-steps 30 --Ne 100
@@ -48,5 +48,5 @@ type, and binding-contact count.
 ## Regenerating after parameter changes
 
 Edit-and-rerun loop: change the CLI args, rerun
-`scripts/generate_trajectory.py`, then reload the browser tab. The HTML
+`scripts/generate_viz_trajectory.py`, then reload the browser tab. The HTML
 re-fetches the JSON on every load.
