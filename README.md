@@ -24,7 +24,7 @@ The full design is in
 | 5 | `trellis/fitness.py` — ensemble-averaged fitness | ✅ done |
 | 6 | `trellis/genetic_code.py` — DNA ↔ AA, mutation enumeration | ✅ done |
 | 7 | `trellis/sswm.py` — SSWM trajectory generation | ✅ done |
-| 8 | `trellis/trajectory_io.py` — FASTA / tar.zst output | not started |
+| 8 | `trellis/trajectory_io.py` — FASTA / tar.zst output | ✅ done |
 | 9 | `trellis/cache.py` — fitness cache | not started |
 | — | `scripts/generate_trajectories.py` — main CLI | not started |
 
@@ -201,6 +201,25 @@ Provides:
   sense codons until the translated protein meets the fitness
   threshold.
 
+### Step 8: `trajectory_io.py`
+
+Provides:
+
+- `write_trajectory_fasta(trajectory, output_path, trajectory_id)` —
+  write a single SSWM trajectory as a FASTA file.  Each step becomes
+  a record `>NODE_XXXX|cumulative_hamming|branch_hamming` with the
+  DNA sequence.  The final node is named `TIP_{trajectory_id}`.
+- `package_shards(trajectory_dir, output_dir, split="train",
+  max_per_shard=10000)` — package `.fasta` files into compressed
+  `forwards-{split}-{NNN}.tar.zst` shards for downstream processing.
+- `train_test_split(trajectories, test_fraction=0.1, rng=None)` —
+  split trajectories into train and test sets.  Holds out entire
+  trajectories so the test set contains unseen evolutionary lineages.
+
+The FASTA format is compatible with the
+[blab/trajectories](https://github.com/blab/trajectories) preprocessing
+pipeline.
+
 ## Visualization
 
 A D3 dashboard for inspecting individual trajectories lives in
@@ -215,7 +234,7 @@ browser. See [`viz/README.md`](viz/README.md) for details.
 pip install -e ".[dev]"
 ```
 
-Requires Python ≥ 3.11. Runtime dependency: `numpy`. Dev dependency: `pytest`.
+Requires Python ≥ 3.11. Runtime dependencies: `numpy`, `zstandard`. Dev dependency: `pytest`.
 
 ## Run tests
 
@@ -242,7 +261,8 @@ trellis/
 │   ├── ligand.py            # Step 4 — ligand placement, binding energy
 │   ├── fitness.py           # Step 5 — ensemble-averaged fitness
 │   ├── genetic_code.py      # Step 6 — codon table, translation, mutations
-│   └── sswm.py              # Step 7 — SSWM trajectory generation
+│   ├── sswm.py              # Step 7 — SSWM trajectory generation
+│   └── trajectory_io.py     # Step 8 — FASTA / tar.zst output
 ├── tests/
 │   ├── __init__.py
 │   ├── test_lattice.py
@@ -251,7 +271,8 @@ trellis/
 │   ├── test_ligand.py
 │   ├── test_fitness.py
 │   ├── test_genetic_code.py
-│   └── test_sswm.py
+│   ├── test_sswm.py
+│   └── test_trajectory_io.py
 ├── scripts/
 │   └── generate_trajectory.py   # run an SSWM trajectory, write JSON for the dashboard
 ├── viz/
