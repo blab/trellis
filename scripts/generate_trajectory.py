@@ -8,6 +8,7 @@ writes everything to a single JSON file consumed by
 
 import argparse
 import json
+from pathlib import Path
 
 import numpy as np
 
@@ -129,6 +130,7 @@ def main() -> None:
         "conformations": fold_results,
     }
 
+    Path(args.output).parent.mkdir(parents=True, exist_ok=True)
     with open(args.output, "w") as f:
         json.dump(data, f, indent=2)
 
