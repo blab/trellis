@@ -5,7 +5,8 @@ from math import exp, inf
 
 import numpy as np
 
-from trellis.fitness import compute_fitness_aa
+from trellis.cache import FitnessCache
+from trellis.fitness import FitnessResult, compute_fitness_aa
 from trellis.genetic_code import (
     CODON_TABLE,
     classify_mutation,
@@ -52,20 +53,20 @@ def generate_trajectory(
     mu: float = 1e-6,
     temperature: float = 1.0,
     rng: np.random.Generator | None = None,
-    fitness_cache: dict[str, float] | None = None,
+    fitness_cache: FitnessCache | None = None,
 ) -> Trajectory:
     """Generate a single SSWM trajectory."""
     if rng is None:
         rng = np.random.default_rng()
     if fitness_cache is None:
-        fitness_cache = {}
+        fitness_cache = FitnessCache()
 
     current_dna = start_dna
     current_aa = translate(current_dna)
     if current_aa not in fitness_cache:
         r = compute_fitness_aa(current_aa, ligand, mj_matrix, temperature)
-        fitness_cache[current_aa] = r.fitness
-    current_fitness = fitness_cache[current_aa]
+        fitness_cache.put(current_aa, r)
+    current_fitness = fitness_cache.get(current_aa).fitness
 
     dna_seqs = [current_dna]
     aa_seqs = [current_aa]
@@ -77,18 +78,21 @@ def generate_trajectory(
         for aa_seq in aa_groups:
             if aa_seq not in fitness_cache:
                 if "*" in aa_seq:
-                    fitness_cache[aa_seq] = -inf
+                    fitness_cache.put(aa_seq, FitnessResult(
+                        fitness=-inf, fold_result=None,
+                        aa_sequence=aa_seq, dna_sequence="",
+                    ))
                 else:
                     r = compute_fitness_aa(
                         aa_seq, ligand, mj_matrix, temperature,
                     )
-                    fitness_cache[aa_seq] = r.fitness
+                    fitness_cache.put(aa_seq, r)
 
         mutations = single_nt_mutations(current_dna)
         weights = []
         for mutant_dna, _, _, _ in mutations:
             mutant_aa = translate(mutant_dna)
-            mutant_fitness = fitness_cache[mutant_aa]
+            mutant_fitness = fitness_cache.get(mutant_aa).fitness
             s = mutant_fitness - current_fitness
             weights.append(fixation_probability(s, Ne))
 
@@ -101,7 +105,7 @@ def generate_trajectory(
         idx = rng.choice(len(mutations), p=probs)
         chosen_dna = mutations[idx][0]
         chosen_aa = translate(chosen_dna)
-        chosen_fitness = fitness_cache[chosen_aa]
+        chosen_fitness = fitness_cache.get(chosen_aa).fitness
         mut_type = classify_mutation(current_dna, chosen_dna)
 
         current_dna = chosen_dna

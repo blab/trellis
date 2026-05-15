@@ -12,8 +12,8 @@ from pathlib import Path
 
 import numpy as np
 
+from trellis.cache import FitnessCache
 from trellis.energy import AA_INDEX, load_mj_matrix
-from trellis.fold import fold
 from trellis.lattice import get_contacts
 from trellis.ligand import Ligand, binding_contacts, create_ligand
 from trellis.sswm import generate_start_sequence, generate_trajectory
@@ -44,23 +44,26 @@ def parse_args() -> argparse.Namespace:
     return p.parse_args()
 
 
-def fold_unique(
+def conformations_from_cache(
     aa_sequences: list[str],
+    cache: FitnessCache,
     ligand: Ligand,
     mj: np.ndarray,
-    temperature: float,
 ) -> dict[str, dict]:
-    """Fold each unique AA sequence once; return per-sequence conformation data."""
-    fold_results: dict[str, dict] = {}
+    """Extract conformation data for unique AA sequences from the cache."""
+    results: dict[str, dict] = {}
     for aa in set(aa_sequences):
-        result = fold(aa, mj, ligand, temperature)
-        conf = result.native_conformation
+        cached = cache.get(aa)
+        if cached is None or cached.fold_result is None:
+            continue
+        fold_result = cached.fold_result
+        conf = fold_result.native_conformation
         i_contacts = get_contacts(conf)
         b_contacts = binding_contacts(conf, ligand)
-        fold_results[aa] = {
+        results[aa] = {
             "conformation": [list(pos) for pos in conf],
-            "native_energy": float(result.native_energy),
-            "ensemble_binding_energy": float(result.ensemble_binding_energy),
+            "native_energy": float(fold_result.native_energy),
+            "ensemble_binding_energy": float(fold_result.ensemble_binding_energy),
             "intra_contacts": [[i, j] for i, j in i_contacts],
             "intra_contact_energies": [
                 float(mj[AA_INDEX[aa[i]], AA_INDEX[aa[j]]]) for i, j in i_contacts
@@ -71,7 +74,7 @@ def fold_unique(
                 for i, k in b_contacts
             ],
         }
-    return fold_results
+    return results
 
 
 def main() -> None:
@@ -90,16 +93,18 @@ def main() -> None:
         temperature=args.temperature,
         rng=rng,
     )
+    cache = FitnessCache()
     trajectory = generate_trajectory(
         start_dna, ligand, mj,
         n_steps=args.n_steps,
         Ne=args.Ne,
         temperature=args.temperature,
         rng=rng,
+        fitness_cache=cache,
     )
 
-    fold_results = fold_unique(
-        trajectory.aa_sequences, ligand, mj, args.temperature,
+    fold_results = conformations_from_cache(
+        trajectory.aa_sequences, cache, ligand, mj,
     )
 
     steps = []

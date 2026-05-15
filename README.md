@@ -25,7 +25,7 @@ The full design is in
 | 6 | `trellis/genetic_code.py` — DNA ↔ AA, mutation enumeration | ✅ done |
 | 7 | `trellis/sswm.py` — SSWM trajectory generation | ✅ done |
 | 8 | `trellis/trajectory_io.py` — FASTA / tar.zst output | ✅ done |
-| 9 | `trellis/cache.py` — fitness cache | not started |
+| 9 | `trellis/cache.py` — fitness cache | ✅ done |
 | — | `scripts/generate_trajectories.py` — main CLI | not started |
 
 ### Step 1: `lattice.py`
@@ -220,6 +220,19 @@ The FASTA format is compatible with the
 [blab/trajectories](https://github.com/blab/trajectories) preprocessing
 pipeline.
 
+### Step 9: `cache.py`
+
+Provides:
+
+- `FitnessCache` — cache mapping AA sequences to `FitnessResult`
+  objects (including `FoldResult` with native conformation, energies).
+  Eliminates redundant folding: `sswm.generate_trajectory` stores full
+  results so downstream code (e.g. the visualization script) can
+  extract conformation data without re-folding.
+  - `get(aa_sequence)` / `put(aa_sequence, result)` — lookup and store.
+  - `__contains__` / `__len__` — support `in` checks and `len()`.
+  - `stats()` — cache entries, hits, misses, and hit rate.
+
 ## Visualization
 
 A D3 dashboard for inspecting individual trajectories lives in
@@ -262,7 +275,8 @@ trellis/
 │   ├── fitness.py           # Step 5 — ensemble-averaged fitness
 │   ├── genetic_code.py      # Step 6 — codon table, translation, mutations
 │   ├── sswm.py              # Step 7 — SSWM trajectory generation
-│   └── trajectory_io.py     # Step 8 — FASTA / tar.zst output
+│   ├── trajectory_io.py     # Step 8 — FASTA / tar.zst output
+│   └── cache.py             # Step 9 — fitness cache
 ├── tests/
 │   ├── __init__.py
 │   ├── test_lattice.py
@@ -272,7 +286,8 @@ trellis/
 │   ├── test_fitness.py
 │   ├── test_genetic_code.py
 │   ├── test_sswm.py
-│   └── test_trajectory_io.py
+│   ├── test_trajectory_io.py
+│   └── test_cache.py
 ├── scripts/
 │   └── generate_trajectory.py   # run an SSWM trajectory, write JSON for the dashboard
 ├── viz/

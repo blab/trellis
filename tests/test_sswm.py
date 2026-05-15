@@ -3,6 +3,7 @@ from math import exp, inf
 import numpy as np
 import pytest
 
+from trellis.cache import FitnessCache
 from trellis.energy import load_mj_matrix
 from trellis.fitness import compute_fitness_aa
 from trellis.genetic_code import classify_mutation, translate
@@ -146,12 +147,15 @@ def test_trajectory_metadata(short_trajectory):
 def test_trajectory_cache_populated():
     mj = load_mj_matrix()
     lig = create_ligand("FW", anchor=(0, -1))
-    cache: dict[str, float] = {}
+    cache = FitnessCache()
     generate_trajectory(
         _DNA_6, lig, mj, n_steps=3, Ne=100,
         rng=np.random.default_rng(42), fitness_cache=cache,
     )
     assert len(cache) > 1
+    stats = cache.stats()
+    assert stats["entries"] > 1
+    assert stats["hits"] >= 0
 
 
 # ---------------------------------------------------------------------------
