@@ -22,40 +22,43 @@ from trellis.trajectory_io import (
 )
 
 
-def _generate_one(kwargs: dict):
-    """Worker function for a single trajectory (must be module-level for pickling)."""
+def _generate_batch(kwargs: dict) -> list[tuple[int, object]]:
+    """Worker function for a batch of trajectories (enumerates once per worker)."""
     mj = load_mj_matrix()
     ligand = create_ligand(
         kwargs["ligand_sequence"],
         anchor=tuple(kwargs["ligand_anchor"]),
         direction=kwargs["ligand_direction"],
     )
-    rng = np.random.default_rng(kwargs["child_seed"])
-    cache = FitnessCache()
     db = enumerate_conformations(kwargs["chain_length"], ligand)
 
-    start_dna = generate_start_sequence(
-        kwargs["chain_length"],
-        ligand,
-        mj,
-        min_fitness=kwargs["min_fitness"],
-        temperature=kwargs["temperature"],
-        rng=rng,
-        db=db,
-    )
-    trajectory = generate_trajectory(
-        start_dna,
-        ligand,
-        mj,
-        n_steps=kwargs["n_steps"],
-        Ne=kwargs["Ne"],
-        mu=kwargs["mu"],
-        temperature=kwargs["temperature"],
-        rng=rng,
-        fitness_cache=cache,
-        db=db,
-    )
-    return trajectory
+    results = []
+    for idx, child_seed in zip(kwargs["indices"], kwargs["child_seeds"]):
+        rng = np.random.default_rng(child_seed)
+        cache = FitnessCache()
+        start_dna = generate_start_sequence(
+            kwargs["chain_length"],
+            ligand,
+            mj,
+            min_fitness=kwargs["min_fitness"],
+            temperature=kwargs["temperature"],
+            rng=rng,
+            db=db,
+        )
+        trajectory = generate_trajectory(
+            start_dna,
+            ligand,
+            mj,
+            n_steps=kwargs["n_steps"],
+            Ne=kwargs["Ne"],
+            mu=kwargs["mu"],
+            temperature=kwargs["temperature"],
+            rng=rng,
+            fitness_cache=cache,
+            db=db,
+        )
+        results.append((idx, trajectory))
+    return results
 
 
 def parse_anchor(value: str) -> tuple[int, int]:
@@ -104,9 +107,15 @@ def main() -> None:
     ss = np.random.SeedSequence(args.seed)
     child_seeds = ss.spawn(n)
 
-    work_items = [
-        {
-            "child_seed": child_seeds[i],
+    # Split work into batches (one per worker, each enumerates once)
+    indices = list(range(n))
+    batch_size = (n + n_workers - 1) // n_workers
+    batches = []
+    for start in range(0, n, batch_size):
+        end = min(start + batch_size, n)
+        batches.append({
+            "indices": indices[start:end],
+            "child_seeds": child_seeds[start:end],
             "chain_length": args.chain_length,
             "ligand_sequence": args.ligand_sequence,
             "ligand_anchor": list(args.ligand_anchor),
@@ -116,20 +125,15 @@ def main() -> None:
             "mu": args.mu,
             "temperature": args.temperature,
             "min_fitness": args.min_fitness,
-        }
-        for i in range(n)
-    ]
+        })
 
     print(f"generating {n} trajectories with {n_workers} workers ...")
     trajectories = []
     with ProcessPoolExecutor(max_workers=n_workers) as executor:
-        futures = {
-            executor.submit(_generate_one, w): i for i, w in enumerate(work_items)
-        }
+        futures = [executor.submit(_generate_batch, b) for b in batches]
         for future in as_completed(futures):
-            idx = futures[future]
-            traj = future.result()
-            trajectories.append((idx, traj))
+            batch_results = future.result()
+            trajectories.extend(batch_results)
             done = len(trajectories)
             if done % max(1, n // 10) == 0 or done == n:
                 print(f"  {done}/{n} complete")

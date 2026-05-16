@@ -19,4 +19,5 @@ Run with `python scripts/benchmark.py` (defaults: 16-mer, FWYL ligand, 3 traject
 
 | Date | Commit | Enumeration | 3 traj (100 steps) | Per step | Notes |
 |------|--------|-------------|---------------------|----------|-------|
+| 2026-05-16 | c46e0a6 | 35.7s | 276.8s | 0.92s | enumerate once per worker |
 | 2026-05-16 | a7e87db | 36.1s | 384.9s | 1.28s | baseline |

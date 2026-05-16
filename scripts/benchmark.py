@@ -14,12 +14,11 @@ from trellis.ligand import create_ligand
 from trellis.sswm import generate_start_sequence, generate_trajectory
 
 
-def generate_one(child_seed, chain_length, ligand, mj, n_steps, Ne, mu,
+def generate_one(child_seed, chain_length, ligand, mj, db, n_steps, Ne, mu,
                  temperature, min_fitness):
-    """Single trajectory — mirrors _generate_one in generate_trajectories.py."""
+    """Single trajectory — mirrors _generate_batch in generate_trajectories.py."""
     rng = np.random.default_rng(child_seed)
     cache = FitnessCache()
-    db = enumerate_conformations(chain_length, ligand)
     start_dna = generate_start_sequence(
         chain_length, ligand, mj,
         min_fitness=min_fitness, temperature=temperature, rng=rng, db=db,
@@ -92,15 +91,15 @@ def main() -> None:
     print(f"  Conformations: {db.n_conformations:,}")
     print(f"  Time: {t_enum:.1f}s")
 
-    # Phase 2: full trajectory generation (mirrors _generate_one per call)
-    print(f"\nPhase 2 — {args.n_trajectories} trajectories (full generate_one each)")
+    # Phase 2: trajectory generation reusing enumerated db
+    print(f"\nPhase 2 — {args.n_trajectories} trajectories")
     ss = np.random.SeedSequence(args.seed)
     child_seeds = ss.spawn(args.n_trajectories)
 
     t0 = time.perf_counter()
     for i in range(args.n_trajectories):
         generate_one(
-            child_seeds[i], args.chain_length, ligand, mj,
+            child_seeds[i], args.chain_length, ligand, mj, db,
             args.n_steps, args.Ne, args.mu, args.temperature, args.min_fitness,
         )
         print(f"  {i + 1}/{args.n_trajectories} complete", flush=True)
