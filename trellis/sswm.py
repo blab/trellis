@@ -7,6 +7,7 @@ import numpy as np
 
 from trellis.cache import FitnessCache
 from trellis.fitness import FitnessResult, compute_fitness_aa
+from trellis.fold_enum import ConformationDatabase
 from trellis.genetic_code import (
     CODON_TABLE,
     classify_mutation,
@@ -54,6 +55,7 @@ def generate_trajectory(
     temperature: float = 1.0,
     rng: np.random.Generator | None = None,
     fitness_cache: FitnessCache | None = None,
+    db: ConformationDatabase | None = None,
 ) -> Trajectory:
     """Generate a single SSWM trajectory."""
     if rng is None:
@@ -64,7 +66,7 @@ def generate_trajectory(
     current_dna = start_dna
     current_aa = translate(current_dna)
     if current_aa not in fitness_cache:
-        r = compute_fitness_aa(current_aa, ligand, mj_matrix, temperature)
+        r = compute_fitness_aa(current_aa, ligand, mj_matrix, temperature, db=db)
         fitness_cache.put(current_aa, r)
     current_fitness = fitness_cache.get(current_aa).fitness
 
@@ -84,7 +86,7 @@ def generate_trajectory(
                     ))
                 else:
                     r = compute_fitness_aa(
-                        aa_seq, ligand, mj_matrix, temperature,
+                        aa_seq, ligand, mj_matrix, temperature, db=db,
                     )
                     fitness_cache.put(aa_seq, r)
 
@@ -143,6 +145,7 @@ def generate_start_sequence(
     max_attempts: int = 10000,
     temperature: float = 1.0,
     rng: np.random.Generator | None = None,
+    db: ConformationDatabase | None = None,
 ) -> str:
     """Generate a random DNA sequence with fitness >= *min_fitness*."""
     if rng is None:
@@ -151,7 +154,7 @@ def generate_start_sequence(
         codons = rng.choice(SENSE_CODONS, size=n_codons)
         dna = "".join(codons)
         aa = translate(dna)
-        r = compute_fitness_aa(aa, ligand, mj_matrix, temperature)
+        r = compute_fitness_aa(aa, ligand, mj_matrix, temperature, db=db)
         if r.fitness >= min_fitness:
             return dna
     raise RuntimeError(

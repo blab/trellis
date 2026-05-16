@@ -12,6 +12,7 @@ import numpy as np
 
 from trellis.cache import FitnessCache
 from trellis.energy import load_mj_matrix
+from trellis.fold_enum import enumerate_conformations
 from trellis.ligand import create_ligand
 from trellis.sswm import generate_start_sequence, generate_trajectory
 from trellis.trajectory_io import (
@@ -31,6 +32,7 @@ def _generate_one(kwargs: dict):
     )
     rng = np.random.default_rng(kwargs["child_seed"])
     cache = FitnessCache()
+    db = enumerate_conformations(kwargs["chain_length"], ligand)
 
     start_dna = generate_start_sequence(
         kwargs["chain_length"],
@@ -39,6 +41,7 @@ def _generate_one(kwargs: dict):
         min_fitness=kwargs["min_fitness"],
         temperature=kwargs["temperature"],
         rng=rng,
+        db=db,
     )
     trajectory = generate_trajectory(
         start_dna,
@@ -50,6 +53,7 @@ def _generate_one(kwargs: dict):
         temperature=kwargs["temperature"],
         rng=rng,
         fitness_cache=cache,
+        db=db,
     )
     return trajectory
 

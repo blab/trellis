@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 
 from trellis.energy import load_mj_matrix
-from trellis.fold import fold as fold_bb
+from trellis.fold_bb import fold as fold_bb
 from trellis.fold_enum import (
     ConformationDatabase,
     enumerate_conformations,
@@ -63,7 +63,7 @@ def test_db_ligand_stored():
 
 
 # ---------------------------------------------------------------------------
-# Cross-validation: fold_enum vs fold.py (with ligand)
+# Cross-validation: fold_enum vs fold_bb.py (with ligand)
 # ---------------------------------------------------------------------------
 
 @pytest.fixture

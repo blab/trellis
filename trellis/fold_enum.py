@@ -5,7 +5,7 @@ Pre-enumerate all self-avoiding walks for a given chain length and
 Scoring a new sequence then reduces to summing MJ lookups over
 precomputed contacts — no geometry discovery needed.
 
-This is faster than branch-and-bound (``fold.py``) when many sequences
+This is faster than branch-and-bound (``fold_bb.py``) when many sequences
 are folded on the same lattice+ligand configuration, which is exactly
 the SSWM use case.
 """
@@ -18,7 +18,7 @@ import numba
 import numpy as np
 
 from trellis.energy import AA_INDEX
-from trellis.fold import FoldResult
+from trellis.fold_bb import FoldResult
 from trellis.lattice import Conformation, enumerate_saws, get_contacts
 from trellis.ligand import Ligand, binding_contacts
 

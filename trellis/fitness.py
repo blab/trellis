@@ -5,7 +5,8 @@ from math import inf
 
 import numpy as np
 
-from trellis.fold import FoldResult, fold
+from trellis.fold_bb import FoldResult, fold as fold_bb
+from trellis.fold_enum import ConformationDatabase, fold as fold_enum
 from trellis.genetic_code import translate
 from trellis.ligand import Ligand
 
@@ -25,6 +26,7 @@ def compute_fitness(
     ligand: Ligand,
     mj_matrix: np.ndarray,
     temperature: float = 1.0,
+    db: ConformationDatabase | None = None,
 ) -> FitnessResult:
     """Compute fitness for a DNA sequence.
 
@@ -39,7 +41,13 @@ def compute_fitness(
             aa_sequence=aa_sequence,
             dna_sequence=dna_sequence,
         )
-    fold_result = fold(aa_sequence, mj_matrix, ligand, temperature)
+    if db is not None:
+        fold_result = fold_enum(
+            aa_sequence, mj_matrix, ligand, temperature,
+            db=db, recover_conformation=False,
+        )
+    else:
+        fold_result = fold_bb(aa_sequence, mj_matrix, ligand, temperature)
     return FitnessResult(
         fitness=-fold_result.ensemble_binding_energy,
         fold_result=fold_result,
@@ -53,9 +61,16 @@ def compute_fitness_aa(
     ligand: Ligand,
     mj_matrix: np.ndarray,
     temperature: float = 1.0,
+    db: ConformationDatabase | None = None,
 ) -> FitnessResult:
     """Compute fitness directly from an amino acid sequence."""
-    fold_result = fold(aa_sequence, mj_matrix, ligand, temperature)
+    if db is not None:
+        fold_result = fold_enum(
+            aa_sequence, mj_matrix, ligand, temperature,
+            db=db, recover_conformation=False,
+        )
+    else:
+        fold_result = fold_bb(aa_sequence, mj_matrix, ligand, temperature)
     return FitnessResult(
         fitness=-fold_result.ensemble_binding_energy,
         fold_result=fold_result,

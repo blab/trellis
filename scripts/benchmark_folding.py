@@ -6,7 +6,7 @@ import time
 import numpy as np
 
 from trellis.energy import AA_ALPHABET, load_mj_matrix
-from trellis.fold import fold as fold_bb
+from trellis.fold_bb import fold as fold_bb
 from trellis.fold_enum import enumerate_conformations, fold as fold_enum
 from trellis.ligand import create_ligand
 

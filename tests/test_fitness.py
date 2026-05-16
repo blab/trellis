@@ -4,7 +4,7 @@ import pytest
 
 from trellis.energy import load_mj_matrix
 from trellis.fitness import FitnessResult, compute_fitness, compute_fitness_aa
-from trellis.fold import FoldResult, fold
+from trellis.fold_bb import FoldResult, fold
 from trellis.ligand import create_ligand
 
 

@@ -19,7 +19,7 @@ The full design is in
 |------|--------|--------|
 | 1 | `trellis/lattice.py` — 2D lattice, SAW enumeration, contacts | ✅ done |
 | 2 | `trellis/energy.py` — MJ matrix, conformation energy | ✅ done |
-| 3 | `trellis/fold.py` — branch-and-bound folding | ✅ done |
+| 3 | `trellis/fold_bb.py` — branch-and-bound folding | ✅ done |
 | 4 | `trellis/ligand.py` — ligand placement, binding energy | ✅ done |
 | 5 | `trellis/fitness.py` — ensemble-averaged fitness | ✅ done |
 | 6 | `trellis/genetic_code.py` — DNA ↔ AA, mutation enumeration | ✅ done |
@@ -89,7 +89,7 @@ A 1996 update of the MJ matrix exists; we may revisit and compare the
 two landscapes once the pipeline is end-to-end working — see the design
 notes for details.
 
-### Step 3: `fold.py`
+### Step 3: `fold_bb.py`
 
 Provides:
 
@@ -236,7 +236,7 @@ Provides:
 
 ### `fold_enum.py`
 
-Alternative to `fold.py` that pre-enumerates all self-avoiding walks for
+Alternative to `fold_bb.py` that pre-enumerates all self-avoiding walks for
 a given chain length and ligand once, storing contact lists in CSR-like
 numpy arrays. Scoring a new sequence reduces to summing MJ lookups over
 precomputed contacts — no geometry re-discovery.
@@ -252,7 +252,7 @@ Provides:
   uses symmetry-reduced enumeration.
 - `fold(sequence, mj_matrix, ligand=None, temperature=1.0, db=None,
   recover_conformation=True)` — fold a sequence using a precomputed
-  database. Returns the same `FoldResult` as `fold.py`. If `db` is
+  database. Returns the same `FoldResult` as `fold_bb.py`. If `db` is
   None, enumerates on the fly. Set `recover_conformation=False` to
   skip coordinate recovery when only fitness is needed.
 - `save_database(db, path)` / `load_database(path)` — persist and
@@ -413,7 +413,7 @@ trellis/
 │   ├── __init__.py
 │   ├── lattice.py           # Step 1 — 2D lattice, SAW enumeration
 │   ├── energy.py            # Step 2 — MJ matrix, conformation energy
-│   ├── fold.py              # Step 3 — branch-and-bound folding
+│   ├── fold_bb.py           # Step 3 — branch-and-bound folding
 │   ├── ligand.py            # Step 4 — ligand placement, binding energy
 │   ├── fitness.py           # Step 5 — ensemble-averaged fitness
 │   ├── genetic_code.py      # Step 6 — codon table, translation, mutations
@@ -425,7 +425,7 @@ trellis/
 │   ├── __init__.py
 │   ├── test_lattice.py
 │   ├── test_energy.py
-│   ├── test_fold.py
+│   ├── test_fold_bb.py
 │   ├── test_ligand.py
 │   ├── test_fitness.py
 │   ├── test_genetic_code.py

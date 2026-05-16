@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 from trellis.energy import conformation_energy, load_mj_matrix, partition_function
-from trellis.fold import FoldResult, fold
+from trellis.fold_bb import FoldResult, fold
 from trellis.lattice import enumerate_saws, is_self_avoiding
 from trellis.ligand import binding_energy, create_ligand
 

@@ -6,7 +6,7 @@ import sys
 import time
 
 from trellis.energy import load_mj_matrix
-from trellis.fold import fold
+from trellis.fold_bb import fold
 from trellis.genetic_code import translate
 from trellis.ligand import create_ligand
 
