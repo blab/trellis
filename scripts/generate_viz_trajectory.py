@@ -12,8 +12,8 @@ from pathlib import Path
 
 import numpy as np
 
-from trellis.cache import FitnessCache
 from trellis.energy import AA_INDEX, load_mj_matrix
+from trellis.fold_enum import enumerate_conformations, fold as fold_enum
 from trellis.lattice import get_contacts
 from trellis.ligand import Ligand, binding_contacts, create_ligand
 from trellis.sswm import generate_start_sequence, generate_trajectory
@@ -44,19 +44,19 @@ def parse_args() -> argparse.Namespace:
     return p.parse_args()
 
 
-def conformations_from_cache(
+def fold_unique_sequences(
     aa_sequences: list[str],
-    cache: FitnessCache,
     ligand: Ligand,
     mj: np.ndarray,
+    db,
+    temperature: float,
 ) -> dict[str, dict]:
-    """Extract conformation data for unique AA sequences from the cache."""
+    """Fold unique AA sequences with conformation recovery for visualization."""
     results: dict[str, dict] = {}
     for aa in set(aa_sequences):
-        cached = cache.get(aa)
-        if cached is None or cached.fold_result is None:
-            continue
-        fold_result = cached.fold_result
+        fold_result = fold_enum(
+            aa, mj, ligand, temperature, db=db, recover_conformation=True,
+        )
         conf = fold_result.native_conformation
         i_contacts = get_contacts(conf)
         b_contacts = binding_contacts(conf, ligand)
@@ -87,24 +87,27 @@ def main() -> None:
     )
     rng = np.random.default_rng(args.seed)
 
+    db = enumerate_conformations(args.n_codons, ligand)
+    print(f"enumerated {db.n_conformations:,} conformations")
+
     start_dna = generate_start_sequence(
         args.n_codons, ligand, mj,
         min_fitness=args.min_fitness,
         temperature=args.temperature,
         rng=rng,
+        db=db,
     )
-    cache = FitnessCache()
     trajectory = generate_trajectory(
         start_dna, ligand, mj,
         n_steps=args.n_steps,
         Ne=args.Ne,
         temperature=args.temperature,
         rng=rng,
-        fitness_cache=cache,
+        db=db,
     )
 
-    fold_results = conformations_from_cache(
-        trajectory.aa_sequences, cache, ligand, mj,
+    fold_results = fold_unique_sequences(
+        trajectory.aa_sequences, ligand, mj, db, args.temperature,
     )
 
     steps = []
