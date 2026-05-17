@@ -19,8 +19,170 @@ import numpy as np
 
 from trellis.energy import AA_INDEX
 from trellis.fold_bb import FoldResult
-from trellis.lattice import Conformation, enumerate_saws, get_contacts
-from trellis.ligand import Ligand, binding_contacts
+from trellis.lattice import Conformation, enumerate_saws
+from trellis.ligand import Ligand
+
+_GRID_SIZE = 41
+_GRID_OFFSET = 20
+_MOVES = np.array([[0, 1], [0, -1], [1, 0], [-1, 0]], dtype=np.int32)
+
+
+@numba.njit(cache=True)
+def _enumerate_numba(
+    chain_length,
+    ligand_grid,
+    ligand_pos,
+    n_ligand,
+    use_symmetry,
+    count_only,
+    contact_pairs,
+    contact_offsets,
+    binding_pairs,
+    binding_offsets,
+):
+    """Enumerate SAWs via explicit-stack DFS and extract contacts.
+
+    Returns (n_conformations, n_contact_pairs, n_binding_pairs).
+    """
+    grid = np.zeros((_GRID_SIZE, _GRID_SIZE), dtype=numba.boolean)
+    path_x = np.zeros(chain_length, dtype=np.int32)
+    path_y = np.zeros(chain_length, dtype=np.int32)
+
+    # Place residue 0 at origin
+    path_x[0] = 0
+    path_y[0] = 0
+    grid[_GRID_OFFSET, _GRID_OFFSET] = True
+
+    if use_symmetry and chain_length >= 2:
+        path_x[1] = 1
+        path_y[1] = 0
+        grid[1 + _GRID_OFFSET, _GRID_OFFSET] = True
+        start_depth = 2
+    elif not use_symmetry:
+        start_depth = 1
+    else:
+        # chain_length == 1, reduced: single residue at origin
+        start_depth = chain_length
+
+    conf_idx = 0
+    contact_cursor = 0
+    binding_cursor = 0
+
+    # Handle case where pre-placed residues already form a complete walk
+    if start_depth >= chain_length:
+        # Extract contacts for the pre-placed path
+        n_new_contacts = 0
+        for i in range(chain_length):
+            for j in range(i + 2, chain_length):
+                if abs(path_x[i] - path_x[j]) + abs(path_y[i] - path_y[j]) == 1:
+                    if not count_only:
+                        contact_pairs[contact_cursor + n_new_contacts, 0] = i
+                        contact_pairs[contact_cursor + n_new_contacts, 1] = j
+                    n_new_contacts += 1
+        contact_cursor += n_new_contacts
+
+        n_new_binding = 0
+        for i in range(chain_length):
+            for k in range(n_ligand):
+                if abs(path_x[i] - ligand_pos[k, 0]) + abs(path_y[i] - ligand_pos[k, 1]) == 1:
+                    if not count_only:
+                        binding_pairs[binding_cursor + n_new_binding, 0] = i
+                        binding_pairs[binding_cursor + n_new_binding, 1] = k
+                    n_new_binding += 1
+        binding_cursor += n_new_binding
+
+        if not count_only:
+            contact_offsets[conf_idx + 1] = contact_cursor
+            binding_offsets[conf_idx + 1] = binding_cursor
+        conf_idx += 1
+        return conf_idx, contact_cursor, binding_cursor
+
+    # DFS with explicit stack
+    move_idx = np.zeros(chain_length, dtype=np.int32)
+    y_locked_stack = np.zeros(chain_length, dtype=numba.boolean)
+
+    if use_symmetry:
+        y_locked_stack[start_depth] = False
+    else:
+        y_locked_stack[start_depth] = True  # no symmetry filtering
+
+    depth = start_depth
+    move_idx[depth] = 0
+
+    while depth >= start_depth:
+        if move_idx[depth] >= 4:
+            move_idx[depth] = 0
+            depth -= 1
+            if depth >= start_depth:
+                gx = path_x[depth] + _GRID_OFFSET
+                gy = path_y[depth] + _GRID_OFFSET
+                grid[gx, gy] = False
+            continue
+
+        m = move_idx[depth]
+        move_idx[depth] += 1
+
+        dx = _MOVES[m, 0]
+        dy = _MOVES[m, 1]
+
+        if use_symmetry and not y_locked_stack[depth] and dy == -1:
+            continue
+
+        nx = path_x[depth - 1] + dx
+        ny = path_y[depth - 1] + dy
+        gx = nx + _GRID_OFFSET
+        gy = ny + _GRID_OFFSET
+
+        if gx < 0 or gx >= _GRID_SIZE or gy < 0 or gy >= _GRID_SIZE:
+            continue
+
+        if grid[gx, gy] or ligand_grid[gx, gy]:
+            continue
+
+        # Place residue at depth
+        path_x[depth] = nx
+        path_y[depth] = ny
+        grid[gx, gy] = True
+
+        if depth + 1 == chain_length:
+            # Leaf: complete conformation — extract contacts
+            n_new_contacts = 0
+            for i in range(chain_length):
+                for j in range(i + 2, chain_length):
+                    if abs(path_x[i] - path_x[j]) + abs(path_y[i] - path_y[j]) == 1:
+                        if not count_only:
+                            contact_pairs[contact_cursor + n_new_contacts, 0] = i
+                            contact_pairs[contact_cursor + n_new_contacts, 1] = j
+                        n_new_contacts += 1
+            contact_cursor += n_new_contacts
+
+            n_new_binding = 0
+            for i in range(chain_length):
+                for k in range(n_ligand):
+                    if abs(path_x[i] - ligand_pos[k, 0]) + abs(path_y[i] - ligand_pos[k, 1]) == 1:
+                        if not count_only:
+                            binding_pairs[binding_cursor + n_new_binding, 0] = i
+                            binding_pairs[binding_cursor + n_new_binding, 1] = k
+                        n_new_binding += 1
+            binding_cursor += n_new_binding
+
+            if not count_only:
+                contact_offsets[conf_idx + 1] = contact_cursor
+                binding_offsets[conf_idx + 1] = binding_cursor
+            conf_idx += 1
+
+            grid[gx, gy] = False
+            continue
+
+        # Advance to next depth
+        if use_symmetry:
+            y_locked_stack[depth + 1] = y_locked_stack[depth] or (dy == 1)
+        else:
+            y_locked_stack[depth + 1] = True
+        move_idx[depth + 1] = 0
+        depth += 1
+
+    return conf_idx, contact_cursor, binding_cursor
 
 
 @dataclass
@@ -48,39 +210,45 @@ def enumerate_conformations(
     Without a ligand, symmetry-reduced enumeration is used.
     """
     use_reduced = ligand is None
-    ligand_sites = ligand.sites if ligand is not None else frozenset()
 
-    all_contact_pairs: list[tuple[int, int]] = []
-    all_binding_pairs: list[tuple[int, int]] = []
-    contact_offsets = [0]
-    binding_offsets = [0]
+    ligand_grid = np.zeros((_GRID_SIZE, _GRID_SIZE), dtype=np.bool_)
+    if ligand is not None:
+        ligand_pos = np.array(ligand.positions, dtype=np.int32)
+        n_ligand = len(ligand.positions)
+        for x, y in ligand.positions:
+            ligand_grid[x + _GRID_OFFSET, y + _GRID_OFFSET] = True
+    else:
+        ligand_pos = np.empty((0, 2), dtype=np.int32)
+        n_ligand = 0
 
-    for conf in enumerate_saws(chain_length, reduce_symmetry=use_reduced):
-        if ligand_sites and ligand_sites & set(conf):
-            continue
+    # Pass 1: count conformations and contacts
+    dummy = np.empty((0, 2), dtype=np.int32)
+    dummy_off = np.empty(0, dtype=np.int64)
+    n_conf, n_contacts, n_binding = _enumerate_numba(
+        chain_length, ligand_grid, ligand_pos, n_ligand,
+        use_reduced, True, dummy, dummy_off, dummy, dummy_off,
+    )
 
-        contacts = get_contacts(conf)
-        all_contact_pairs.extend(contacts)
-        contact_offsets.append(len(all_contact_pairs))
+    # Pass 2: allocate exact arrays and fill
+    contact_pairs = np.empty((n_contacts, 2), dtype=np.int32)
+    contact_offsets = np.zeros(n_conf + 1, dtype=np.int64)
+    binding_pairs = np.empty((n_binding, 2), dtype=np.int32)
+    binding_offsets = np.zeros(n_conf + 1, dtype=np.int64)
 
-        if ligand is not None:
-            bcontacts = binding_contacts(conf, ligand)
-            all_binding_pairs.extend(bcontacts)
-        binding_offsets.append(len(all_binding_pairs))
-
-    n_conf = len(contact_offsets) - 1
-
-    cp = np.array(all_contact_pairs, dtype=np.int32).reshape(-1, 2) if all_contact_pairs else np.empty((0, 2), dtype=np.int32)
-    bp = np.array(all_binding_pairs, dtype=np.int32).reshape(-1, 2) if all_binding_pairs else np.empty((0, 2), dtype=np.int32)
+    _enumerate_numba(
+        chain_length, ligand_grid, ligand_pos, n_ligand,
+        use_reduced, False,
+        contact_pairs, contact_offsets, binding_pairs, binding_offsets,
+    )
 
     return ConformationDatabase(
         chain_length=chain_length,
         ligand=ligand,
         n_conformations=n_conf,
-        contact_pairs=cp,
-        contact_offsets=np.array(contact_offsets, dtype=np.int64),
-        binding_pairs=bp,
-        binding_offsets=np.array(binding_offsets, dtype=np.int64),
+        contact_pairs=contact_pairs,
+        contact_offsets=contact_offsets,
+        binding_pairs=binding_pairs,
+        binding_offsets=binding_offsets,
         reduced_symmetry=use_reduced,
     )
 
