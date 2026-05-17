@@ -72,8 +72,11 @@ def main() -> None:
         if dna_sequence:
             data["dna_sequence"] = dna_sequence
         if ligand:
+            fitness = result.fraction_folded * (-result.native_binding_energy)
+            data["native_binding_energy"] = result.native_binding_energy
+            data["fraction_folded"] = result.fraction_folded
             data["ensemble_binding_energy"] = result.ensemble_binding_energy
-            data["fitness"] = -result.ensemble_binding_energy
+            data["fitness"] = fitness
             data["ligand_sequence"] = args.ligand_sequence
         print(json.dumps(data, indent=2))
     else:
@@ -82,8 +85,10 @@ def main() -> None:
             print(f"dna:            {dna_sequence}")
         print(f"native_energy:  {result.native_energy:.3f}")
         if ligand:
-            print(f"binding_energy: {result.ensemble_binding_energy:.3f}")
-            print(f"fitness:        {-result.ensemble_binding_energy:.3f}")
+            fitness = result.fraction_folded * (-result.native_binding_energy)
+            print(f"native_bind:    {result.native_binding_energy:.3f}")
+            print(f"frac_folded:    {result.fraction_folded:.4f}")
+            print(f"fitness:        {fitness:.3f}")
         print(f"Z:              {result.partition_function:.4e}")
         print(f"conformations:  {result.n_conformations_enumerated}")
         conf_str = " ".join(

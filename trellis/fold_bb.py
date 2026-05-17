@@ -32,6 +32,8 @@ class FoldResult:
 
     native_conformation: Conformation
     native_energy: float
+    native_binding_energy: float
+    fraction_folded: float
     partition_function: float
     ensemble_binding_energy: float
     n_conformations_enumerated: int
@@ -78,6 +80,8 @@ def fold(
         return FoldResult(
             native_conformation=((0, 0),),
             native_energy=e_bind,
+            native_binding_energy=e_bind,
+            fraction_folded=1.0,
             partition_function=1.0,
             ensemble_binding_energy=e_bind,
             n_conformations_enumerated=1,
@@ -88,13 +92,15 @@ def fold(
     binding_bound = (4 * len(ligand.sequence) * mj_min) if ligand is not None else 0.0
 
     best_energy = inf
+    best_binding = 0.0
     best_conf: list[tuple[int, int]] | None = None
     Z_sum = 0.0
     binding_weighted_sum = 0.0
     n_enumerated = 0
 
     def _recurse(energy: float, depth: int, y_locked: bool) -> None:
-        nonlocal best_energy, best_conf, Z_sum, binding_weighted_sum, n_enumerated
+        nonlocal best_energy, best_binding, best_conf
+        nonlocal Z_sum, binding_weighted_sum, n_enumerated
 
         if depth == n:
             e_bind = 0.0
@@ -109,6 +115,7 @@ def fold(
             n_enumerated += 1
             if total < best_energy:
                 best_energy = total
+                best_binding = e_bind
                 best_conf = list(path)
             return
 
@@ -152,10 +159,13 @@ def fold(
         Z_full = Z_sum * 8 - 4
 
     ensemble_binding = binding_weighted_sum / Z_sum if Z_sum > 0 else 0.0
+    frac_folded = exp(-best_energy / temperature) / Z_sum if Z_sum > 0 else 0.0
 
     return FoldResult(
         native_conformation=tuple(best_conf),  # type: ignore[arg-type]
         native_energy=best_energy,
+        native_binding_energy=best_binding,
+        fraction_folded=frac_folded,
         partition_function=Z_full,
         ensemble_binding_energy=ensemble_binding,
         n_conformations_enumerated=n_enumerated,

@@ -49,7 +49,7 @@ def compute_fitness(
     else:
         fold_result = fold_bb(aa_sequence, mj_matrix, ligand, temperature)
     return FitnessResult(
-        fitness=-fold_result.ensemble_binding_energy,
+        fitness=fold_result.fraction_folded * (-fold_result.native_binding_energy),
         fold_result=fold_result,
         aa_sequence=aa_sequence,
         dna_sequence=dna_sequence,
@@ -72,7 +72,7 @@ def compute_fitness_aa(
     else:
         fold_result = fold_bb(aa_sequence, mj_matrix, ligand, temperature)
     return FitnessResult(
-        fitness=-fold_result.ensemble_binding_energy,
+        fitness=fold_result.fraction_folded * (-fold_result.native_binding_energy),
         fold_result=fold_result,
         aa_sequence=aa_sequence,
         dna_sequence="",

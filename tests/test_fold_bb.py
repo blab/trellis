@@ -43,6 +43,8 @@ def test_fold_result_fields():
     assert isinstance(result, FoldResult)
     assert hasattr(result, "native_conformation")
     assert hasattr(result, "native_energy")
+    assert hasattr(result, "native_binding_energy")
+    assert hasattr(result, "fraction_folded")
     assert hasattr(result, "partition_function")
     assert hasattr(result, "ensemble_binding_energy")
     assert hasattr(result, "n_conformations_enumerated")
@@ -161,6 +163,8 @@ def test_fold_single_residue():
     result = fold("A", mj)
     assert result.native_conformation == ((0, 0),)
     assert result.native_energy == 0.0
+    assert result.native_binding_energy == 0.0
+    assert result.fraction_folded == 1.0
     assert result.partition_function == 1.0
     assert result.n_conformations_enumerated == 1
 
@@ -197,6 +201,7 @@ def test_fold_20mer_under_30_seconds():
 def exhaustive_fold_with_ligand(sequence, mj, ligand, temperature=1.0):
     """Brute-force fold with ligand over all unreduced SAWs."""
     best_energy = float("inf")
+    best_bind = 0.0
     Z = 0.0
     bws = 0.0
     n_conf = 0
@@ -212,8 +217,9 @@ def exhaustive_fold_with_ligand(sequence, mj, ligand, temperature=1.0):
         bws += e_bind * boltz
         if total < best_energy:
             best_energy = total
+            best_bind = e_bind
     ensemble = bws / Z if Z > 0 else 0.0
-    return best_energy, Z, ensemble, n_conf
+    return best_energy, best_bind, Z, ensemble, n_conf
 
 
 @pytest.mark.parametrize("seq", ["ACDEFG", "ACDEFGHI"])
@@ -221,10 +227,11 @@ def test_fold_with_ligand_matches_exhaustive(seq):
     mj = load_mj_matrix()
     lig = create_ligand("FW", anchor=(0, -1))
     result = fold(seq, mj, ligand=lig)
-    exp_energy, exp_Z, exp_binding, _ = exhaustive_fold_with_ligand(
+    exp_energy, exp_bind, exp_Z, exp_binding, _ = exhaustive_fold_with_ligand(
         seq, mj, lig
     )
     assert result.native_energy == pytest.approx(exp_energy)
+    assert result.native_binding_energy == pytest.approx(exp_bind)
     assert result.partition_function == pytest.approx(exp_Z, rel=1e-9)
     assert result.ensemble_binding_energy == pytest.approx(exp_binding, rel=1e-9)
 
@@ -237,6 +244,7 @@ def test_fold_with_ligand_native_energy_includes_binding():
     e_intra = conformation_energy(seq, result.native_conformation, mj)
     e_bind = binding_energy(seq, result.native_conformation, lig, mj)
     assert result.native_energy == pytest.approx(e_intra + e_bind)
+    assert result.native_binding_energy == pytest.approx(e_bind)
 
 
 def test_fold_with_ligand_fewer_conformations():

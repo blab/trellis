@@ -281,9 +281,13 @@ def _score_conformations(
     binding_pairs: np.ndarray,
     binding_offsets: np.ndarray,
     temperature: float,
-) -> tuple[float, float, float, int]:
-    """Score all conformations. Returns (best_energy, Z_sum, binding_weighted_sum, best_idx)."""
+) -> tuple[float, float, float, float, int]:
+    """Score all conformations.
+
+    Returns (best_energy, best_binding_energy, Z_sum, binding_weighted_sum, best_idx).
+    """
     best_energy = np.inf
+    best_binding_energy = 0.0
     best_idx = -1
     Z_sum = 0.0
     binding_weighted_sum = 0.0
@@ -309,9 +313,10 @@ def _score_conformations(
 
         if total < best_energy:
             best_energy = total
+            best_binding_energy = e_bind
             best_idx = k
 
-    return best_energy, Z_sum, binding_weighted_sum, best_idx
+    return best_energy, best_binding_energy, Z_sum, binding_weighted_sum, best_idx
 
 
 def fold(
@@ -359,11 +364,13 @@ def fold(
         else np.empty(0, dtype=np.int32)
     )
 
-    best_energy, Z_sum, binding_weighted_sum, best_idx = _score_conformations(
-        aa_idx, lig_idx, mj_matrix,
-        db.contact_pairs, db.contact_offsets,
-        db.binding_pairs, db.binding_offsets,
-        temperature,
+    best_energy, best_bind, Z_sum, binding_weighted_sum, best_idx = (
+        _score_conformations(
+            aa_idx, lig_idx, mj_matrix,
+            db.contact_pairs, db.contact_offsets,
+            db.binding_pairs, db.binding_offsets,
+            temperature,
+        )
     )
 
     if db.reduced_symmetry:
@@ -372,6 +379,7 @@ def fold(
         Z_full = Z_sum
 
     ensemble_binding = binding_weighted_sum / Z_sum if Z_sum > 0 else 0.0
+    frac_folded = exp(-best_energy / temperature) / Z_sum if Z_sum > 0 else 0.0
 
     if recover_conformation:
         native_conf = _recover_native_conformation(
@@ -383,6 +391,8 @@ def fold(
     return FoldResult(
         native_conformation=native_conf,
         native_energy=best_energy,
+        native_binding_energy=best_bind,
+        fraction_folded=frac_folded,
         partition_function=Z_full,
         ensemble_binding_energy=ensemble_binding,
         n_conformations_enumerated=db.n_conformations,

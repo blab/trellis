@@ -83,6 +83,8 @@ def test_fold_matches_bb_with_ligand(n, mj, ligand):
     r_bb = fold_bb(seq, mj, ligand)
     r_en = fold(seq, mj, ligand, db=db)
     assert r_en.native_energy == pytest.approx(r_bb.native_energy)
+    assert r_en.native_binding_energy == pytest.approx(r_bb.native_binding_energy)
+    assert r_en.fraction_folded == pytest.approx(r_bb.fraction_folded, rel=1e-10)
     assert r_en.partition_function == pytest.approx(r_bb.partition_function, rel=1e-10)
     assert r_en.ensemble_binding_energy == pytest.approx(r_bb.ensemble_binding_energy, rel=1e-10)
     assert r_en.n_conformations_enumerated == r_bb.n_conformations_enumerated
@@ -95,6 +97,7 @@ def test_fold_matches_bb_no_ligand(n, mj):
     r_bb = fold_bb(seq, mj)
     r_en = fold(seq, mj, db=db)
     assert r_en.native_energy == pytest.approx(r_bb.native_energy)
+    assert r_en.native_binding_energy == pytest.approx(r_bb.native_binding_energy)
     # B&B prunes subtrees with negligible Boltzmann weight, so Z can differ
     # slightly from exhaustive enumeration. rel=1e-5 accommodates this.
     assert r_en.partition_function == pytest.approx(r_bb.partition_function, rel=1e-5)
@@ -123,6 +126,7 @@ def test_native_conformation_energy(mj, ligand):
     e_intra = conformation_energy(seq, r.native_conformation, mj)
     e_bind = binding_energy(seq, r.native_conformation, ligand, mj)
     assert e_intra + e_bind == pytest.approx(r.native_energy)
+    assert e_bind == pytest.approx(r.native_binding_energy)
 
 
 # ---------------------------------------------------------------------------

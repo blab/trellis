@@ -1,6 +1,6 @@
 # Fitness Metric: Switching to Fraction-Folded × Native Binding Energy
 
-Trevor Bedford — 2026-05-16
+Trevor Bedford — 2026-05-17
 
 ## Summary
 
@@ -8,7 +8,7 @@ We are switching the trellis fitness metric from ensemble-averaged binding energ
 
 $$F(T) = f(T) \times BE(C_\text{native})$$
 
-where f(T) is the fraction of the conformational ensemble in the native state and BE is the binding energy of the native conformation to the ligand. This change aligns with established practice, enables mean-field pruning for longer chain lengths, and produces effectively equivalent fitness landscapes for evolutionary trajectory generation.
+where f(T) is the fraction of the conformational ensemble in the native state and BE is the binding energy of the native conformation to the ligand. This change aligns with established practice and enables mean-field pruning for longer chain lengths. The two metrics produce genuinely different fitness landscapes (Spearman rho ≈ 0.58 across random sequences), but since the fitness landscape is arbitrary for our training-data use case, we adopt the literature-standard formulation to provide a simple citation justification.
 
 ## Previous approach: ensemble-averaged binding
 
@@ -65,11 +65,32 @@ The fraction-folded × native binding formulation is used consistently across th
 
 > Williams PD, Pollock DD, Goldstein RA. "Functionality and the evolution of marginal stability in proteins: Inferences from lattice simulations." *J Mol Evol* 62:698–706 (2006).
 
-## Why the two metrics are equivalent for our use case
+## Empirical comparison of the two metrics
 
-At T=1.0 with MJ energies, our binding thermodynamics analysis (`notes/binding-thermodynamics.md`) showed that for a typical sequence, P(native) ≈ 32% while P(bound) ≈ 99.7%. This means nearly all conformations with significant Boltzmann weight contact the ligand. The ensemble-averaged binding energy is therefore dominated by conformations near the native state, and should correlate strongly with native-state binding energy.
+We computed both metrics for 1000 random 16-mer sequences with a FWYL ligand at T=1.0 (`scripts/validate_fitness_metric.py`):
 
-Before fully committing to the switch, we will validate empirically: compute both metrics for 1000 random sequences on 16-mer chains and confirm that the Spearman rank correlation is >0.95. If the fitness landscapes produce equivalent sequence rankings, SSWM trajectories through them will have the same statistical properties.
+| Metric | Old (−⟨E_bind⟩) | New (f × −BE_native) |
+|--------|:----------------:|:--------------------:|
+| Mean | 35.8 | 10.0 |
+| Std | 4.1 | 6.9 |
+| Min | 23.7 | 1.1 |
+| Max | 52.3 | 45.9 |
+
+**Spearman rank correlation: 0.584.** The two metrics produce genuinely different fitness landscapes. This correlation does not improve when filtering for well-folded sequences (rho ≈ 0.54 for sequences with fraction_folded ≥ 0.20).
+
+The divergence arises because the metrics measure different things:
+- **Old (−⟨E_bind⟩):** How well does this protein bind across its full conformational ensemble? A protein with moderate fraction_folded but many binding-competent conformations scores well.
+- **New (f × −BE_native):** How reliably does this protein fold, and how well does the folded form bind? Dominated by the fraction_folded term — unstable proteins score near zero regardless of their binding capacity.
+
+## Why we switch despite the divergence
+
+The choice of fitness function is ultimately arbitrary for our use case. We are generating synthetic evolutionary trajectories as training data for a predictive model. The model needs to learn from trajectories through a rugged, epistatic fitness landscape that couples sequence to function through structure. Both metrics produce such landscapes — they simply define different topographies over sequence space.
+
+Given this, we adopt the literature-standard formulation for two reasons:
+
+1. **Citation justification.** Every published lattice protein ligand-binding study we are aware of uses f(T) × BE(C_native). This provides a simple, well-established reference for our choice of fitness function without requiring novel justification.
+
+2. **Future scalability.** The fraction-folded formulation enables Bloom-style mean-field pruning for the partition function Z, since the native state and its binding energy are always explicitly scored. This is a prerequisite for scaling to 18–20 residue chains (see `notes/2026-05-16-mean-field-pruning-investigation.md`).
 
 ## Computational impact
 

@@ -63,6 +63,8 @@ def fold_unique_sequences(
         results[aa] = {
             "conformation": [list(pos) for pos in conf],
             "native_energy": float(fold_result.native_energy),
+            "native_binding_energy": float(fold_result.native_binding_energy),
+            "fraction_folded": float(fold_result.fraction_folded),
             "ensemble_binding_energy": float(fold_result.ensemble_binding_energy),
             "intra_contacts": [[i, j] for i, j in i_contacts],
             "intra_contact_energies": [

@@ -88,7 +88,8 @@ def test_fitness_matches_manual_fold():
     lig = create_ligand("FW", anchor=(0, -1))
     result = compute_fitness(DNA_ACDEFGHI, lig, mj)
     manual = fold("ACDEFGHI", mj, ligand=lig)
-    assert result.fitness == pytest.approx(-manual.ensemble_binding_energy)
+    expected = manual.fraction_folded * (-manual.native_binding_energy)
+    assert result.fitness == pytest.approx(expected)
     assert result.fold_result.native_energy == pytest.approx(manual.native_energy)
 
 
