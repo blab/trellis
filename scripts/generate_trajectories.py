@@ -27,6 +27,12 @@ def _progress_bar(done: int, total: int, width: int = 8) -> str:
     return "▓" * filled + "░" * (width - filled)
 
 
+def _format_eta(seconds: float) -> str:
+    if seconds >= 3600:
+        return f"{seconds / 3600:.1f}h"
+    return f"{seconds / 60:.0f}m"
+
+
 def _log_header(args, n_workers: int, n_ligands: int | None = None) -> None:
     parts = [
         "trellis",
@@ -41,6 +47,39 @@ def _log_header(args, n_workers: int, n_ligands: int | None = None) -> None:
     parts.append(f"{n_workers} workers")
     print(" | ".join(parts))
     print()
+
+
+_worker_state: dict = {}
+
+
+def _init_worker(chain_length, ligand_sequence, ligand_anchor, ligand_direction):
+    """Called once per worker process — enumerate conformations and cache."""
+    _worker_state["mj"] = load_mj_matrix()
+    _worker_state["ligand"] = create_ligand(
+        ligand_sequence, anchor=tuple(ligand_anchor), direction=ligand_direction,
+    )
+    _worker_state["db"] = enumerate_conformations(chain_length, _worker_state["ligand"])
+
+
+def _generate_one(kwargs: dict) -> tuple[int, object]:
+    """Worker function for a single trajectory (uses pre-initialized state)."""
+    mj = _worker_state["mj"]
+    ligand = _worker_state["ligand"]
+    db = _worker_state["db"]
+    rng = np.random.default_rng(kwargs["child_seed"])
+    cache = FitnessCache()
+    start_dna = generate_start_sequence(
+        kwargs["chain_length"], ligand, mj,
+        min_fitness=kwargs["min_fitness"],
+        temperature=kwargs["temperature"],
+        rng=rng, db=db,
+    )
+    trajectory = generate_trajectory(
+        start_dna, ligand, mj,
+        n_steps=kwargs["n_steps"], Ne=kwargs["Ne"], mu=kwargs["mu"],
+        temperature=kwargs["temperature"], rng=rng, fitness_cache=cache, db=db,
+    )
+    return (kwargs["idx"], trajectory)
 
 
 def _generate_batch(kwargs: dict) -> list[tuple[int, object]]:
@@ -129,7 +168,7 @@ def _generate_random_ligands(n: int, length: int, rng: np.random.Generator) -> l
 
 
 def _run_single_ligand(args, ss, n_workers) -> None:
-    """Original mode: all workers share one ligand."""
+    """Single-ligand mode: per-trajectory progress via worker initializer."""
     n = args.n_trajectories
 
     if args.output_dir is None:
@@ -140,38 +179,41 @@ def _run_single_ligand(args, ss, n_workers) -> None:
 
     child_seeds = ss.spawn(n)
 
-    indices = list(range(n))
-    batch_size = (n + n_workers - 1) // n_workers
-    batches = []
-    for start in range(0, n, batch_size):
-        end = min(start + batch_size, n)
-        batches.append({
-            "indices": indices[start:end],
-            "child_seeds": child_seeds[start:end],
+    jobs = [
+        {
+            "idx": i,
+            "child_seed": child_seeds[i],
             "chain_length": args.chain_length,
-            "ligand_sequence": args.ligand_sequence,
-            "ligand_anchor": list(args.ligand_anchor),
-            "ligand_direction": args.ligand_direction,
             "n_steps": args.n_steps,
             "Ne": args.Ne,
             "mu": args.mu,
             "temperature": args.temperature,
             "min_fitness": args.min_fitness,
-        })
+        }
+        for i in range(n)
+    ]
 
     _log_header(args, n_workers)
     trajectories = []
     t_start = time.perf_counter()
-    with ProcessPoolExecutor(max_workers=n_workers) as executor:
-        futures = [executor.submit(_generate_batch, b) for b in batches]
+    with ProcessPoolExecutor(
+        max_workers=n_workers,
+        initializer=_init_worker,
+        initargs=(
+            args.chain_length, args.ligand_sequence,
+            list(args.ligand_anchor), args.ligand_direction,
+        ),
+    ) as executor:
+        futures = [executor.submit(_generate_one, job) for job in jobs]
         for future in as_completed(futures):
-            batch_results = future.result()
-            trajectories.extend(batch_results)
+            trajectories.append(future.result())
             done = len(trajectories)
             elapsed = time.perf_counter() - t_start
-            rate = elapsed / done if done > 0 else 0.0
+            rate = elapsed / done
+            remaining = rate * (n - done)
+            eta = f"  eta {_format_eta(remaining)}" if done < n else ""
             print(f"[{elapsed:5.0f}s] {_progress_bar(done, n)}  "
-                  f"{done}/{n} traj  {rate:.1f}s/traj")
+                  f"{done}/{n} traj  {rate:.1f}s/traj{eta}")
 
     trajectories.sort(key=lambda x: x[0])
     trajectories = [t for _, t in trajectories]
