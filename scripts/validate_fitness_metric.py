@@ -30,7 +30,7 @@ def main():
     rng = np.random.default_rng(seed)
     sequences = random_sequences(n_sequences, chain_length, rng)
 
-    db = enumerate_conformations(chain_length, lig)
+    db = enumerate_conformations(chain_length, lig, min_contacts=0)
     print(f"Comparing fitness metrics: {chain_length}-mer, {n_sequences} sequences, "
           f"FWYL ligand")
     print(f"Database: {db.n_conformations:,} conformations\n")

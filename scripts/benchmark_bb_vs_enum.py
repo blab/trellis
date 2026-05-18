@@ -42,7 +42,7 @@ def benchmark_one(chain_length, n_sequences, ligand, mj, rng, warmup_done=False)
 
     # Pre-enumeration: enumerate
     t0 = time.perf_counter()
-    db = enumerate_conformations(chain_length, ligand)
+    db = enumerate_conformations(chain_length, ligand, min_contacts=0)
     t_enum = time.perf_counter() - t0
 
     # Warm up numba JIT on first call (excluded from timing)
@@ -125,7 +125,7 @@ def main():
 
     # Warm up numba JIT before any timed runs
     print("warming up numba JIT ...", flush=True)
-    warmup_db = enumerate_conformations(4, ligand)
+    warmup_db = enumerate_conformations(4, ligand, min_contacts=0)
     fold_enum("ACDE", mj, ligand, db=warmup_db)
 
     if args.sweep:

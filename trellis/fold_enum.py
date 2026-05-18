@@ -35,14 +35,20 @@ def _enumerate_numba(
     n_ligand,
     use_symmetry,
     count_only,
+    min_contacts,
     contact_pairs,
     contact_offsets,
     binding_pairs,
     binding_offsets,
+    pruned_counts,
 ):
     """Enumerate SAWs via explicit-stack DFS and extract contacts.
 
-    Returns (n_conformations, n_contact_pairs, n_binding_pairs).
+    Conformations with fewer than *min_contacts* intra-protein contacts
+    are not stored; their count is accumulated in *pruned_counts* by
+    contact number.
+
+    Returns (n_stored_conformations, n_contact_pairs, n_binding_pairs).
     """
     grid = np.zeros((_GRID_SIZE, _GRID_SIZE), dtype=numba.boolean)
     path_x = np.zeros(chain_length, dtype=np.int32)
@@ -70,31 +76,40 @@ def _enumerate_numba(
 
     # Handle case where pre-placed residues already form a complete walk
     if start_depth >= chain_length:
-        # Extract contacts for the pre-placed path
         n_new_contacts = 0
         for i in range(chain_length):
             for j in range(i + 2, chain_length):
                 if abs(path_x[i] - path_x[j]) + abs(path_y[i] - path_y[j]) == 1:
-                    if not count_only:
-                        contact_pairs[contact_cursor + n_new_contacts, 0] = i
-                        contact_pairs[contact_cursor + n_new_contacts, 1] = j
                     n_new_contacts += 1
-        contact_cursor += n_new_contacts
 
-        n_new_binding = 0
-        for i in range(chain_length):
-            for k in range(n_ligand):
-                if abs(path_x[i] - ligand_pos[k, 0]) + abs(path_y[i] - ligand_pos[k, 1]) == 1:
-                    if not count_only:
-                        binding_pairs[binding_cursor + n_new_binding, 0] = i
-                        binding_pairs[binding_cursor + n_new_binding, 1] = k
-                    n_new_binding += 1
-        binding_cursor += n_new_binding
+        if n_new_contacts < min_contacts:
+            if n_new_contacts < len(pruned_counts):
+                pruned_counts[n_new_contacts] += 1
+        else:
+            if not count_only:
+                c = 0
+                for i in range(chain_length):
+                    for j in range(i + 2, chain_length):
+                        if abs(path_x[i] - path_x[j]) + abs(path_y[i] - path_y[j]) == 1:
+                            contact_pairs[contact_cursor + c, 0] = i
+                            contact_pairs[contact_cursor + c, 1] = j
+                            c += 1
+            contact_cursor += n_new_contacts
 
-        if not count_only:
-            contact_offsets[conf_idx + 1] = contact_cursor
-            binding_offsets[conf_idx + 1] = binding_cursor
-        conf_idx += 1
+            n_new_binding = 0
+            for i in range(chain_length):
+                for k in range(n_ligand):
+                    if abs(path_x[i] - ligand_pos[k, 0]) + abs(path_y[i] - ligand_pos[k, 1]) == 1:
+                        if not count_only:
+                            binding_pairs[binding_cursor + n_new_binding, 0] = i
+                            binding_pairs[binding_cursor + n_new_binding, 1] = k
+                        n_new_binding += 1
+            binding_cursor += n_new_binding
+
+            if not count_only:
+                contact_offsets[conf_idx + 1] = contact_cursor
+                binding_offsets[conf_idx + 1] = binding_cursor
+            conf_idx += 1
         return conf_idx, contact_cursor, binding_cursor
 
     # DFS with explicit stack
@@ -145,31 +160,41 @@ def _enumerate_numba(
         grid[gx, gy] = True
 
         if depth + 1 == chain_length:
-            # Leaf: complete conformation — extract contacts
+            # Leaf: count intra-protein contacts
             n_new_contacts = 0
             for i in range(chain_length):
                 for j in range(i + 2, chain_length):
                     if abs(path_x[i] - path_x[j]) + abs(path_y[i] - path_y[j]) == 1:
-                        if not count_only:
-                            contact_pairs[contact_cursor + n_new_contacts, 0] = i
-                            contact_pairs[contact_cursor + n_new_contacts, 1] = j
                         n_new_contacts += 1
-            contact_cursor += n_new_contacts
 
-            n_new_binding = 0
-            for i in range(chain_length):
-                for k in range(n_ligand):
-                    if abs(path_x[i] - ligand_pos[k, 0]) + abs(path_y[i] - ligand_pos[k, 1]) == 1:
-                        if not count_only:
-                            binding_pairs[binding_cursor + n_new_binding, 0] = i
-                            binding_pairs[binding_cursor + n_new_binding, 1] = k
-                        n_new_binding += 1
-            binding_cursor += n_new_binding
+            if n_new_contacts < min_contacts:
+                if n_new_contacts < len(pruned_counts):
+                    pruned_counts[n_new_contacts] += 1
+            else:
+                if not count_only:
+                    c = 0
+                    for i in range(chain_length):
+                        for j in range(i + 2, chain_length):
+                            if abs(path_x[i] - path_x[j]) + abs(path_y[i] - path_y[j]) == 1:
+                                contact_pairs[contact_cursor + c, 0] = i
+                                contact_pairs[contact_cursor + c, 1] = j
+                                c += 1
+                contact_cursor += n_new_contacts
 
-            if not count_only:
-                contact_offsets[conf_idx + 1] = contact_cursor
-                binding_offsets[conf_idx + 1] = binding_cursor
-            conf_idx += 1
+                n_new_binding = 0
+                for i in range(chain_length):
+                    for k in range(n_ligand):
+                        if abs(path_x[i] - ligand_pos[k, 0]) + abs(path_y[i] - ligand_pos[k, 1]) == 1:
+                            if not count_only:
+                                binding_pairs[binding_cursor + n_new_binding, 0] = i
+                                binding_pairs[binding_cursor + n_new_binding, 1] = k
+                            n_new_binding += 1
+                binding_cursor += n_new_binding
+
+                if not count_only:
+                    contact_offsets[conf_idx + 1] = contact_cursor
+                    binding_offsets[conf_idx + 1] = binding_cursor
+                conf_idx += 1
 
             grid[gx, gy] = False
             continue
@@ -197,17 +222,25 @@ class ConformationDatabase:
     binding_pairs: np.ndarray       # (total_binding_contacts, 2) int32
     binding_offsets: np.ndarray     # (n_conformations + 1,) int64
     reduced_symmetry: bool          # True if SAWs were symmetry-reduced
+    min_contacts: int = 0
+    pruned_counts: np.ndarray | None = None  # (min_contacts,) int64
 
 
 def enumerate_conformations(
     chain_length: int,
     ligand: Ligand | None = None,
+    min_contacts: int = 4,
 ) -> ConformationDatabase:
     """Build a ConformationDatabase for all SAWs of *chain_length*.
 
     With a ligand, walks that collide with ligand sites are skipped and
     unreduced enumeration is used (symmetry is broken by the ligand).
     Without a ligand, symmetry-reduced enumeration is used.
+
+    When *min_contacts* > 0, conformations with fewer intra-protein
+    contacts are not stored; their counts by contact number are recorded
+    in ``pruned_counts`` for mean-field correction of the partition
+    function.
     """
     use_reduced = ligand is None
 
@@ -221,15 +254,20 @@ def enumerate_conformations(
         ligand_pos = np.empty((0, 2), dtype=np.int32)
         n_ligand = 0
 
+    hist_len = max(min_contacts, 1)
+    pruned_counts = np.zeros(hist_len, dtype=np.int64)
+
     # Pass 1: count conformations and contacts
     dummy = np.empty((0, 2), dtype=np.int32)
     dummy_off = np.empty(0, dtype=np.int64)
     n_conf, n_contacts, n_binding = _enumerate_numba(
         chain_length, ligand_grid, ligand_pos, n_ligand,
-        use_reduced, True, dummy, dummy_off, dummy, dummy_off,
+        use_reduced, True, min_contacts,
+        dummy, dummy_off, dummy, dummy_off, pruned_counts,
     )
 
     # Pass 2: allocate exact arrays and fill
+    pruned_counts[:] = 0
     contact_pairs = np.empty((n_contacts, 2), dtype=np.int32)
     contact_offsets = np.zeros(n_conf + 1, dtype=np.int64)
     binding_pairs = np.empty((n_binding, 2), dtype=np.int32)
@@ -237,8 +275,9 @@ def enumerate_conformations(
 
     _enumerate_numba(
         chain_length, ligand_grid, ligand_pos, n_ligand,
-        use_reduced, False,
+        use_reduced, False, min_contacts,
         contact_pairs, contact_offsets, binding_pairs, binding_offsets,
+        pruned_counts,
     )
 
     return ConformationDatabase(
@@ -250,6 +289,8 @@ def enumerate_conformations(
         binding_pairs=binding_pairs,
         binding_offsets=binding_offsets,
         reduced_symmetry=use_reduced,
+        min_contacts=min_contacts,
+        pruned_counts=pruned_counts if min_contacts > 0 else None,
     )
 
 
@@ -319,6 +360,37 @@ def _score_conformations(
     return best_energy, best_binding_energy, Z_sum, binding_weighted_sum, best_idx
 
 
+def _mean_field_params(aa_indices: np.ndarray, mj_matrix: np.ndarray):
+    """Mean and variance of MJ energies over all non-bonded residue pairs."""
+    n = len(aa_indices)
+    total = 0.0
+    total_sq = 0.0
+    count = 0
+    for i in range(n):
+        for j in range(i + 2, n):
+            e = mj_matrix[aa_indices[i], aa_indices[j]]
+            total += e
+            total_sq += e * e
+            count += 1
+    if count == 0:
+        return 0.0, 0.0
+    mu = total / count
+    sigma2 = total_sq / count - mu * mu
+    return mu, sigma2
+
+
+def _mean_field_z(
+    pruned_counts: np.ndarray, mu: float, sigma2: float, temperature: float,
+) -> float:
+    """Bloom cumulant expansion: Z contribution of pruned conformations."""
+    z = 0.0
+    for n in range(len(pruned_counts)):
+        if pruned_counts[n] > 0:
+            exponent = -n * mu / temperature + n * sigma2 / (2.0 * temperature * temperature)
+            z += pruned_counts[n] * exp(exponent)
+    return z
+
+
 def fold(
     sequence: str,
     mj_matrix: np.ndarray,
@@ -350,7 +422,7 @@ def fold(
             "enumerate_conformations().",
             stacklevel=2,
         )
-        db = enumerate_conformations(n, ligand)
+        db = enumerate_conformations(n, ligand, min_contacts=0)
 
     if db.chain_length != n:
         raise ValueError(
@@ -372,6 +444,12 @@ def fold(
             temperature,
         )
     )
+
+    # Mean-field correction for pruned conformations
+    if db.pruned_counts is not None and db.min_contacts > 0:
+        mu, sigma2 = _mean_field_params(aa_idx, mj_matrix)
+        Z_mf = _mean_field_z(db.pruned_counts, mu, sigma2, temperature)
+        Z_sum += Z_mf
 
     if db.reduced_symmetry:
         Z_full = Z_sum * 8 - 4
@@ -405,6 +483,7 @@ def save_database(db: ConformationDatabase, path: str) -> None:
         "chain_length": np.array(db.chain_length),
         "n_conformations": np.array(db.n_conformations),
         "reduced_symmetry": np.array(db.reduced_symmetry),
+        "min_contacts": np.array(db.min_contacts),
         "contact_pairs": db.contact_pairs,
         "contact_offsets": db.contact_offsets,
         "binding_pairs": db.binding_pairs,
@@ -413,6 +492,8 @@ def save_database(db: ConformationDatabase, path: str) -> None:
     if db.ligand is not None:
         meta["ligand_sequence"] = np.array(list(db.ligand.sequence))
         meta["ligand_positions"] = np.array(db.ligand.positions, dtype=np.int32)
+    if db.pruned_counts is not None:
+        meta["pruned_counts"] = db.pruned_counts
     np.savez_compressed(path, **meta)
 
 
@@ -431,6 +512,9 @@ def load_database(path: str) -> ConformationDatabase:
             sites=frozenset(positions),
         )
 
+    mc = int(data["min_contacts"]) if "min_contacts" in data else 0
+    pc = data["pruned_counts"] if "pruned_counts" in data else None
+
     return ConformationDatabase(
         chain_length=int(data["chain_length"]),
         ligand=ligand,
@@ -440,4 +524,6 @@ def load_database(path: str) -> ConformationDatabase:
         binding_pairs=data["binding_pairs"],
         binding_offsets=data["binding_offsets"],
         reduced_symmetry=bool(data["reduced_symmetry"]),
+        min_contacts=mc,
+        pruned_counts=pc,
     )

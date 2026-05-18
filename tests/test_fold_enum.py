@@ -24,7 +24,7 @@ from trellis.ligand import create_ligand
 
 def test_db_counts_no_ligand():
     for n in [4, 6, 8]:
-        db = enumerate_conformations(n)
+        db = enumerate_conformations(n, min_contacts=0)
         expected = sum(1 for _ in enumerate_saws(n, reduce_symmetry=True))
         assert db.n_conformations == expected
         assert db.reduced_symmetry is True
@@ -33,7 +33,7 @@ def test_db_counts_no_ligand():
 def test_db_counts_with_ligand():
     lig = create_ligand("FW", anchor=(0, -1))
     for n in [4, 6, 8]:
-        db = enumerate_conformations(n, lig)
+        db = enumerate_conformations(n, lig, min_contacts=0)
         expected = sum(
             1 for c in enumerate_saws(n, reduce_symmetry=False)
             if not (lig.sites & set(c))
@@ -43,7 +43,7 @@ def test_db_counts_with_ligand():
 
 
 def test_db_offsets_shape():
-    db = enumerate_conformations(6)
+    db = enumerate_conformations(6, min_contacts=0)
     assert db.contact_offsets.shape == (db.n_conformations + 1,)
     assert db.binding_offsets.shape == (db.n_conformations + 1,)
     assert db.contact_offsets[0] == 0
@@ -51,7 +51,7 @@ def test_db_offsets_shape():
 
 
 def test_db_contact_pairs_shape():
-    db = enumerate_conformations(8)
+    db = enumerate_conformations(8, min_contacts=0)
     assert db.contact_pairs.ndim == 2
     assert db.contact_pairs.shape[1] == 2
 
@@ -79,7 +79,7 @@ def ligand():
 @pytest.mark.parametrize("n", [6, 8, 10, 12])
 def test_fold_matches_bb_with_ligand(n, mj, ligand):
     seq = "ACDEFGHIKLMNPQRSTVWY"[:n]
-    db = enumerate_conformations(n, ligand)
+    db = enumerate_conformations(n, ligand, min_contacts=0)
     r_bb = fold_bb(seq, mj, ligand)
     r_en = fold(seq, mj, ligand, db=db)
     assert r_en.native_energy == pytest.approx(r_bb.native_energy)
@@ -93,7 +93,7 @@ def test_fold_matches_bb_with_ligand(n, mj, ligand):
 @pytest.mark.parametrize("n", [6, 8, 10, 12])
 def test_fold_matches_bb_no_ligand(n, mj):
     seq = "ACDEFGHIKLMNPQRSTVWY"[:n]
-    db = enumerate_conformations(n)
+    db = enumerate_conformations(n, min_contacts=0)
     r_bb = fold_bb(seq, mj)
     r_en = fold(seq, mj, db=db)
     assert r_en.native_energy == pytest.approx(r_bb.native_energy)
@@ -104,7 +104,7 @@ def test_fold_matches_bb_no_ligand(n, mj):
 
 
 def test_fold_different_sequences_same_db(mj, ligand):
-    db = enumerate_conformations(6, ligand)
+    db = enumerate_conformations(6, ligand, min_contacts=0)
     for seq in ["ACDEFG", "FWYLMK", "GGGGGG"]:
         r_bb = fold_bb(seq, mj, ligand)
         r_en = fold(seq, mj, ligand, db=db)
@@ -121,7 +121,7 @@ def test_native_conformation_energy(mj, ligand):
     from trellis.ligand import binding_energy
 
     seq = "ACDEFGHIKL"
-    db = enumerate_conformations(10, ligand)
+    db = enumerate_conformations(10, ligand, min_contacts=0)
     r = fold(seq, mj, ligand, db=db)
     e_intra = conformation_energy(seq, r.native_conformation, mj)
     e_bind = binding_energy(seq, r.native_conformation, ligand, mj)
@@ -134,7 +134,7 @@ def test_native_conformation_energy(mj, ligand):
 # ---------------------------------------------------------------------------
 
 def test_fold_single_residue(mj):
-    db = enumerate_conformations(1)
+    db = enumerate_conformations(1, min_contacts=0)
     r = fold("A", mj, db=db)
     assert r.native_conformation == ((0, 0),)
     assert r.native_energy == 0.0
@@ -142,7 +142,7 @@ def test_fold_single_residue(mj):
 
 
 def test_fold_two_residues(mj):
-    db = enumerate_conformations(2)
+    db = enumerate_conformations(2, min_contacts=0)
     r_bb = fold_bb("AC", mj)
     r_en = fold("AC", mj, db=db)
     assert r_en.native_energy == pytest.approx(r_bb.native_energy)
@@ -155,7 +155,7 @@ def test_fold_without_db_warns(mj):
 
 
 def test_fold_wrong_chain_length(mj):
-    db = enumerate_conformations(6)
+    db = enumerate_conformations(6, min_contacts=0)
     with pytest.raises(ValueError, match="chain_length"):
         fold("ACDE", mj, db=db)
 
@@ -166,7 +166,7 @@ def test_fold_empty_sequence(mj):
 
 
 def test_fold_zero_temperature(mj):
-    db = enumerate_conformations(6)
+    db = enumerate_conformations(6, min_contacts=0)
     with pytest.raises(ValueError, match="temperature"):
         fold("ACDEFG", mj, temperature=0.0, db=db)
 
@@ -177,7 +177,7 @@ def test_fold_zero_temperature(mj):
 
 def test_temperature_matches_bb(mj, ligand):
     seq = "ACDEFGHIKL"
-    db = enumerate_conformations(10, ligand)
+    db = enumerate_conformations(10, ligand, min_contacts=0)
     for temp in [0.5, 1.0, 2.0]:
         r_bb = fold_bb(seq, mj, ligand, temperature=temp)
         r_en = fold(seq, mj, ligand, temperature=temp, db=db)
@@ -190,7 +190,7 @@ def test_temperature_matches_bb(mj, ligand):
 # ---------------------------------------------------------------------------
 
 def test_save_load_no_ligand(mj):
-    db = enumerate_conformations(8)
+    db = enumerate_conformations(8, min_contacts=0)
     with tempfile.NamedTemporaryFile(suffix=".npz") as f:
         save_database(db, f.name)
         db2 = load_database(f.name)
@@ -206,7 +206,7 @@ def test_save_load_no_ligand(mj):
 
 def test_save_load_with_ligand(mj):
     lig = create_ligand("FW", anchor=(0, -1))
-    db = enumerate_conformations(8, lig)
+    db = enumerate_conformations(8, lig, min_contacts=0)
     with tempfile.NamedTemporaryFile(suffix=".npz") as f:
         save_database(db, f.name)
         db2 = load_database(f.name)

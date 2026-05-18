@@ -80,7 +80,7 @@ def main() -> None:
 
     # Warm up numba JIT (excluded from timing)
     print("\nWarming up numba JIT ...", flush=True)
-    warmup_db = enumerate_conformations(4, ligand)
+    warmup_db = enumerate_conformations(4, ligand, min_contacts=0)
     fold_enum("ACDE", mj, ligand, db=warmup_db)
 
     # Phase 1: standalone enumeration
