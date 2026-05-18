@@ -360,6 +360,62 @@ def _score_conformations(
     return best_energy, best_binding_energy, Z_sum, binding_weighted_sum, best_idx
 
 
+@numba.njit(cache=True)
+def _score_conformations_batch(
+    aa_indices_batch: np.ndarray,
+    lig_indices: np.ndarray,
+    mj_matrix: np.ndarray,
+    contact_pairs: np.ndarray,
+    contact_offsets: np.ndarray,
+    binding_pairs: np.ndarray,
+    binding_offsets: np.ndarray,
+    temperature: float,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Score all conformations for a batch of sequences in one pass."""
+    n_seqs = aa_indices_batch.shape[0]
+    n_conf = len(contact_offsets) - 1
+    inv_T = 1.0 / temperature
+
+    best_energy = np.full(n_seqs, np.inf)
+    best_binding = np.zeros(n_seqs)
+    best_idx = np.full(n_seqs, -1, dtype=np.int64)
+    Z_sum = np.zeros(n_seqs)
+    bw_sum = np.zeros(n_seqs)
+
+    for k in range(n_conf):
+        c_start = contact_offsets[k]
+        c_end = contact_offsets[k + 1]
+        b_start = binding_offsets[k]
+        b_end = binding_offsets[k + 1]
+
+        for s in range(n_seqs):
+            e_intra = 0.0
+            for c in range(c_start, c_end):
+                e_intra += mj_matrix[
+                    aa_indices_batch[s, contact_pairs[c, 0]],
+                    aa_indices_batch[s, contact_pairs[c, 1]],
+                ]
+
+            e_bind = 0.0
+            for c in range(b_start, b_end):
+                e_bind += mj_matrix[
+                    aa_indices_batch[s, binding_pairs[c, 0]],
+                    lig_indices[binding_pairs[c, 1]],
+                ]
+
+            total = e_intra + e_bind
+            boltz = np.exp(-total * inv_T)
+            Z_sum[s] += boltz
+            bw_sum[s] += e_bind * boltz
+
+            if total < best_energy[s]:
+                best_energy[s] = total
+                best_binding[s] = e_bind
+                best_idx[s] = k
+
+    return best_energy, best_binding, Z_sum, bw_sum, best_idx
+
+
 def _mean_field_params(aa_indices: np.ndarray, mj_matrix: np.ndarray):
     """Mean and variance of MJ energies over all non-bonded residue pairs."""
     n = len(aa_indices)
@@ -475,6 +531,73 @@ def fold(
         ensemble_binding_energy=ensemble_binding,
         n_conformations_enumerated=db.n_conformations,
     )
+
+
+def fold_batch(
+    sequences: list[str],
+    mj_matrix: np.ndarray,
+    ligand: Ligand | None = None,
+    temperature: float = 1.0,
+    db: ConformationDatabase | None = None,
+) -> list[FoldResult]:
+    """Fold multiple sequences in one pass over conformations.
+
+    Always skips conformation recovery (returns empty native_conformation).
+    """
+    if not sequences:
+        return []
+
+    n = len(sequences)
+    chain_length = len(sequences[0])
+
+    if db is None:
+        raise ValueError("fold_batch requires a prebuilt ConformationDatabase")
+    if db.chain_length != chain_length:
+        raise ValueError(
+            f"database chain_length {db.chain_length} != sequence length {chain_length}"
+        )
+
+    aa_batch = np.empty((n, chain_length), dtype=np.int32)
+    for s, seq in enumerate(sequences):
+        for i, aa in enumerate(seq):
+            aa_batch[s, i] = AA_INDEX[aa]
+
+    lig_idx = (
+        np.array([AA_INDEX[aa] for aa in ligand.sequence], dtype=np.int32)
+        if ligand is not None
+        else np.empty(0, dtype=np.int32)
+    )
+
+    best_e, best_b, Z_sums, bw_sums, best_idxs = _score_conformations_batch(
+        aa_batch, lig_idx, mj_matrix,
+        db.contact_pairs, db.contact_offsets,
+        db.binding_pairs, db.binding_offsets,
+        temperature,
+    )
+
+    if db.pruned_counts is not None and db.min_contacts > 0:
+        for s in range(n):
+            mu, sigma2 = _mean_field_params(aa_batch[s], mj_matrix)
+            Z_mf = _mean_field_z(db.pruned_counts, mu, sigma2, temperature)
+            Z_sums[s] += Z_mf
+
+    results = []
+    for s in range(n):
+        Z = Z_sums[s]
+        Z_full = Z * 8 - 4 if db.reduced_symmetry else Z
+        frac = exp(-best_e[s] / temperature) / Z if Z > 0 else 0.0
+        ebe = bw_sums[s] / Z if Z > 0 else 0.0
+        results.append(FoldResult(
+            native_conformation=(),
+            native_energy=float(best_e[s]),
+            native_binding_energy=float(best_b[s]),
+            fraction_folded=frac,
+            partition_function=Z_full,
+            ensemble_binding_energy=ebe,
+            n_conformations_enumerated=db.n_conformations,
+        ))
+
+    return results
 
 
 def save_database(db: ConformationDatabase, path: str) -> None:

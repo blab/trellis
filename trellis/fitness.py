@@ -6,7 +6,7 @@ from math import inf
 import numpy as np
 
 from trellis.fold_bb import FoldResult, fold as fold_bb
-from trellis.fold_enum import ConformationDatabase, fold as fold_enum
+from trellis.fold_enum import ConformationDatabase, fold as fold_enum, fold_batch
 from trellis.genetic_code import translate
 from trellis.ligand import Ligand
 
@@ -77,3 +77,23 @@ def compute_fitness_aa(
         aa_sequence=aa_sequence,
         dna_sequence="",
     )
+
+
+def compute_fitness_batch(
+    aa_sequences: list[str],
+    ligand: Ligand,
+    mj_matrix: np.ndarray,
+    temperature: float = 1.0,
+    db: ConformationDatabase | None = None,
+) -> list[FitnessResult]:
+    """Compute fitness for multiple AA sequences in one batch."""
+    fold_results = fold_batch(aa_sequences, mj_matrix, ligand, temperature, db=db)
+    return [
+        FitnessResult(
+            fitness=fr.fraction_folded * (-fr.native_binding_energy),
+            fold_result=fr,
+            aa_sequence=aa,
+            dna_sequence="",
+        )
+        for aa, fr in zip(aa_sequences, fold_results)
+    ]

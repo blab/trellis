@@ -6,7 +6,7 @@ from math import exp, inf
 import numpy as np
 
 from trellis.cache import FitnessCache
-from trellis.fitness import FitnessResult, compute_fitness_aa
+from trellis.fitness import FitnessResult, compute_fitness_aa, compute_fitness_batch
 from trellis.fold_enum import ConformationDatabase
 from trellis.genetic_code import (
     CODON_TABLE,
@@ -77,6 +77,8 @@ def generate_trajectory(
 
     for _ in range(n_steps):
         aa_groups = mutant_aa_sequences(current_dna)
+
+        uncached = []
         for aa_seq in aa_groups:
             if aa_seq not in fitness_cache:
                 if "*" in aa_seq:
@@ -85,10 +87,20 @@ def generate_trajectory(
                         aa_sequence=aa_seq, dna_sequence="",
                     ))
                 else:
-                    r = compute_fitness_aa(
-                        aa_seq, ligand, mj_matrix, temperature, db=db,
-                    )
-                    fitness_cache.put(aa_seq, r)
+                    uncached.append(aa_seq)
+
+        if uncached and db is not None:
+            batch_results = compute_fitness_batch(
+                uncached, ligand, mj_matrix, temperature, db=db,
+            )
+            for aa_seq, result in zip(uncached, batch_results):
+                fitness_cache.put(aa_seq, result)
+        elif uncached:
+            for aa_seq in uncached:
+                r = compute_fitness_aa(
+                    aa_seq, ligand, mj_matrix, temperature, db=db,
+                )
+                fitness_cache.put(aa_seq, r)
 
         mutations = single_nt_mutations(current_dna)
         weights = []
