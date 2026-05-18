@@ -32,10 +32,10 @@ def _generate_batch(kwargs: dict) -> list[tuple[int, object]]:
     )
     db = enumerate_conformations(kwargs["chain_length"], ligand)
 
+    cache = FitnessCache()
     results = []
     for idx, child_seed in zip(kwargs["indices"], kwargs["child_seeds"]):
         rng = np.random.default_rng(child_seed)
-        cache = FitnessCache()
         start_dna = generate_start_sequence(
             kwargs["chain_length"],
             ligand,
