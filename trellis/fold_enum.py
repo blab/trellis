@@ -373,8 +373,29 @@ def _score_conformations_batch(
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Score all conformations for a batch of sequences in one pass."""
     n_seqs = aa_indices_batch.shape[0]
+    chain_length = aa_indices_batch.shape[1]
+    lig_length = len(lig_indices)
     n_conf = len(contact_offsets) - 1
     inv_T = 1.0 / temperature
+
+    # Precompute pair energies to eliminate double-indirect MJ lookups
+    intra_e = np.empty((chain_length * chain_length, n_seqs))
+    for i in range(chain_length):
+        for j in range(i + 2, chain_length):
+            idx = i * chain_length + j
+            for s in range(n_seqs):
+                intra_e[idx, s] = mj_matrix[
+                    aa_indices_batch[s, i], aa_indices_batch[s, j]
+                ]
+
+    bind_e = np.empty((chain_length * lig_length, n_seqs))
+    for i in range(chain_length):
+        for l in range(lig_length):
+            idx = i * lig_length + l
+            for s in range(n_seqs):
+                bind_e[idx, s] = mj_matrix[
+                    aa_indices_batch[s, i], lig_indices[l]
+                ]
 
     best_energy = np.full(n_seqs, np.inf)
     best_binding = np.zeros(n_seqs)
@@ -391,16 +412,14 @@ def _score_conformations_batch(
         for s in range(n_seqs):
             e_intra = 0.0
             for c in range(c_start, c_end):
-                e_intra += mj_matrix[
-                    aa_indices_batch[s, contact_pairs[c, 0]],
-                    aa_indices_batch[s, contact_pairs[c, 1]],
+                e_intra += intra_e[
+                    contact_pairs[c, 0] * chain_length + contact_pairs[c, 1], s
                 ]
 
             e_bind = 0.0
             for c in range(b_start, b_end):
-                e_bind += mj_matrix[
-                    aa_indices_batch[s, binding_pairs[c, 0]],
-                    lig_indices[binding_pairs[c, 1]],
+                e_bind += bind_e[
+                    binding_pairs[c, 0] * lig_length + binding_pairs[c, 1], s
                 ]
 
             total = e_intra + e_bind
