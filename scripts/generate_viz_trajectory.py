@@ -12,7 +12,7 @@ from pathlib import Path
 
 import numpy as np
 
-from trellis.energy import AA_INDEX, load_mj_matrix
+from trellis.energy import AA_ALPHABET, AA_INDEX, load_mj_matrix
 from trellis.fold_enum import enumerate_conformations, fold as fold_enum
 from trellis.lattice import get_contacts
 from trellis.ligand import Ligand, binding_contacts, create_ligand
@@ -31,7 +31,7 @@ def parse_anchor(value: str) -> tuple[int, int]:
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--n-codons", type=int, default=10)
-    p.add_argument("--ligand-sequence", type=str, default="FWYL")
+    p.add_argument("--ligand-sequence", type=str, default=None)
     p.add_argument("--ligand-anchor", type=parse_anchor, default=(0, -1))
     p.add_argument("--ligand-direction", type=str, default="horizontal",
                    choices=["horizontal", "vertical"])
@@ -82,12 +82,15 @@ def fold_unique_sequences(
 def main() -> None:
     args = parse_args()
     mj = load_mj_matrix()
+    rng = np.random.default_rng(args.seed)
+    if args.ligand_sequence is None:
+        args.ligand_sequence = "".join(rng.choice(list(AA_ALPHABET), size=4))
+    print(f"ligand sequence: {args.ligand_sequence}")
     ligand = create_ligand(
         args.ligand_sequence,
         anchor=args.ligand_anchor,
         direction=args.ligand_direction,
     )
-    rng = np.random.default_rng(args.seed)
 
     db = enumerate_conformations(args.n_codons, ligand)
     print(f"enumerated {db.n_conformations:,} conformations")

@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Trellis: SSWM Trajectory Viewer</title>
+        <title>Lattice protein fitness trajectory</title>
         <style>
             body {
                 font-family:
@@ -182,13 +182,15 @@
     </head>
     <body>
         <div class="container">
-            <h1>Trellis: SSWM Trajectory Viewer</h1>
+            <h1>Lattice Protein Fitness Trajectory</h1>
 
             <div id="metadata-bar" class="metrics"></div>
 
             <h2>Fitness trajectory</h2>
             <div class="plot-container">
                 <div id="fitness-plot"></div>
+                <div id="fraction-folded-plot"></div>
+                <div id="binding-energy-plot"></div>
                 <div class="legend" id="fitness-legend">
                     <div class="legend-item">
                         <span class="legend-swatch" style="background:#999"></span>Start
@@ -284,7 +286,15 @@
             function renderAll() {
                 renderMetadata();
                 computeSampling();
-                renderFitness();
+                renderTimeseries("#fitness-plot", d => d.fitness, "Fitness (f × −BE_native)");
+                renderTimeseries("#fraction-folded-plot", d => {
+                    const conf = data.conformations[d.aa_sequence];
+                    return conf ? conf.fraction_folded : 0;
+                }, "Fraction folded f(T)", {height: 146, yTickFormat: d => Math.round(d * 100) + "%", yTickStep: 0.2});
+                renderTimeseries("#binding-energy-plot", d => {
+                    const conf = data.conformations[d.aa_sequence];
+                    return conf ? -conf.native_binding_energy : 0;
+                }, "−BE_native", {height: 146, yTickStep: 5});
                 renderLattices();
             }
 
@@ -341,12 +351,12 @@
                 }
             }
 
-            function renderFitness() {
-                const container = d3.select("#fitness-plot");
+            function renderTimeseries(containerSelector, yAccessor, yLabel, {height: heightOverride, yTickFormat, yTickCount, yTickStep} = {}) {
+                const container = d3.select(containerSelector);
                 container.selectAll("*").remove();
 
                 const width = 1100;
-                const height = 260;
+                const height = heightOverride || 260;
                 const margin = { top: 12, right: 16, bottom: 40, left: 56 };
                 const innerW = width - margin.left - margin.right;
                 const innerH = height - margin.top - margin.bottom;
@@ -366,7 +376,7 @@
                     .domain([0, d3.max(data.steps, (d) => d.step)])
                     .range([0, innerW]);
 
-                const yExtent = d3.extent(data.steps, (d) => d.fitness);
+                const yExtent = d3.extent(data.steps, (d) => yAccessor(d));
                 const yPad = (yExtent[1] - yExtent[0]) * 0.1 || 1;
                 const y = d3
                     .scaleLinear()
@@ -378,7 +388,18 @@
                     .attr("class", "axis")
                     .attr("transform", `translate(0,${innerH})`)
                     .call(d3.axisBottom(x).ticks(Math.min(10, data.steps.length)));
-                g.append("g").attr("class", "axis").call(d3.axisLeft(y));
+                const yAxis = d3.axisLeft(y);
+                if (yTickStep) {
+                    const [lo, hi] = y.domain();
+                    const vals = [];
+                    const start = Math.ceil(lo / yTickStep) * yTickStep;
+                    for (let v = start; v <= hi; v += yTickStep) vals.push(v);
+                    yAxis.tickValues(vals);
+                } else if (yTickCount) {
+                    yAxis.ticks(yTickCount);
+                }
+                if (yTickFormat) yAxis.tickFormat(yTickFormat);
+                g.append("g").attr("class", "axis").call(yAxis);
 
                 g.append("text")
                     .attr("class", "axis-label")
@@ -392,13 +413,13 @@
                     .attr("x", -innerH / 2)
                     .attr("y", -40)
                     .attr("text-anchor", "middle")
-                    .text("Fitness (f × −BE_native)");
+                    .text(yLabel);
 
                 // Line
                 const line = d3
                     .line()
                     .x((d) => x(d.step))
-                    .y((d) => y(d.fitness));
+                    .y((d) => y(yAccessor(d)));
                 g.append("path")
                     .datum(data.steps)
                     .attr("fill", "none")
@@ -407,16 +428,13 @@
                     .attr("d", line);
 
                 // Dots
-                const sampledSet = new Set(sampledSteps);
                 g.selectAll("circle.traj-dot")
                     .data(data.steps)
                     .join("circle")
-                    .attr("class", (d) =>
-                        sampledSet.has(d.step) ? "traj-dot sampled" : "traj-dot",
-                    )
+                    .attr("class", "traj-dot")
                     .attr("cx", (d) => x(d.step))
-                    .attr("cy", (d) => y(d.fitness))
-                    .attr("r", (d) => (sampledSet.has(d.step) ? 5 : 3.5))
+                    .attr("cy", (d) => y(yAccessor(d)))
+                    .attr("r", 4)
                     .attr("fill", (d) => mutationColor(d.mutation_type))
                     .attr("data-step", (d) => d.step)
                     .on("mouseover", function (event, d) {
@@ -438,9 +456,11 @@
                     : null;
                 const conf = data.conformations[s.aa_sequence];
                 const nBind = conf ? conf.binding_contacts.length : 0;
+                const frac = conf ? conf.fraction_folded : null;
                 return [
                     `<b>Step ${s.step}</b>`,
                     `Fitness: ${s.fitness.toFixed(3)}${delta !== null ? ` (Δ ${delta >= 0 ? "+" : ""}${delta})` : ""}`,
+                    `f(T): ${frac !== null ? frac.toFixed(3) : "—"}`,
                     `AA: ${s.aa_sequence}`,
                     `Mutation: ${s.mutation_type ?? "—"}`,
                     `Binding contacts: ${nBind}`,
@@ -459,7 +479,8 @@
                     prev && delta !== "—"
                         ? `${delta >= 0 ? "+" : ""}${delta}`
                         : "—";
-                return `Step ${s.step}  |  AA: ${s.aa_sequence}  |  Fitness: ${s.fitness.toFixed(3)}  |  ΔFitness: ${deltaStr}  |  Mutation: ${s.mutation_type ?? "—"}  |  Binding contacts: ${nBind}`;
+                const frac = conf ? conf.fraction_folded.toFixed(3) : "—";
+                return `Step ${s.step}  |  AA: ${s.aa_sequence}  |  Fitness: ${s.fitness.toFixed(3)}  |  f(T): ${frac}  |  ΔFitness: ${deltaStr}  |  Mutation: ${s.mutation_type ?? "—"}  |  Binding contacts: ${nBind}`;
             }
 
             function onStepHover(stepIdx, event) {
@@ -691,10 +712,11 @@
                 });
 
                 // 7. Panel label below SVG
+                const frac = conf.fraction_folded;
                 panelSel
                     .append("div")
                     .attr("class", "lattice-label")
-                    .text(`Step ${stepIdx}  ·  f=${step.fitness.toFixed(2)}`);
+                    .text(`Step ${stepIdx}  ·  fitness=${step.fitness.toFixed(2)}  ·  f(T)=${frac.toFixed(2)}`);
             }
 
             loadData().catch((err) => {
