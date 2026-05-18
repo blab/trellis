@@ -19,7 +19,7 @@ import numpy as np
 
 from trellis.energy import AA_INDEX
 from trellis.fold_bb import FoldResult
-from trellis.lattice import Conformation, enumerate_saws
+from trellis.lattice import Conformation, enumerate_saws, get_contacts
 from trellis.ligand import Ligand
 
 _GRID_SIZE = 41
@@ -41,6 +41,7 @@ def _enumerate_numba(
     binding_pairs,
     binding_offsets,
     pruned_counts,
+    coordinates,
 ):
     """Enumerate SAWs via explicit-stack DFS and extract contacts.
 
@@ -109,6 +110,10 @@ def _enumerate_numba(
             if not count_only:
                 contact_offsets[conf_idx + 1] = contact_cursor
                 binding_offsets[conf_idx + 1] = binding_cursor
+                if len(coordinates) > 0:
+                    for i in range(chain_length):
+                        coordinates[conf_idx, i, 0] = path_x[i]
+                        coordinates[conf_idx, i, 1] = path_y[i]
             conf_idx += 1
         return conf_idx, contact_cursor, binding_cursor
 
@@ -194,6 +199,10 @@ def _enumerate_numba(
                 if not count_only:
                     contact_offsets[conf_idx + 1] = contact_cursor
                     binding_offsets[conf_idx + 1] = binding_cursor
+                    if len(coordinates) > 0:
+                        for i in range(chain_length):
+                            coordinates[conf_idx, i, 0] = path_x[i]
+                            coordinates[conf_idx, i, 1] = path_y[i]
                 conf_idx += 1
 
             grid[gx, gy] = False
@@ -224,12 +233,14 @@ class ConformationDatabase:
     reduced_symmetry: bool          # True if SAWs were symmetry-reduced
     min_contacts: int = 0
     pruned_counts: np.ndarray | None = None  # (min_contacts,) int64
+    coordinates: np.ndarray | None = None    # (n_conformations, chain_length, 2) int32
 
 
 def enumerate_conformations(
     chain_length: int,
     ligand: Ligand | None = None,
     min_contacts: int = 4,
+    store_coordinates: bool = False,
 ) -> ConformationDatabase:
     """Build a ConformationDatabase for all SAWs of *chain_length*.
 
@@ -241,6 +252,10 @@ def enumerate_conformations(
     contacts are not stored; their counts by contact number are recorded
     in ``pruned_counts`` for mean-field correction of the partition
     function.
+
+    When *store_coordinates* is True, the (x, y) positions for every
+    stored conformation are kept in ``coordinates``.  This is needed for
+    visualization but costs extra memory.
     """
     use_reduced = ligand is None
 
@@ -256,6 +271,7 @@ def enumerate_conformations(
 
     hist_len = max(min_contacts, 1)
     pruned_counts = np.zeros(hist_len, dtype=np.int64)
+    no_coords = np.empty((0, 0, 0), dtype=np.int32)
 
     # Pass 1: count conformations and contacts
     dummy = np.empty((0, 2), dtype=np.int32)
@@ -264,6 +280,7 @@ def enumerate_conformations(
         chain_length, ligand_grid, ligand_pos, n_ligand,
         use_reduced, True, min_contacts,
         dummy, dummy_off, dummy, dummy_off, pruned_counts,
+        no_coords,
     )
 
     # Pass 2: allocate exact arrays and fill
@@ -272,12 +289,17 @@ def enumerate_conformations(
     contact_offsets = np.zeros(n_conf + 1, dtype=np.int64)
     binding_pairs = np.empty((n_binding, 2), dtype=np.int32)
     binding_offsets = np.zeros(n_conf + 1, dtype=np.int64)
+    coords = (
+        np.empty((n_conf, chain_length, 2), dtype=np.int32)
+        if store_coordinates
+        else no_coords
+    )
 
     _enumerate_numba(
         chain_length, ligand_grid, ligand_pos, n_ligand,
         use_reduced, False, min_contacts,
         contact_pairs, contact_offsets, binding_pairs, binding_offsets,
-        pruned_counts,
+        pruned_counts, coords,
     )
 
     return ConformationDatabase(
@@ -291,20 +313,25 @@ def enumerate_conformations(
         reduced_symmetry=use_reduced,
         min_contacts=min_contacts,
         pruned_counts=pruned_counts if min_contacts > 0 else None,
+        coordinates=coords if store_coordinates else None,
     )
 
 
 def _recover_native_conformation(
     best_idx: int,
-    chain_length: int,
-    ligand: Ligand | None,
-    reduced_symmetry: bool,
+    db: ConformationDatabase,
 ) -> Conformation:
-    """Re-enumerate SAWs and return the conformation at index *best_idx*."""
-    ligand_sites = ligand.sites if ligand is not None else frozenset()
+    """Return the conformation at *best_idx* in the database."""
+    if db.coordinates is not None:
+        row = db.coordinates[best_idx]
+        return tuple((int(row[i, 0]), int(row[i, 1])) for i in range(db.chain_length))
+
+    ligand_sites = db.ligand.sites if db.ligand is not None else frozenset()
     idx = 0
-    for conf in enumerate_saws(chain_length, reduce_symmetry=reduced_symmetry):
+    for conf in enumerate_saws(db.chain_length, reduce_symmetry=db.reduced_symmetry):
         if ligand_sites and ligand_sites & set(conf):
+            continue
+        if db.min_contacts > 0 and len(get_contacts(conf)) < db.min_contacts:
             continue
         if idx == best_idx:
             return conf
@@ -535,9 +562,7 @@ def fold(
     frac_folded = exp(-best_energy / temperature) / Z_sum if Z_sum > 0 else 0.0
 
     if recover_conformation:
-        native_conf = _recover_native_conformation(
-            best_idx, db.chain_length, db.ligand, db.reduced_symmetry,
-        )
+        native_conf = _recover_native_conformation(best_idx, db)
     else:
         native_conf = ()
 

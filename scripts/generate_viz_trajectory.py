@@ -35,8 +35,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--ligand-anchor", type=parse_anchor, default=(0, -1))
     p.add_argument("--ligand-direction", type=str, default="horizontal",
                    choices=["horizontal", "vertical"])
-    p.add_argument("--n-steps", type=int, default=30)
-    p.add_argument("--Ne", type=float, default=100.0)
+    p.add_argument("--n-steps", type=int, default=100)
+    p.add_argument("--Ne", type=float, default=50.0)
     p.add_argument("--temperature", type=float, default=1.0)
     p.add_argument("--min-fitness", type=float, default=0.0)
     p.add_argument("--seed", type=int, default=42)
@@ -92,7 +92,7 @@ def main() -> None:
         direction=args.ligand_direction,
     )
 
-    db = enumerate_conformations(args.n_codons, ligand)
+    db = enumerate_conformations(args.n_codons, ligand, store_coordinates=True)
     print(f"enumerated {db.n_conformations:,} conformations")
 
     start_dna = generate_start_sequence(
