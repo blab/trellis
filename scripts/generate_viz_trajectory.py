@@ -3,7 +3,7 @@
 Runs a short SSWM trajectory, re-folds each unique amino-acid sequence
 encountered to capture its native conformation and binding contacts, and
 writes everything to a single JSON file consumed by
-``viz/trajectory_dashboard.html``.
+``viz/index.html``.
 """
 
 import argparse

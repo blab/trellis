@@ -322,7 +322,8 @@ chains (6–10 residues) complete instantly.
 ## Generate and visualize a single trajectory
 
 `scripts/generate_viz_trajectory.py` runs a short SSWM trajectory and
-writes a JSON snapshot for the interactive D3 dashboard.
+writes a JSON snapshot for the interactive D3 dashboard. A live example is
+at https://blab.github.io/trellis/viz/.
 
 ```bash
 python scripts/generate_viz_trajectory.py
@@ -331,11 +332,11 @@ python scripts/generate_viz_trajectory.py
 This runs from defaults (`--n-codons 10 --n-steps 30 --Ne 100
 --temperature 1.0 --seed 42 --ligand-sequence FWYL`) and writes
 `viz/viz_trajectory_data.json`. Serve the repo root over HTTP and open
-`viz/trajectory_dashboard.html` in a browser:
+`viz/index.html` in a browser:
 
 ```bash
 python -m http.server 8000
-# open http://localhost:8000/viz/trajectory_dashboard.html
+# open http://localhost:8000/viz/index.html
 ```
 
 The dashboard shows a fitness-vs-step plot, small-multiple lattice
@@ -440,7 +441,7 @@ trellis/
 │   ├── fold_sequence.py            # fold a single sequence, print results
 │   └── benchmark_folding.py        # branch-and-bound vs pre-enumeration comparison
 ├── viz/
-│   ├── trajectory_dashboard.html  # D3 dashboard (reads viz_trajectory_data.json)
+│   ├── index.html               # D3 dashboard (reads viz_trajectory_data.json)
 │   └── README.md
 ├── data/
 │   ├── mj_matrix.csv        # MJ 1985 Table V, 20×20, alphabetical AA order

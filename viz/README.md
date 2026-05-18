@@ -3,6 +3,8 @@
 Interactive D3 dashboard for inspecting an SSWM trajectory: a fitness-vs-step
 plot and small-multiple lattice diagrams of each native conformation.
 
+A live example is at https://blab.github.io/trellis/viz/.
+
 ## Usage
 
 1. Generate trajectory data:
@@ -25,7 +27,7 @@ plot and small-multiple lattice diagrams of each native conformation.
    python -m http.server 8000
    ```
 
-3. Open <http://localhost:8000/viz/trajectory_dashboard.html>.
+3. Open <http://localhost:8000/viz/index.html>.
 
 ## What's shown
 

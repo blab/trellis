@@ -1,0 +1,7536 @@
+{
+  "metadata": {
+    "n_codons": 18,
+    "n_steps": 100,
+    "Ne": 50.0,
+    "temperature": 1.0,
+    "seed": 102,
+    "ligand_sequence": "KEMN"
+  },
+  "ligand": {
+    "sequence": "KEMN",
+    "positions": [
+      [
+        0,
+        -1
+      ],
+      [
+        1,
+        -1
+      ],
+      [
+        2,
+        -1
+      ],
+      [
+        3,
+        -1
+      ]
+    ]
+  },
+  "steps": [
+    {
+      "step": 0,
+      "dna_sequence": "GTACGCTCCTCACTCAAGAACGCTCCCAGCTGGCATCAGGGGTTGGTAATCCTA",
+      "aa_sequence": "VRSSLKNAPSWHQGLVIL",
+      "fitness": 1.5616933981959393,
+      "mutation_type": null
+    },
+    {
+      "step": 1,
+      "dna_sequence": "GTACGCTCCTCACTCAAGAAGGCTCCCAGCTGGCATCAGGGGTTGGTAATCCTA",
+      "aa_sequence": "VRSSLKKAPSWHQGLVIL",
+      "fitness": 1.8648925754471979,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 2,
+      "dna_sequence": "GTACGCTCCTCACTCAAGAAGGCTCCCAGCTGGCATCAGGGGTTTGTAATCCTA",
+      "aa_sequence": "VRSSLKKAPSWHQGFVIL",
+      "fitness": 2.552368255059555,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 3,
+      "dna_sequence": "GTACGCTCCTCACTCAAGAAGGCTCCCAGGTGGCATCAGGGGTTTGTAATCCTA",
+      "aa_sequence": "VRSSLKKAPRWHQGFVIL",
+      "fitness": 3.6169500924720137,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 4,
+      "dna_sequence": "GTACGCTCCTCACTCAAGAAGGCTCCCAGGTGGCATCAGGGGTTTGTAACCCTA",
+      "aa_sequence": "VRSSLKKAPRWHQGFVTL",
+      "fitness": 4.817682982363725,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 5,
+      "dna_sequence": "GTACGCTCCTCACTCAAGAAGGCTCCCAGGTGGCATCAGGGGTTTGTAACCGTA",
+      "aa_sequence": "VRSSLKKAPRWHQGFVTV",
+      "fitness": 4.9531106405022785,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 6,
+      "dna_sequence": "GTACGCTCCTCACTCAAGAAGGCTCCCAGGTGGCATCAGGGGTTTTTAACCGTA",
+      "aa_sequence": "VRSSLKKAPRWHQGFLTV",
+      "fitness": 5.195872653713551,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 7,
+      "dna_sequence": "GTACGCTACTCACTCAAGAAGGCTCCCAGGTGGCATCAGGGGTTTTTAACCGTA",
+      "aa_sequence": "VRYSLKKAPRWHQGFLTV",
+      "fitness": 5.5980451524702275,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 8,
+      "dna_sequence": "GTACGCTACTCACTCAAGAAGGCTCCCAGGTGGCTTCAGGGGTTTTTAACCGTA",
+      "aa_sequence": "VRYSLKKAPRWLQGFLTV",
+      "fitness": 7.339897752870146,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 9,
+      "dna_sequence": "GTACGCTACTCACTCAAGAAGGCTCCCAGGTGGCTTCAGGGGTTTTTCACCGTA",
+      "aa_sequence": "VRYSLKKAPRWLQGFFTV",
+      "fitness": 8.055993640416448,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 10,
+      "dna_sequence": "GTACGCTACTCACTCAAGAAGGCTCCCAGGTGGCTTCAGGGGTTTTTCACCATA",
+      "aa_sequence": "VRYSLKKAPRWLQGFFTI",
+      "fitness": 8.587609769263267,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 11,
+      "dna_sequence": "GTACGATACTCACTCAAGAAGGCTCCCAGGTGGCTTCAGGGGTTTTTCACCATA",
+      "aa_sequence": "VRYSLKKAPRWLQGFFTI",
+      "fitness": 8.587609769263267,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 12,
+      "dna_sequence": "GTACGATACTCACTCAAGAAGGTTCCCAGGTGGCTTCAGGGGTTTTTCACCATA",
+      "aa_sequence": "VRYSLKKVPRWLQGFFTI",
+      "fitness": 11.020480600743221,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 13,
+      "dna_sequence": "TTACGATACTCACTCAAGAAGGTTCCCAGGTGGCTTCAGGGGTTTTTCACCATA",
+      "aa_sequence": "LRYSLKKVPRWLQGFFTI",
+      "fitness": 11.113026692169289,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 14,
+      "dna_sequence": "TTACGATACTCACTCAAGAAGGTTCCCAGGTTGCTTCAGGGGTTTTTCACCATA",
+      "aa_sequence": "LRYSLKKVPRLLQGFFTI",
+      "fitness": 11.814994573085569,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 15,
+      "dna_sequence": "TTACGATACTCACTCAAGAAGTTTCCCAGGTTGCTTCAGGGGTTTTTCACCATA",
+      "aa_sequence": "LRYSLKKFPRLLQGFFTI",
+      "fitness": 12.47927684774277,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 16,
+      "dna_sequence": "TTTCGATACTCACTCAAGAAGTTTCCCAGGTTGCTTCAGGGGTTTTTCACCATA",
+      "aa_sequence": "FRYSLKKFPRLLQGFFTI",
+      "fitness": 12.61557077486329,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 17,
+      "dna_sequence": "TTTGGATACTCACTCAAGAAGTTTCCCAGGTTGCTTCAGGGGTTTTTCACCATA",
+      "aa_sequence": "FGYSLKKFPRLLQGFFTI",
+      "fitness": 12.93099477769706,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 18,
+      "dna_sequence": "TTTGGATACTCACTCAAGAAGTTTCCCAGGTTTCTTCAGGGGTTTTTCACCATA",
+      "aa_sequence": "FGYSLKKFPRFLQGFFTI",
+      "fitness": 13.076620767151605,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 19,
+      "dna_sequence": "TTTGGATACTCACTCAAGAAGTTTCCCAGGTTTCTTGAGGGGTTTTTCACCATA",
+      "aa_sequence": "FGYSLKKFPRFLEGFFTI",
+      "fitness": 13.241380707226401,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 20,
+      "dna_sequence": "TTTGGATACTCACTCAAGAAGTTTCCCAGGTTTCTGGAGGGGTTTTTCACCATA",
+      "aa_sequence": "FGYSLKKFPRFLEGFFTI",
+      "fitness": 13.241380707226401,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 21,
+      "dna_sequence": "TTTGGATACTCACTCAAGAAGTTTCCCAGGTTTCTGGAGGGGTTTTTCACTATA",
+      "aa_sequence": "FGYSLKKFPRFLEGFFTI",
+      "fitness": 13.241380707226401,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 22,
+      "dna_sequence": "TTTGGATACTCACTCAAGAAGTTTCCCAGGTTTCTGGAGGGGTTTTTCACGATA",
+      "aa_sequence": "FGYSLKKFPRFLEGFFTI",
+      "fitness": 13.241380707226401,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 23,
+      "dna_sequence": "TTTGGATACTCATTCAAGAAGTTTCCCAGGTTTCTGGAGGGGTTTTTCACGATA",
+      "aa_sequence": "FGYSFKKFPRFLEGFFTI",
+      "fitness": 13.35878574104902,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 24,
+      "dna_sequence": "TTTGGATGCTCATTCAAGAAGTTTCCCAGGTTTCTGGAGGGGTTTTTCACGATA",
+      "aa_sequence": "FGCSFKKFPRFLEGFFTI",
+      "fitness": 13.385913180499667,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 25,
+      "dna_sequence": "TTTGGATGCTCATTCAAGAAGTTTCCCAGGTTTCTGGAAGGGTTTTTCACGATA",
+      "aa_sequence": "FGCSFKKFPRFLEGFFTI",
+      "fitness": 13.385913180499667,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 26,
+      "dna_sequence": "TTTGGATGCTCATTCAAGAAGTTTCCCAGGTTTCTGGAAGGGTTTTTCACAATA",
+      "aa_sequence": "FGCSFKKFPRFLEGFFTI",
+      "fitness": 13.385913180499667,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 27,
+      "dna_sequence": "TTTGGATGCTCATTCAAGAAGTTTCCCAGGTTTCTCGAAGGGTTTTTCACAATA",
+      "aa_sequence": "FGCSFKKFPRFLEGFFTI",
+      "fitness": 13.385913180499667,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 28,
+      "dna_sequence": "TTTGGATGCTCATTCAAGAAGTTTCCCAAGTTTCTCGAAGGGTTTTTCACAATA",
+      "aa_sequence": "FGCSFKKFPKFLEGFFTI",
+      "fitness": 13.417901124514673,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 29,
+      "dna_sequence": "TTTGGATGCTCATTCAAGAAGTTTCCCAAGTTTCTCGAAGGGTTTTTCATAATA",
+      "aa_sequence": "FGCSFKKFPKFLEGFFII",
+      "fitness": 13.567242315496573,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 30,
+      "dna_sequence": "TTTGGATGCTCATTCAAGAAGTTTCCCAAGTTTCTCGAATGGTTTTTCATAATA",
+      "aa_sequence": "FGCSFKKFPKFLEWFFII",
+      "fitness": 14.017694731227264,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 31,
+      "dna_sequence": "TTTGCATGCTCATTCAAGAAGTTTCCCAAGTTTCTCGAATGGTTTTTCATAATA",
+      "aa_sequence": "FACSFKKFPKFLEWFFII",
+      "fitness": 14.452978100041237,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 32,
+      "dna_sequence": "TTTGCATGCTCATTTAAGAAGTTTCCCAAGTTTCTCGAATGGTTTTTCATAATA",
+      "aa_sequence": "FACSFKKFPKFLEWFFII",
+      "fitness": 14.452978100041237,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 33,
+      "dna_sequence": "TTTGCATGCTCATTTAAGAAGTTTCCGAAGTTTCTCGAATGGTTTTTCATAATA",
+      "aa_sequence": "FACSFKKFPKFLEWFFII",
+      "fitness": 14.452978100041237,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 34,
+      "dna_sequence": "TTTGCATGCTCATTTAAGAAGTTTCCTAAGTTTCTCGAATGGTTTTTCATAATA",
+      "aa_sequence": "FACSFKKFPKFLEWFFII",
+      "fitness": 14.452978100041237,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 35,
+      "dna_sequence": "TTTGCATGCTCATTTAAGAAGTTTCCTAGGTTTCTCGAATGGTTTTTCATAATA",
+      "aa_sequence": "FACSFKKFPRFLEWFFII",
+      "fitness": 14.712061759209567,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 36,
+      "dna_sequence": "TTTGCATGCTCATTTAAGAAGTTTCCTAGGTTTCTCGATTGGTTTTTCATAATA",
+      "aa_sequence": "FACSFKKFPRFLDWFFII",
+      "fitness": 14.825137926847757,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 37,
+      "dna_sequence": "TTTGCATGCTCATTTAAGAAGTTTCCTAGGTTTCTCGATTGGTTTTTCATATTA",
+      "aa_sequence": "FACSFKKFPRFLDWFFIL",
+      "fitness": 14.933159060976534,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 38,
+      "dna_sequence": "TTTGCATGCTCATTTAAGAAGTTTCCTAGGTTTCTCGATTGGTTTTTCATATTC",
+      "aa_sequence": "FACSFKKFPRFLDWFFIF",
+      "fitness": 15.143998375753585,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 39,
+      "dna_sequence": "TTTGCATGCTCATTTAAGAAGTTTCCTAGGTTTCTCGATTGGTTTTTTATATTC",
+      "aa_sequence": "FACSFKKFPRFLDWFFIF",
+      "fitness": 15.143998375753585,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 40,
+      "dna_sequence": "TTTGCATGCTCATTTAAGAAGTTTCCTAGGTTTCTCGATTGGTTTTTTATTTTC",
+      "aa_sequence": "FACSFKKFPRFLDWFFIF",
+      "fitness": 15.143998375753585,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 41,
+      "dna_sequence": "TTTGCATGCTCATTTAAGAAGTTTCGTAGGTTTCTCGATTGGTTTTTTATTTTC",
+      "aa_sequence": "FACSFKKFRRFLDWFFIF",
+      "fitness": 15.165435965699707,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 42,
+      "dna_sequence": "TTTGCATGCTCATTTAAGAAGTTTCGTAGGTTTCTGGATTGGTTTTTTATTTTC",
+      "aa_sequence": "FACSFKKFRRFLDWFFIF",
+      "fitness": 15.165435965699707,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 43,
+      "dna_sequence": "TTTGCATGCTCATTTAAGAAGTTTCGTAGGTTTCTGGATTGGTTTTTTATTTGC",
+      "aa_sequence": "FACSFKKFRRFLDWFFIC",
+      "fitness": 15.278823789904383,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 44,
+      "dna_sequence": "TTTGCATGCTCATTTAAGAAGTTTCGTAGGTTTCTGGATTGGTTTTTTATTTGT",
+      "aa_sequence": "FACSFKKFRRFLDWFFIC",
+      "fitness": 15.278823789904383,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 45,
+      "dna_sequence": "TTTGCATGCTCATTTAAGAAGTTTCGCAGGTTTCTGGATTGGTTTTTTATTTGT",
+      "aa_sequence": "FACSFKKFRRFLDWFFIC",
+      "fitness": 15.278823789904383,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 46,
+      "dna_sequence": "TTTGCATGCTCATTTAAGAAGTTTCGCAGGTTTCTTGATTGGTTTTTTATTTGT",
+      "aa_sequence": "FACSFKKFRRFLDWFFIC",
+      "fitness": 15.278823789904383,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 47,
+      "dna_sequence": "TTTGCATGCTCATTTAAGAAATTTCGCAGGTTTCTTGATTGGTTTTTTATTTGT",
+      "aa_sequence": "FACSFKKFRRFLDWFFIC",
+      "fitness": 15.278823789904383,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 48,
+      "dna_sequence": "TTTGCATGCTCATTTAAGAAATTTCGCAGGTTTCTGGATTGGTTTTTTATTTGT",
+      "aa_sequence": "FACSFKKFRRFLDWFFIC",
+      "fitness": 15.278823789904383,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 49,
+      "dna_sequence": "TTTGCATGCTCATTTAAGAAATTTCCCAGGTTTCTGGATTGGTTTTTTATTTGT",
+      "aa_sequence": "FACSFKKFPRFLDWFFIC",
+      "fitness": 15.25984680338136,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 50,
+      "dna_sequence": "TTTGCATGCTCATTTAAGAAATTTCCCAGGTTTCTCGATTGGTTTTTTATTTGT",
+      "aa_sequence": "FACSFKKFPRFLDWFFIC",
+      "fitness": 15.25984680338136,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 51,
+      "dna_sequence": "TTTGCTTGCTCATTTAAGAAATTTCCCAGGTTTCTCGATTGGTTTTTTATTTGT",
+      "aa_sequence": "FACSFKKFPRFLDWFFIC",
+      "fitness": 15.25984680338136,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 52,
+      "dna_sequence": "TTTGCTTGCTCTTTTAAGAAATTTCCCAGGTTTCTCGATTGGTTTTTTATTTGT",
+      "aa_sequence": "FACSFKKFPRFLDWFFIC",
+      "fitness": 15.25984680338136,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 53,
+      "dna_sequence": "TTTGCTTGCTCTTTTAAGAAATTTCCCAGATTTCTCGATTGGTTTTTTATTTGT",
+      "aa_sequence": "FACSFKKFPRFLDWFFIC",
+      "fitness": 15.25984680338136,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 54,
+      "dna_sequence": "TTTGCTTGCTCTTGTAAGAAATTTCCCAGATTTCTCGATTGGTTTTTTATTTGT",
+      "aa_sequence": "FACSCKKFPRFLDWFFIC",
+      "fitness": 15.248456021215791,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 55,
+      "dna_sequence": "TTTGCTTGCTCTTGTAAGAAGTTTCCCAGATTTCTCGATTGGTTTTTTATTTGT",
+      "aa_sequence": "FACSCKKFPRFLDWFFIC",
+      "fitness": 15.248456021215791,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 56,
+      "dna_sequence": "TTTGCTTGCTCTTGTAAGAAGTTTCCCAGATTTATCGATTGGTTTTTTATTTGT",
+      "aa_sequence": "FACSCKKFPRFIDWFFIC",
+      "fitness": 15.278927713263487,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 57,
+      "dna_sequence": "TTTGCTTGCTCTTGTAAAAAGTTTCCCAGATTTATCGATTGGTTTTTTATTTGT",
+      "aa_sequence": "FACSCKKFPRFIDWFFIC",
+      "fitness": 15.278927713263487,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 58,
+      "dna_sequence": "TTTGCTTGCTCTTGTAAAAAGTTCCCCAGATTTATCGATTGGTTTTTTATTTGT",
+      "aa_sequence": "FACSCKKFPRFIDWFFIC",
+      "fitness": 15.278927713263487,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 59,
+      "dna_sequence": "TTTGCTTGCTCTTGTAAAAAGTTCCCCAGATTTATGGATTGGTTTTTTATTTGT",
+      "aa_sequence": "FACSCKKFPRFMDWFFIC",
+      "fitness": 15.297206130442067,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 60,
+      "dna_sequence": "TTTGCCTGCTCTTGTAAAAAGTTCCCCAGATTTATGGATTGGTTTTTTATTTGT",
+      "aa_sequence": "FACSCKKFPRFMDWFFIC",
+      "fitness": 15.297206130442067,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 61,
+      "dna_sequence": "ATTGCCTGCTCTTGTAAAAAGTTCCCCAGATTTATGGATTGGTTTTTTATTTGT",
+      "aa_sequence": "IACSCKKFPRFMDWFFIC",
+      "fitness": 15.307200506702397,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 62,
+      "dna_sequence": "ATTGCCTGCTCTTGTAAAAAGTTCCGCAGATTTATGGATTGGTTTTTTATTTGT",
+      "aa_sequence": "IACSCKKFRRFMDWFFIC",
+      "fitness": 15.352773413022762,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 63,
+      "dna_sequence": "ATTGCCTGCTCTTGTAAAAAGTTCCGCAGATTCATGGATTGGTTTTTTATTTGT",
+      "aa_sequence": "IACSCKKFRRFMDWFFIC",
+      "fitness": 15.352773413022762,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 64,
+      "dna_sequence": "ATTGCATGCTCTTGTAAAAAGTTCCGCAGATTCATGGATTGGTTTTTTATTTGT",
+      "aa_sequence": "IACSCKKFRRFMDWFFIC",
+      "fitness": 15.352773413022762,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 65,
+      "dna_sequence": "ATGGCATGCTCTTGTAAAAAGTTCCGCAGATTCATGGATTGGTTTTTTATTTGT",
+      "aa_sequence": "MACSCKKFRRFMDWFFIC",
+      "fitness": 15.68508973688912,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 66,
+      "dna_sequence": "ATGGCATGCTCTTGTAAAAAGTTCCGCAGATTCATGGATTGGTTTTTTATATGT",
+      "aa_sequence": "MACSCKKFRRFMDWFFIC",
+      "fitness": 15.68508973688912,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 67,
+      "dna_sequence": "ATGGCATGCTCTTGTAAAAAGTTCCGAAGATTCATGGATTGGTTTTTTATATGT",
+      "aa_sequence": "MACSCKKFRRFMDWFFIC",
+      "fitness": 15.68508973688912,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 68,
+      "dna_sequence": "ATGGCATGTTCTTGTAAAAAGTTCCGAAGATTCATGGATTGGTTTTTTATATGT",
+      "aa_sequence": "MACSCKKFRRFMDWFFIC",
+      "fitness": 15.68508973688912,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 69,
+      "dna_sequence": "ATGGCATGTTCTTGTAAAAAGTTTCGAAGATTCATGGATTGGTTTTTTATATGT",
+      "aa_sequence": "MACSCKKFRRFMDWFFIC",
+      "fitness": 15.68508973688912,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 70,
+      "dna_sequence": "ATGGCATGTTCTTGTAAAAAGTTTAGAAGATTCATGGATTGGTTTTTTATATGT",
+      "aa_sequence": "MACSCKKFRRFMDWFFIC",
+      "fitness": 15.68508973688912,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 71,
+      "dna_sequence": "ATGGCATGTTCTTGTAAAAAGTTTAGAAGATTCATGGACTGGTTTTTTATATGT",
+      "aa_sequence": "MACSCKKFRRFMDWFFIC",
+      "fitness": 15.68508973688912,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 72,
+      "dna_sequence": "ATGGCATGTTCTTGTAAAAAGTTTAAAAGATTCATGGACTGGTTTTTTATATGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 73,
+      "dna_sequence": "ATGGCGTGTTCTTGTAAAAAGTTTAAAAGATTCATGGACTGGTTTTTTATATGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 74,
+      "dna_sequence": "ATGGCGTGTTCTTGTAAAAAGTTTAAAAGGTTCATGGACTGGTTTTTTATATGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 75,
+      "dna_sequence": "ATGGCGTGTTCTTGTAAAAAGTTTAAAAGGTTCATGGACTGGTTTTTCATATGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 76,
+      "dna_sequence": "ATGGCCTGTTCTTGTAAAAAGTTTAAAAGGTTCATGGACTGGTTTTTCATATGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 77,
+      "dna_sequence": "ATGGCCTGTTCTTGTAAAAAGTTTAAAAGGTTCATGGACTGGTTTTTCATTTGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 78,
+      "dna_sequence": "ATGGCGTGTTCTTGTAAAAAGTTTAAAAGGTTCATGGACTGGTTTTTCATTTGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 79,
+      "dna_sequence": "ATGGCGTGTTCTTGTAAAAAGTTTAAAAGGTTTATGGACTGGTTTTTCATTTGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 80,
+      "dna_sequence": "ATGGCGTGTTCTTGTAAGAAGTTTAAAAGGTTTATGGACTGGTTTTTCATTTGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 81,
+      "dna_sequence": "ATGGCGTGTTCTTGTAAGAAGTTCAAAAGGTTTATGGACTGGTTTTTCATTTGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 82,
+      "dna_sequence": "ATGGCGTGTCCTTGTAAGAAGTTCAAAAGGTTTATGGACTGGTTTTTCATTTGT",
+      "aa_sequence": "MACPCKKFKRFMDWFFIC",
+      "fitness": 15.717546405983098,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 83,
+      "dna_sequence": "ATGGCGTGTTCTTGTAAGAAGTTCAAAAGGTTTATGGACTGGTTTTTCATTTGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 84,
+      "dna_sequence": "ATGGCGTGTTCGTGTAAGAAGTTCAAAAGGTTTATGGACTGGTTTTTCATTTGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 85,
+      "dna_sequence": "ATGGCGTGTTCGTGTAAGAAGTTCAAAAGGTTTATGGACTGGTTCTTCATTTGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 86,
+      "dna_sequence": "ATGGCGTGTTCGTGTAAGAAGTTCAAAAGGTTTATGGACTGGTTCTTTATTTGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 87,
+      "dna_sequence": "ATGGCGTGTTCGTGTAAGAAGTTCAAAAGGTTTATGGATTGGTTCTTTATTTGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 88,
+      "dna_sequence": "ATGGCGTGTTCGTGCAAGAAGTTCAAAAGGTTTATGGATTGGTTCTTTATTTGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 89,
+      "dna_sequence": "ATGGCGTGTTCGTGTAAGAAGTTCAAAAGGTTTATGGATTGGTTCTTTATTTGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 90,
+      "dna_sequence": "ATGGCGTGTTCGTGTAAGAAGTGCAAAAGGTTTATGGATTGGTTCTTTATTTGT",
+      "aa_sequence": "MACSCKKCKRFMDWFFIC",
+      "fitness": 15.749920026109066,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 91,
+      "dna_sequence": "ATGGCGTGTTCGTGTAAGAAGTTCAAAAGGTTTATGGATTGGTTCTTTATTTGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 92,
+      "dna_sequence": "ATGGCGTGTTCGTGTAAAAAGTTCAAAAGGTTTATGGATTGGTTCTTTATTTGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 93,
+      "dna_sequence": "ATGGCGTGTTCGTGTAAAAAGTTCAAGAGGTTTATGGATTGGTTCTTTATTTGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 94,
+      "dna_sequence": "ATGGCGTGTTCTTGTAAAAAGTTCAAGAGGTTTATGGATTGGTTCTTTATTTGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 95,
+      "dna_sequence": "ATGGCGTGCTCTTGTAAAAAGTTCAAGAGGTTTATGGATTGGTTCTTTATTTGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 96,
+      "dna_sequence": "ATGGCTTGCTCTTGTAAAAAGTTCAAGAGGTTTATGGATTGGTTCTTTATTTGT",
+      "aa_sequence": "MACSCKKFKRFMDWFFIC",
+      "fitness": 15.754648050167676,
+      "mutation_type": "synonymous"
+    },
+    {
+      "step": 97,
+      "dna_sequence": "ATGGCTTGCTCTTGTAAAAAGTGCAAGAGGTTTATGGATTGGTTCTTTATTTGT",
+      "aa_sequence": "MACSCKKCKRFMDWFFIC",
+      "fitness": 15.749920026109066,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 98,
+      "dna_sequence": "ATGGCTTGCTCTTGTAAAAAGTGCAAGAGGTGTATGGATTGGTTCTTTATTTGT",
+      "aa_sequence": "MACSCKKCKRCMDWFFIC",
+      "fitness": 15.873744857002917,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 99,
+      "dna_sequence": "ATGGCTTGCTCTTGTAAAAAGTGCAAGAGGTGTATAGATTGGTTCTTTATTTGT",
+      "aa_sequence": "MACSCKKCKRCIDWFFIC",
+      "fitness": 15.865023551366399,
+      "mutation_type": "nonsynonymous"
+    },
+    {
+      "step": 100,
+      "dna_sequence": "ATGGCATGCTCTTGTAAAAAGTGCAAGAGGTGTATAGATTGGTTCTTTATTTGT",
+      "aa_sequence": "MACSCKKCKRCIDWFFIC",
+      "fitness": 15.865023551366399,
+      "mutation_type": "synonymous"
+    }
+  ],
+  "conformations": {
+    "FGCSFKKFPRFLEGFFTI": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -66.73,
+      "native_binding_energy": -14.58,
+      "fraction_folded": 0.9181010411865341,
+      "ensemble_binding_energy": -14.446535036193938,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.85,
+        -2.03,
+        -5.03,
+        -6.85,
+        -6.39,
+        -6.85,
+        -2.07,
+        -6.39,
+        -6.26,
+        -3.43
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.83,
+        -1.56,
+        -6.68,
+        -3.51
+      ]
+    },
+    "FGYSLKKFPRFLEGFFTI": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -65.52,
+      "native_binding_energy": -14.58,
+      "fraction_folded": 0.9081879771760221,
+      "ensemble_binding_energy": -14.45893793814737,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.85,
+        -2.03,
+        -4.63,
+        -6.26,
+        -6.17,
+        -6.85,
+        -2.07,
+        -6.39,
+        -6.26,
+        -3.43
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.83,
+        -1.56,
+        -6.68,
+        -3.51
+      ]
+    },
+    "FACSFKKFRRFLDWFFIC": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -72.19999999999999,
+      "native_binding_energy": -16.13,
+      "fraction_folded": 0.9472302411596022,
+      "ensemble_binding_energy": -16.031857562457898,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.85,
+        -4.41,
+        -5.44,
+        -6.85,
+        -5.63,
+        -6.85,
+        -1.98,
+        -5.63,
+        -6.26,
+        -6.17
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.83,
+        -3.11,
+        -6.68,
+        -3.51
+      ]
+    },
+    "VRSSLKNAPSWHQGLVIL": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -51.66,
+      "native_binding_energy": -12.08,
+      "fraction_folded": 0.12927925481754465,
+      "ensemble_binding_energy": -11.469000702702882,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -4.94,
+        -3.33,
+        -3.16,
+        -3.96,
+        -5.79,
+        -3.93,
+        -1.37,
+        -5.5,
+        -3.84,
+        -3.76
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -1.95,
+        -1.56,
+        -6.01,
+        -2.56
+      ]
+    },
+    "VRYSLKKAPRWLQGFFTI": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -57.28999999999999,
+      "native_binding_energy": -13.7,
+      "fraction_folded": 0.6268328298732312,
+      "ensemble_binding_energy": -13.319474083451542,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -5.75,
+        -1.97,
+        -4.63,
+        -3.96,
+        -6.17,
+        -3.93,
+        -1.85,
+        -5.64,
+        -6.26,
+        -3.43
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -1.95,
+        -1.56,
+        -6.68,
+        -3.51
+      ]
+    },
+    "FGCSFKKFPKFLEWFFII": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -72.17,
+      "native_binding_energy": -16.13,
+      "fraction_folded": 0.869044930640252,
+      "ensemble_binding_energy": -15.94279871489072,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.85,
+        -3.65,
+        -5.03,
+        -6.85,
+        -6.39,
+        -6.85,
+        -1.6,
+        -6.39,
+        -6.26,
+        -6.17
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.83,
+        -3.11,
+        -6.68,
+        -3.51
+      ]
+    },
+    "VRYSLKKAPRWHQGFLTV": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -51.59,
+      "native_binding_energy": -13.1,
+      "fraction_folded": 0.42733169102826163,
+      "ensemble_binding_energy": -12.261571584379192,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -5.38,
+        -1.97,
+        -4.05,
+        -3.96,
+        -5.38,
+        -3.93,
+        -1.85,
+        -5.05,
+        -4.61,
+        -2.31
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -1.95,
+        -1.56,
+        -6.68,
+        -2.91
+      ]
+    },
+    "LRYSLKKFPRLLQGFFTI": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -63.64,
+      "native_binding_energy": -14.379999999999999,
+      "fraction_folded": 0.8678217557540175,
+      "ensemble_binding_energy": -14.178988514623914,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.26,
+        -1.97,
+        -4.63,
+        -6.26,
+        -6.17,
+        -6.26,
+        -1.85,
+        -6.17,
+        -6.26,
+        -3.43
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.63,
+        -1.56,
+        -6.68,
+        -3.51
+      ]
+    },
+    "FACSFKKFPKFLEWFFII": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -72.93,
+      "native_binding_energy": -16.13,
+      "fraction_folded": 0.8960308803497358,
+      "ensemble_binding_energy": -15.979076249744107,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.85,
+        -4.41,
+        -5.03,
+        -6.85,
+        -6.39,
+        -6.85,
+        -1.6,
+        -6.39,
+        -6.26,
+        -6.17
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.83,
+        -3.11,
+        -6.68,
+        -3.51
+      ]
+    },
+    "MACPCKKFKRFMDWFFIC": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -71.47999999999999,
+      "native_binding_energy": -16.409999999999997,
+      "fraction_folded": 0.9578029497856857,
+      "ensemble_binding_energy": -16.324345309409853,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.68,
+        -4.41,
+        -5.44,
+        -5.63,
+        -5.44,
+        -6.85,
+        -1.98,
+        -5.63,
+        -6.68,
+        -6.33
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -3.11,
+        -3.11,
+        -6.68,
+        -3.51
+      ]
+    },
+    "FACSFKKFRRFLDWFFIF": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -74.83,
+      "native_binding_energy": -16.13,
+      "fraction_folded": 0.9402006178363117,
+      "ensemble_binding_energy": -16.048323079683485,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.85,
+        -4.41,
+        -5.63,
+        -6.85,
+        -6.85,
+        -6.85,
+        -1.98,
+        -6.85,
+        -6.26,
+        -6.17
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.83,
+        -3.11,
+        -6.68,
+        -3.51
+      ]
+    },
+    "FACSFKKFPRFLDWFFIF": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -74.83,
+      "native_binding_energy": -16.13,
+      "fraction_folded": 0.9388715670027021,
+      "ensemble_binding_energy": -16.04572572469565,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.85,
+        -4.41,
+        -5.63,
+        -6.85,
+        -6.85,
+        -6.85,
+        -1.98,
+        -6.85,
+        -6.26,
+        -6.17
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.83,
+        -3.11,
+        -6.68,
+        -3.51
+      ]
+    },
+    "FACSCKKFPRFMDWFFIC": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -71.36999999999999,
+      "native_binding_energy": -16.13,
+      "fraction_folded": 0.9483698778947345,
+      "ensemble_binding_energy": -16.047071807227347,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.85,
+        -4.41,
+        -5.44,
+        -5.63,
+        -5.44,
+        -6.85,
+        -1.98,
+        -5.63,
+        -6.68,
+        -6.33
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.83,
+        -3.11,
+        -6.68,
+        -3.51
+      ]
+    },
+    "FACSCKKFPRFLDWFFIC": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -70.78999999999999,
+      "native_binding_energy": -16.13,
+      "fraction_folded": 0.9453475524622313,
+      "ensemble_binding_energy": -16.03443880916741,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.85,
+        -4.41,
+        -5.44,
+        -5.63,
+        -5.44,
+        -6.85,
+        -1.98,
+        -5.63,
+        -6.26,
+        -6.17
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.83,
+        -3.11,
+        -6.68,
+        -3.51
+      ]
+    },
+    "VRSSLKKAPSWHQGFVIL": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -53.1,
+      "native_binding_energy": -12.75,
+      "fraction_folded": 0.20018574549486703,
+      "ensemble_binding_energy": -12.00897750565515,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -4.94,
+        -3.33,
+        -3.16,
+        -3.96,
+        -5.79,
+        -3.93,
+        -1.37,
+        -5.5,
+        -4.61,
+        -3.76
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -1.95,
+        -1.56,
+        -6.68,
+        -2.56
+      ]
+    },
+    "MACSCKKCKRCMDWFFIC": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -69.69,
+      "native_binding_energy": -16.409999999999997,
+      "fraction_folded": 0.9673214416211408,
+      "ensemble_binding_energy": -16.358727911940502,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.68,
+        -4.41,
+        -5.44,
+        -5.44,
+        -5.44,
+        -5.44,
+        -1.98,
+        -5.44,
+        -6.68,
+        -6.33
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -3.11,
+        -3.11,
+        -6.68,
+        -3.51
+      ]
+    },
+    "IACSCKKFPRFMDWFFIC": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -70.78,
+      "native_binding_energy": -16.0,
+      "fraction_folded": 0.9567000316688998,
+      "ensemble_binding_energy": -15.922353603164794,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.39,
+        -4.41,
+        -5.44,
+        -5.63,
+        -5.44,
+        -6.85,
+        -1.98,
+        -5.63,
+        -6.68,
+        -6.33
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.7,
+        -3.11,
+        -6.68,
+        -3.51
+      ]
+    },
+    "IACSCKKFRRFMDWFFIC": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -70.78,
+      "native_binding_energy": -16.0,
+      "fraction_folded": 0.9595483383139226,
+      "ensemble_binding_energy": -15.92657982947419,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.39,
+        -4.41,
+        -5.44,
+        -5.63,
+        -5.44,
+        -6.85,
+        -1.98,
+        -5.63,
+        -6.68,
+        -6.33
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.7,
+        -3.11,
+        -6.68,
+        -3.51
+      ]
+    },
+    "FGYSLKKFPRFLQGFFTI": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -65.3,
+      "native_binding_energy": -14.58,
+      "fraction_folded": 0.8968875697634845,
+      "ensemble_binding_energy": -14.451421156486584,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.85,
+        -2.03,
+        -4.63,
+        -6.26,
+        -6.17,
+        -6.85,
+        -1.85,
+        -6.39,
+        -6.26,
+        -3.43
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.83,
+        -1.56,
+        -6.68,
+        -3.51
+      ]
+    },
+    "MACSCKKCKRCIDWFFIC": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -69.28999999999999,
+      "native_binding_energy": -16.409999999999997,
+      "fraction_folded": 0.9667899787548082,
+      "ensemble_binding_energy": -16.356551395319286,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.68,
+        -4.41,
+        -5.44,
+        -5.44,
+        -5.44,
+        -5.44,
+        -1.98,
+        -5.44,
+        -6.39,
+        -6.22
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -3.11,
+        -3.11,
+        -6.68,
+        -3.51
+      ]
+    },
+    "FACSFKKFPRFLDWFFIL": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -73.05,
+      "native_binding_energy": -16.13,
+      "fraction_folded": 0.9258003137617195,
+      "ensemble_binding_energy": -16.029129279072247,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.85,
+        -4.41,
+        -5.03,
+        -6.85,
+        -6.26,
+        -6.85,
+        -1.98,
+        -6.26,
+        -6.26,
+        -6.17
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.83,
+        -3.11,
+        -6.68,
+        -3.51
+      ]
+    },
+    "VRSSLKKAPRWHQGFVTL": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -50.77,
+      "native_binding_energy": -12.75,
+      "fraction_folded": 0.37785748881284115,
+      "ensemble_binding_energy": -12.273527172642735,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -4.94,
+        -1.97,
+        -3.16,
+        -3.96,
+        -5.79,
+        -3.93,
+        -1.85,
+        -5.5,
+        -4.61,
+        -2.31
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -1.95,
+        -1.56,
+        -6.68,
+        -2.56
+      ]
+    },
+    "VRYSLKKVPRWLQGFFTI": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -59.83,
+      "native_binding_energy": -13.7,
+      "fraction_folded": 0.8044146423900161,
+      "ensemble_binding_energy": -13.441455210067733,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -5.75,
+        -1.97,
+        -4.63,
+        -5.38,
+        -6.17,
+        -5.05,
+        -1.85,
+        -5.64,
+        -6.26,
+        -3.43
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -1.95,
+        -1.56,
+        -6.68,
+        -3.51
+      ]
+    },
+    "FACSCKKFPRFIDWFFIC": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -70.97,
+      "native_binding_energy": -16.13,
+      "fraction_folded": 0.947236684021295,
+      "ensemble_binding_energy": -16.04132584951369,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.85,
+        -4.41,
+        -5.44,
+        -5.63,
+        -5.44,
+        -6.85,
+        -1.98,
+        -5.63,
+        -6.39,
+        -6.22
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.83,
+        -3.11,
+        -6.68,
+        -3.51
+      ]
+    },
+    "FACSFKKFPRFLDWFFIC": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -72.19999999999999,
+      "native_binding_energy": -16.13,
+      "fraction_folded": 0.9460537385853293,
+      "ensemble_binding_energy": -16.03024481871129,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.85,
+        -4.41,
+        -5.44,
+        -6.85,
+        -5.63,
+        -6.85,
+        -1.98,
+        -5.63,
+        -6.26,
+        -6.17
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.83,
+        -3.11,
+        -6.68,
+        -3.51
+      ]
+    },
+    "LRYSLKKVPRWLQGFFTI": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -61.019999999999996,
+      "native_binding_energy": -14.379999999999999,
+      "fraction_folded": 0.7728113137808964,
+      "ensemble_binding_energy": -14.105534645693247,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.26,
+        -1.97,
+        -4.63,
+        -5.38,
+        -6.17,
+        -5.05,
+        -1.85,
+        -5.64,
+        -6.26,
+        -3.43
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.63,
+        -1.56,
+        -6.68,
+        -3.51
+      ]
+    },
+    "FRYSLKKFPRLLQGFFTI": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -64.43,
+      "native_binding_energy": -14.58,
+      "fraction_folded": 0.8652654852443957,
+      "ensemble_binding_energy": -14.387427279081466,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.85,
+        -1.97,
+        -4.63,
+        -6.26,
+        -6.17,
+        -6.26,
+        -1.85,
+        -6.17,
+        -6.26,
+        -3.43
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.83,
+        -1.56,
+        -6.68,
+        -3.51
+      ]
+    },
+    "FGYSLKKFPRLLQGFFTI": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -64.49,
+      "native_binding_energy": -14.58,
+      "fraction_folded": 0.8868995046431455,
+      "ensemble_binding_energy": -14.4456719628149,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.85,
+        -2.03,
+        -4.63,
+        -6.26,
+        -6.17,
+        -6.26,
+        -1.85,
+        -6.17,
+        -6.26,
+        -3.43
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.83,
+        -1.56,
+        -6.68,
+        -3.51
+      ]
+    },
+    "VRYSLKKAPRWLQGFLTV": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -54.36,
+      "native_binding_energy": -13.1,
+      "fraction_folded": 0.5602975383870341,
+      "ensemble_binding_energy": -12.59297863178861,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -5.38,
+        -1.97,
+        -4.05,
+        -3.96,
+        -5.38,
+        -3.93,
+        -1.85,
+        -5.05,
+        -6.26,
+        -3.43
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -1.95,
+        -1.56,
+        -6.68,
+        -2.91
+      ]
+    },
+    "VRSSLKKAPRWHQGFLTV": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -50.330000000000005,
+      "native_binding_energy": -13.1,
+      "fraction_folded": 0.3966315002834772,
+      "ensemble_binding_energy": -12.491224546104895,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -5.38,
+        -1.97,
+        -2.79,
+        -3.96,
+        -5.38,
+        -3.93,
+        -1.85,
+        -5.05,
+        -4.61,
+        -2.31
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -1.95,
+        -1.56,
+        -6.68,
+        -2.91
+      ]
+    },
+    "FGCSFKKFPKFLEGFFTI": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -66.26,
+      "native_binding_energy": -14.58,
+      "fraction_folded": 0.9202950016813904,
+      "ensemble_binding_energy": -14.439615352402246,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.85,
+        -2.03,
+        -5.03,
+        -6.85,
+        -6.39,
+        -6.85,
+        -1.6,
+        -6.39,
+        -6.26,
+        -3.43
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.83,
+        -1.56,
+        -6.68,
+        -3.51
+      ]
+    },
+    "FGCSFKKFPKFLEGFFII": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -70.62,
+      "native_binding_energy": -14.58,
+      "fraction_folded": 0.9305378817213014,
+      "ensemble_binding_energy": -14.493514595877576,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.85,
+        -3.65,
+        -5.03,
+        -6.85,
+        -6.39,
+        -6.85,
+        -1.6,
+        -6.39,
+        -6.26,
+        -6.17
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.83,
+        -1.56,
+        -6.68,
+        -3.51
+      ]
+    },
+    "VRYSLKKAPRWLQGFFTV": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -55.33,
+      "native_binding_energy": -13.7,
+      "fraction_folded": 0.588028732877113,
+      "ensemble_binding_energy": -13.164877029840241,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -5.75,
+        -1.97,
+        -4.05,
+        -3.96,
+        -5.38,
+        -3.93,
+        -1.85,
+        -5.05,
+        -6.26,
+        -3.43
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -1.95,
+        -1.56,
+        -6.68,
+        -3.51
+      ]
+    },
+    "VRSSLKKAPRWHQGFVIL": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -53.58,
+      "native_binding_energy": -12.75,
+      "fraction_folded": 0.28368236019388343,
+      "ensemble_binding_energy": -12.104569858952601,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -4.94,
+        -3.33,
+        -3.16,
+        -3.96,
+        -5.79,
+        -3.93,
+        -1.85,
+        -5.5,
+        -4.61,
+        -3.76
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -1.95,
+        -1.56,
+        -6.68,
+        -2.56
+      ]
+    },
+    "LRYSLKKVPRLLQGFFTI": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -61.879999999999995,
+      "native_binding_energy": -14.379999999999999,
+      "fraction_folded": 0.8216268826902343,
+      "ensemble_binding_energy": -14.162954653249948,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.26,
+        -1.97,
+        -4.63,
+        -5.38,
+        -6.17,
+        -5.38,
+        -1.85,
+        -6.17,
+        -6.26,
+        -3.43
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.63,
+        -1.56,
+        -6.68,
+        -3.51
+      ]
+    },
+    "MACSCKKCKRFMDWFFIC": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -70.07,
+      "native_binding_energy": -16.409999999999997,
+      "fraction_folded": 0.9597757480870853,
+      "ensemble_binding_energy": -16.345146961409448,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.68,
+        -4.41,
+        -5.44,
+        -5.44,
+        -5.44,
+        -5.63,
+        -1.98,
+        -5.63,
+        -6.68,
+        -6.33
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -3.11,
+        -3.11,
+        -6.68,
+        -3.51
+      ]
+    },
+    "FACSFKKFPRFLEWFFII": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -73.4,
+      "native_binding_energy": -16.13,
+      "fraction_folded": 0.9120931034847841,
+      "ensemble_binding_energy": -16.00045104175154,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.85,
+        -4.41,
+        -5.03,
+        -6.85,
+        -6.39,
+        -6.85,
+        -2.07,
+        -6.39,
+        -6.26,
+        -6.17
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.83,
+        -3.11,
+        -6.68,
+        -3.51
+      ]
+    },
+    "MACSCKKFRRFMDWFFIC": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -71.47999999999999,
+      "native_binding_energy": -16.409999999999997,
+      "fraction_folded": 0.9558250906087217,
+      "ensemble_binding_energy": -16.32165313318296,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.68,
+        -4.41,
+        -5.44,
+        -5.63,
+        -5.44,
+        -6.85,
+        -1.98,
+        -5.63,
+        -6.68,
+        -6.33
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -3.11,
+        -3.11,
+        -6.68,
+        -3.51
+      ]
+    },
+    "FACSFKKFPRFLDWFFII": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -73.31,
+      "native_binding_energy": -16.13,
+      "fraction_folded": 0.9191034052602454,
+      "ensemble_binding_energy": -16.020214929013786,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.85,
+        -4.41,
+        -5.03,
+        -6.85,
+        -6.39,
+        -6.85,
+        -1.98,
+        -6.39,
+        -6.26,
+        -6.17
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.83,
+        -3.11,
+        -6.68,
+        -3.51
+      ]
+    },
+    "FGYSFKKFPRFLEGFFTI": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -66.33,
+      "native_binding_energy": -14.58,
+      "fraction_folded": 0.91624044863162,
+      "ensemble_binding_energy": -14.455338913863313,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.85,
+        -2.03,
+        -4.63,
+        -6.85,
+        -6.39,
+        -6.85,
+        -2.07,
+        -6.39,
+        -6.26,
+        -3.43
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -2.83,
+        -1.56,
+        -6.68,
+        -3.51
+      ]
+    },
+    "VRSSLKKAPRWHQGFVTV": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -49.540000000000006,
+      "native_binding_energy": -12.75,
+      "fraction_folded": 0.38847926592174736,
+      "ensemble_binding_energy": -12.197393036553603,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -4.94,
+        -1.97,
+        -2.79,
+        -3.96,
+        -5.38,
+        -3.93,
+        -1.85,
+        -5.05,
+        -4.61,
+        -2.31
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -1.95,
+        -1.56,
+        -6.68,
+        -2.56
+      ]
+    },
+    "MACSCKKFKRFMDWFFIC": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -71.47999999999999,
+      "native_binding_energy": -16.409999999999997,
+      "fraction_folded": 0.9600638665550079,
+      "ensemble_binding_energy": -16.329186729741522,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -6.68,
+        -4.41,
+        -5.44,
+        -5.63,
+        -5.44,
+        -6.85,
+        -1.98,
+        -5.63,
+        -6.68,
+        -6.33
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -3.11,
+        -3.11,
+        -6.68,
+        -3.51
+      ]
+    },
+    "VRSSLKKAPSWHQGLVIL": {
+      "conformation": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "native_energy": -51.66,
+      "native_binding_energy": -12.08,
+      "fraction_folded": 0.1543785244575495,
+      "ensemble_binding_energy": -11.374280734241035,
+      "intra_contacts": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          16
+        ]
+      ],
+      "intra_contact_energies": [
+        -4.94,
+        -3.33,
+        -3.16,
+        -3.96,
+        -5.79,
+        -3.93,
+        -1.37,
+        -5.5,
+        -3.84,
+        -3.76
+      ],
+      "binding_contacts": [
+        [
+          0,
+          0
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          15,
+          1
+        ]
+      ],
+      "binding_contact_energies": [
+        -1.95,
+        -1.56,
+        -6.01,
+        -2.56
+      ]
+    }
+  }
+}

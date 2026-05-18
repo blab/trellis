@@ -8,10 +8,10 @@ Build a two-part visualization system: a Python script that runs a short SSWM tr
 
 ```
 scripts/visualize_trajectory.py    → viz/viz_trajectory_data.json
-viz/trajectory_dashboard.html      ← reads viz_trajectory_data.json
+viz/index.html      ← reads viz_trajectory_data.json
 ```
 
-Open `viz/trajectory_dashboard.html` in a browser, it loads `../viz/viz_trajectory_data.json` via fetch.
+Open `viz/index.html` in a browser, it loads `../viz/viz_trajectory_data.json` via fetch.
 
 ## 1. Python script: `scripts/visualize_trajectory.py`
 
@@ -169,7 +169,7 @@ def main():
 
 Note: `conformations` is keyed by AA sequence. Multiple steps can share the same AA sequence (synonymous mutations). The dashboard looks up the conformation by `step.aa_sequence`.
 
-## 2. HTML dashboard: `viz/trajectory_dashboard.html`
+## 2. HTML dashboard: `viz/index.html`
 
 ### Layout
 
@@ -357,18 +357,18 @@ trellis/
 ├── scripts/
 │   └── visualize_trajectory.py
 ├── viz/
-│   └── trajectory_dashboard.html
+│   └── index.html
 └── results/                         # gitignored
     └── viz_trajectory_data.json
 ```
 
-The `viz/` directory is new. The `results/` directory is for generated artifacts and should be in `.gitignore`. To use: run the script, then serve the repo root with `python -m http.server` and open `viz/trajectory_dashboard.html` in the browser.
+The `viz/` directory is new. The `results/` directory is for generated artifacts and should be in `.gitignore`. To use: run the script, then serve the repo root with `python -m http.server` and open `viz/index.html` in the browser.
 
 ## 5. Implementation order
 
 1. **`scripts/visualize_trajectory.py`** — Python script with argparse CLI. Generate trajectory, re-fold, write JSON with all fields (conformations, intra contacts, binding contacts, energies). Test by running with `--n-codons 8 --n-steps 20` and inspecting the JSON.
 
-2. **`viz/trajectory_dashboard.html`** — Start with the skeleton: HTML structure, CSS (copied/adapted from VAE dashboard), data loading via fetch, metadata display.
+2. **`viz/index.html`** — Start with the skeleton: HTML structure, CSS (copied/adapted from VAE dashboard), data loading via fetch, metadata display.
 
 3. **Fitness trajectory panel** — D3 line + dots with mutation type coloring. Tooltip on hover. This is a standard line chart.
 
@@ -381,7 +381,7 @@ The `viz/` directory is new. The `results/` directory is for generated artifacts
 ## 6. Testing
 
 - Run `visualize_trajectory.py` with `--n-codons 8 --n-steps 20 --seed 42` — should complete in under a minute and produce valid JSON.
-- Open `viz/trajectory_dashboard.html` in browser (via `python -m http.server` from repo root) — should render without errors.
+- Open `viz/index.html` in browser (via `python -m http.server` from repo root) — should render without errors.
 - Verify fitness trajectory shows increasing trend (SSWM should climb fitness).
 - Verify lattice panels show protein avoiding ligand sites.
 - Verify binding contacts (orange dashed lines) appear between protein and ligand.
