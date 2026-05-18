@@ -39,14 +39,14 @@ def parse_anchor(value: str) -> tuple[int, int]:
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--chain-length", type=int, default=16)
+    p.add_argument("--chain-length", type=int, default=18)
     p.add_argument("--ligand-sequence", type=str, default="FWYL")
     p.add_argument("--ligand-anchor", type=parse_anchor, default=(0, -1))
     p.add_argument("--ligand-direction", type=str, default="horizontal",
                    choices=["horizontal", "vertical"])
-    p.add_argument("--n-trajectories", type=int, default=3)
+    p.add_argument("--n-trajectories", type=int, default=1)
     p.add_argument("--n-steps", type=int, default=100)
-    p.add_argument("--Ne", type=float, default=1000.0)
+    p.add_argument("--Ne", type=float, default=50.0)
     p.add_argument("--mu", type=float, default=1e-6)
     p.add_argument("--temperature", type=float, default=1.0)
     p.add_argument("--min-fitness", type=float, default=0.0)

@@ -1,7 +1,25 @@
 # Benchmark
 
 Single-worker pipeline benchmark for trajectory generation.
-Run with `python scripts/benchmark.py` (defaults: 16-mer, FWYL ligand, 3 trajectories x 100 steps).
+Run with `python scripts/benchmark.py` (defaults: 18-mer, FWYL ligand, 1 trajectory x 100 steps).
+
+## 18-mers
+
+| Parameter | Value |
+|-----------|-------|
+| Chain length | 18 |
+| Ligand | FWYL (anchor (0,-1), horizontal) |
+| Trajectories | 1 |
+| Steps per trajectory | 100 |
+| Ne | 50 |
+| Temperature | 1.0 |
+| Seed | 42 |
+
+### Results
+
+| Date       | Commit  | Enumeration | Trajectory (100 steps) | Per step | Notes                    |
+|------------|---------|-------------|------------------------|----------|--------------------------|
+| 2026-05-18 | 388457d | 6.3s        | 283.6s                 | 2.84s    | precomputed energy table |
 
 ## 16-mers
 

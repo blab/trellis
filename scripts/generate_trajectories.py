@@ -75,7 +75,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--n-trajectories", type=int, required=True)
     p.add_argument("--output-dir", type=str, default=None)
     p.add_argument("--n-steps", type=int, default=100)
-    p.add_argument("--chain-length", type=int, default=20)
+    p.add_argument("--chain-length", type=int, default=18)
     p.add_argument("--ligand-sequence", type=str, default="FWYL")
     p.add_argument("--ligand-anchor", type=parse_anchor, default=(0, -1))
     p.add_argument("--ligand-direction", type=str, default="horizontal",
@@ -84,7 +84,7 @@ def parse_args() -> argparse.Namespace:
                    help="Generate N random ligand sequences (overrides --ligand-sequence)")
     p.add_argument("--ligand-length", type=int, default=4,
                    help="Length of random ligand sequences (used with --n-random-ligands)")
-    p.add_argument("--Ne", type=float, default=1000.0)
+    p.add_argument("--Ne", type=float, default=50.0)
     p.add_argument("--mu", type=float, default=1e-6)
     p.add_argument("--temperature", type=float, default=1.0)
     p.add_argument("--min-fitness", type=float, default=0.0)
