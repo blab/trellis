@@ -22,6 +22,27 @@ from trellis.trajectory_io import (
 )
 
 
+def _progress_bar(done: int, total: int, width: int = 8) -> str:
+    filled = round(width * done / total) if total > 0 else 0
+    return "▓" * filled + "░" * (width - filled)
+
+
+def _log_header(args, n_workers: int, n_ligands: int | None = None) -> None:
+    parts = [
+        "trellis",
+        f"{args.chain_length}aa × {args.n_steps} steps",
+        f"Ne={args.Ne:g}",
+    ]
+    if n_ligands is not None:
+        parts.append(f"{n_ligands} ligands × {args.n_trajectories} traj")
+    else:
+        parts.append(f"{args.ligand_sequence}")
+        parts.append(f"{args.n_trajectories} traj")
+    parts.append(f"{n_workers} workers")
+    print(" | ".join(parts))
+    print()
+
+
 def _generate_batch(kwargs: dict) -> list[tuple[int, object]]:
     """Worker function for a batch of trajectories (enumerates once per worker)."""
     mj = load_mj_matrix()
@@ -138,16 +159,19 @@ def _run_single_ligand(args, ss, n_workers) -> None:
             "min_fitness": args.min_fitness,
         })
 
-    print(f"generating {n} trajectories with {n_workers} workers ...")
+    _log_header(args, n_workers)
     trajectories = []
+    t_start = time.perf_counter()
     with ProcessPoolExecutor(max_workers=n_workers) as executor:
         futures = [executor.submit(_generate_batch, b) for b in batches]
         for future in as_completed(futures):
             batch_results = future.result()
             trajectories.extend(batch_results)
             done = len(trajectories)
-            if done % max(1, n // 10) == 0 or done == n:
-                print(f"  {done}/{n} complete")
+            elapsed = time.perf_counter() - t_start
+            rate = elapsed / done if done > 0 else 0.0
+            print(f"[{elapsed:5.0f}s] {_progress_bar(done, n)}  "
+                  f"{done}/{n} traj  {rate:.1f}s/traj")
 
     trajectories.sort(key=lambda x: x[0])
     trajectories = [t for _, t in trajectories]
@@ -183,11 +207,12 @@ def _run_random_ligands(args, ss, n_workers) -> None:
         })
 
     total = n_ligands * n
-    print(f"generating {total} trajectories ({n_ligands} ligands × {n} each) "
-          f"with {n_workers} workers ...")
+    _log_header(args, n_workers, n_ligands=n_ligands)
 
     results_by_ligand: dict[str, list[tuple[int, object]]] = {lig: [] for lig in ligands}
     done_count = 0
+    ligands_done = 0
+    t_start = time.perf_counter()
     with ProcessPoolExecutor(max_workers=n_workers) as executor:
         future_to_ligand = {}
         for batch, lig_seq in zip(batches, ligands):
@@ -198,7 +223,13 @@ def _run_random_ligands(args, ss, n_workers) -> None:
             batch_results = future.result()
             results_by_ligand[lig_seq].extend(batch_results)
             done_count += len(batch_results)
-            print(f"  {done_count}/{total} complete (ligand {lig_seq} done)")
+            ligands_done += 1
+            elapsed = time.perf_counter() - t_start
+            rate = elapsed / done_count if done_count > 0 else 0.0
+            print(f"[{elapsed:5.0f}s] {lig_seq}  "
+                  f"{_progress_bar(ligands_done, n_ligands)}  "
+                  f"{ligands_done}/{n_ligands} ligands  "
+                  f"{done_count}/{total} traj  {rate:.1f}s/traj")
 
     for lig_seq in ligands:
         traj_list = results_by_ligand[lig_seq]
@@ -282,7 +313,9 @@ def main() -> None:
         _run_single_ligand(args, ss, n_workers)
 
     elapsed = time.perf_counter() - t0
-    print(f"total time: {elapsed:.1f}s")
+    n_total = args.n_trajectories * (args.n_random_ligands or 1)
+    rate = elapsed / n_total if n_total > 0 else 0.0
+    print(f"\ntotal: {n_total} trajectories in {elapsed:.1f}s ({rate:.1f}s/traj avg)")
 
 
 if __name__ == "__main__":
