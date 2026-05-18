@@ -390,6 +390,7 @@ worker count.
 ```bash
 pip install -e ".[dev]"
 ```
+for local development or just `pip install .` for executing existing code.
 
 Requires Python ≥ 3.11. Runtime dependencies: `numpy`, `numba`, `zstandard`. Dev dependency: `pytest`.
 

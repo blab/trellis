@@ -11,17 +11,14 @@ helpers used downstream:
 - ``partition_function`` — naive ``Σ exp(-E/T)`` for testing on small
   chains. Production folding accumulates Z directly inside the B&B loop.
 
-The MJ matrix is loaded from ``data/mj_matrix.csv``. The values are
-taken from the ``miyazawa_jernigan`` dictionary in
-``jbloomlab/latticeproteins/src/interactions.py``
-(https://github.com/jbloomlab/latticeproteins), which in turn cites
-Table V of:
+The 20×20 MJ matrix is loaded from ``mj_matrix.csv`` (bundled in this
+package). Values are taken from the ``miyazawa_jernigan`` dictionary in
+``jbloomlab/latticeproteins/src/interactions.py`` at commit ``de1316a``
+(https://github.com/jbloomlab/latticeproteins), which cites Table V of:
 
     Miyazawa, S. & Jernigan, R. L. (1985). Estimation of effective
     interresidue contact energies from protein crystal structures:
     Quasi-chemical approximation. Macromolecules 18:534-552.
-
-See ``data/README.md`` for the full citation and the source commit SHA.
 """
 
 import csv
@@ -36,7 +33,7 @@ from trellis.lattice import Conformation, get_contacts
 AA_ALPHABET = "ACDEFGHIKLMNPQRSTVWY"
 AA_INDEX: dict[str, int] = {aa: i for i, aa in enumerate(AA_ALPHABET)}
 
-DEFAULT_MJ_PATH = Path(__file__).resolve().parent.parent / "data" / "mj_matrix.csv"
+DEFAULT_MJ_PATH = Path(__file__).resolve().parent / "mj_matrix.csv"
 
 
 @cache
