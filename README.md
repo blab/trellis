@@ -109,6 +109,30 @@ database. Per-trajectory RNG streams are created via `SeedSequence.spawn()`
 for reproducibility regardless of worker count. See
 [BENCHMARK.md](BENCHMARK.md) for timing data.
 
+## Sync results with S3
+
+`scripts/s3.py` moves dataset directories between local `results/` and S3.
+Requires environment variables `S3_BUCKET`, `AWS_ACCESS_KEY_ID`, and
+`AWS_SECRET_ACCESS_KEY`. Install the optional S3 dependency with
+`pip install -e ".[s3]"`.
+
+```bash
+# List available datasets on S3
+python scripts/s3.py list
+
+# Download a specific dataset
+python scripts/s3.py pull trellis-18aa-KEMN
+
+# Download all datasets
+python scripts/s3.py pull --all
+
+# Upload a dataset to S3
+python scripts/s3.py push trellis-18aa-KEMN
+```
+
+Both subcommands prompt before overwriting existing data; pass `--force`
+to skip confirmation.
+
 ## Run tests
 
 ```bash
@@ -145,6 +169,7 @@ trellis/
 │   ├── generate_viz_trajectory.py   # single trajectory for D3 dashboard
 │   ├── fold_sequence.py             # fold a single sequence
 │   ├── inspect_shard.py             # inspect / extract tar.zst shards
+│   ├── s3.py                        # push/pull results to/from S3
 │   ├── benchmark.py                 # single-worker pipeline benchmark
 │   └── benchmark_bb_vs_enum.py      # B&B vs pre-enumeration comparison
 ├── viz/
@@ -162,6 +187,4 @@ trellis/
 
 ## Todo
 
-1. Viz improvements following [Wolfram blog post](https://writings.stephenwolfram.com/2024/05/why-does-biological-evolution-work-a-minimal-model-for-biological-evolution-and-other-adaptive-processes/) to show distribution of fitness effects
-2. Generate initial single ligand batch
-3. Overview analysis of these 1000 trajectories, confirm that they don't converge
+1. Overview analysis of these 1000 trajectories, confirm that they don't converge
