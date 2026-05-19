@@ -162,6 +162,6 @@ trellis/
 
 ## Todo
 
-1. S3 upload/download helpers
-2. Viz improvements following [Wolfram blog post](https://writings.stephenwolfram.com/2024/05/why-does-biological-evolution-work-a-minimal-model-for-biological-evolution-and-other-adaptive-processes/) to show distribution of fitness effects
-3. Generate initial single ligand batch
+1. Viz improvements following [Wolfram blog post](https://writings.stephenwolfram.com/2024/05/why-does-biological-evolution-work-a-minimal-model-for-biological-evolution-and-other-adaptive-processes/) to show distribution of fitness effects
+2. Generate initial single ligand batch
+3. Overview analysis of these 1000 trajectories, confirm that they don't converge
