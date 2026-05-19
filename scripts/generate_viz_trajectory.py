@@ -109,10 +109,17 @@ def main() -> None:
         temperature=args.temperature,
         rng=rng,
         db=db,
+        record_candidates=True,
     )
 
+    all_aa = list(trajectory.aa_sequences)
+    if trajectory.candidate_data:
+        for step_candidates in trajectory.candidate_data:
+            for c in step_candidates:
+                all_aa.append(c["aa_sequence"])
+
     fold_results = fold_unique_sequences(
-        trajectory.aa_sequences, ligand, mj, db, args.temperature,
+        all_aa, ligand, mj, db, args.temperature,
     )
 
     steps = []
@@ -124,6 +131,14 @@ def main() -> None:
             "fitness": float(trajectory.fitness_values[i]),
             "mutation_type": trajectory.mutation_types[i - 1] if i > 0 else None,
         }
+        if trajectory.candidate_data and i > 0:
+            step["candidates"] = [
+                {
+                    "fitness": float(c["fitness"]),
+                    "aa_sequence": c["aa_sequence"],
+                }
+                for c in trajectory.candidate_data[i - 1]
+            ]
         steps.append(step)
 
     data = {

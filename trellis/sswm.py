@@ -29,6 +29,7 @@ class Trajectory:
     fitness_values: list[float]
     mutation_types: list[str]
     metadata: dict = field(default_factory=dict)
+    candidate_data: list[list[dict]] | None = None
 
 
 def fixation_probability(s: float, Ne: float) -> float:
@@ -56,6 +57,7 @@ def generate_trajectory(
     rng: np.random.Generator | None = None,
     fitness_cache: FitnessCache | None = None,
     db: ConformationDatabase | None = None,
+    record_candidates: bool = False,
 ) -> Trajectory:
     """Generate a single SSWM trajectory."""
     if rng is None:
@@ -74,6 +76,7 @@ def generate_trajectory(
     aa_seqs = [current_aa]
     fitness_vals = [current_fitness]
     mut_types: list[str] = []
+    all_candidates: list[list[dict]] = [] if record_candidates else None
 
     for _ in range(n_steps):
         aa_groups = mutant_aa_sequences(current_dna)
@@ -101,6 +104,20 @@ def generate_trajectory(
                     aa_seq, ligand, mj_matrix, temperature, db=db,
                 )
                 fitness_cache.put(aa_seq, r)
+
+        if record_candidates:
+            step_candidates = []
+            for aa_seq in aa_groups:
+                if aa_seq == current_aa:
+                    continue
+                result = fitness_cache.get(aa_seq)
+                if result.fitness == -inf:
+                    continue
+                step_candidates.append({
+                    "aa_sequence": aa_seq,
+                    "fitness": result.fitness,
+                })
+            all_candidates.append(step_candidates)
 
         mutations = single_nt_mutations(current_dna)
         weights = []
@@ -146,6 +163,7 @@ def generate_trajectory(
         fitness_values=fitness_vals,
         mutation_types=mut_types,
         metadata=metadata,
+        candidate_data=all_candidates,
     )
 
 

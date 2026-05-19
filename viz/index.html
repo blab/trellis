@@ -286,15 +286,27 @@
             function renderAll() {
                 renderMetadata();
                 computeSampling();
-                renderTimeseries("#fitness-plot", d => d.fitness, "Fitness (f × −BE_native)");
+                renderTimeseries("#fitness-plot", d => d.fitness, "Fitness (f × −BE_native)", {
+                    candidateYAccessor: c => c.fitness,
+                });
                 renderTimeseries("#fraction-folded-plot", d => {
                     const conf = data.conformations[d.aa_sequence];
                     return conf ? conf.fraction_folded : 0;
-                }, "Fraction folded f(T)", {height: 146, yTickFormat: d => Math.round(d * 100) + "%", yTickStep: 0.2});
+                }, "Fraction folded f(T)", {height: 146, yTickFormat: d => Math.round(d * 100) + "%", yTickStep: 0.2,
+                    candidateYAccessor: c => {
+                        const conf = data.conformations[c.aa_sequence];
+                        return conf ? conf.fraction_folded : 0;
+                    },
+                });
                 renderTimeseries("#binding-energy-plot", d => {
                     const conf = data.conformations[d.aa_sequence];
                     return conf ? -conf.native_binding_energy : 0;
-                }, "−BE_native", {height: 146, yTickStep: 5});
+                }, "−BE_native", {height: 146, yTickStep: 5,
+                    candidateYAccessor: c => {
+                        const conf = data.conformations[c.aa_sequence];
+                        return conf ? -conf.native_binding_energy : 0;
+                    },
+                });
                 renderLattices();
             }
 
@@ -351,7 +363,7 @@
                 }
             }
 
-            function renderTimeseries(containerSelector, yAccessor, yLabel, {height: heightOverride, yTickFormat, yTickCount, yTickStep} = {}) {
+            function renderTimeseries(containerSelector, yAccessor, yLabel, {height: heightOverride, yTickFormat, yTickCount, yTickStep, candidateYAccessor} = {}) {
                 const container = d3.select(containerSelector);
                 container.selectAll("*").remove();
 
@@ -376,11 +388,23 @@
                     .domain([0, d3.max(data.steps, (d) => d.step)])
                     .range([0, innerW]);
 
-                const yExtent = d3.extent(data.steps, (d) => yAccessor(d));
-                const yPad = (yExtent[1] - yExtent[0]) * 0.1 || 1;
+                let yMin = Infinity, yMax = -Infinity;
+                for (const d of data.steps) {
+                    const v = yAccessor(d);
+                    if (v < yMin) yMin = v;
+                    if (v > yMax) yMax = v;
+                    if (candidateYAccessor && d.candidates) {
+                        for (const c of d.candidates) {
+                            const cv = candidateYAccessor(c);
+                            if (cv < yMin) yMin = cv;
+                            if (cv > yMax) yMax = cv;
+                        }
+                    }
+                }
+                const yPad = (yMax - yMin) * 0.1 || 1;
                 const y = d3
                     .scaleLinear()
-                    .domain([yExtent[0] - yPad, yExtent[1] + yPad])
+                    .domain([yMin - yPad, yMax + yPad])
                     .range([innerH, 0]);
 
                 // Axes
@@ -426,6 +450,22 @@
                     .attr("stroke", "#999")
                     .attr("stroke-width", 1)
                     .attr("d", line);
+
+                // Candidate dots (unselected mutations)
+                if (candidateYAccessor) {
+                    const candidateData = data.steps
+                        .filter(d => d.candidates)
+                        .flatMap(d => d.candidates.map(c => ({step: d.step, ...c})));
+                    g.selectAll("circle.candidate-dot")
+                        .data(candidateData)
+                        .join("circle")
+                        .attr("class", "candidate-dot")
+                        .attr("cx", d => x(d.step))
+                        .attr("cy", d => y(candidateYAccessor(d)))
+                        .attr("r", 2)
+                        .attr("fill", "#999")
+                        .attr("opacity", 0.1);
+                }
 
                 // Dots
                 g.selectAll("circle.traj-dot")
