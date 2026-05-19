@@ -11,6 +11,7 @@ dependencies = ["numpy", "numba", "zstandard"]
 
 [project.optional-dependencies]
 dev = ["pytest"]
+analysis = ["matplotlib"]
 s3 = ["boto3"]
 
 [tool.setuptools.packages.find]
