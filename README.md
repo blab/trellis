@@ -109,6 +109,33 @@ database. Per-trajectory RNG streams are created via `SeedSequence.spawn()`
 for reproducibility regardless of worker count. See
 [BENCHMARK.md](BENCHMARK.md) for timing data.
 
+## Generate phylogenies
+
+`scripts/generate_phylogeny.py` generates a single phylogenetic tree via
+Yule-with-sampling on SSWM dynamics. At each time step, active lineages
+may speciate (rate beta), get sampled as tips (rate psi), or continue as
+single daughters. Mutations are drawn from SSWM fixation probabilities.
+Output is Auspice v2 JSON viewable at [auspice.us](https://auspice.us).
+
+```bash
+# Generate a phylogeny with default parameters
+# Default is 18-mer, which may take a while
+python scripts/generate_phylogeny.py --output results/phylogeny.json
+
+# Specify ligand and specify protein length
+python scripts/generate_phylogeny.py \
+    --chain-length 12 \
+    --ligand-sequence KEMN \
+    --output results/phylogeny.json
+```
+
+Key parameters:
+- `--beta`: speciation probability per lineage per step (default 0.08)
+- `--psi`: sampling probability per lineage per step (default 0.05)
+- `--min-active`: minimum active lineages preserved against sampling (default 1)
+- `--max-active`: cap on active lineages per step (default 100)
+- `--max-nodes`: hard cap on total tree size (default 5000)
+
 ## Sync results with S3
 
 `scripts/s3.py` moves dataset directories between local `results/` and S3.
@@ -160,12 +187,15 @@ trellis/
 │   ├── fitness.py           # fitness function
 │   ├── genetic_code.py      # codon table, translation, mutations
 │   ├── sswm.py              # SSWM trajectory generation
+│   ├── phylogeny.py         # phylogenetic tree generation
+│   ├── auspice_io.py        # Auspice v2 JSON serialization
 │   ├── trajectory_io.py     # FASTA / tar.zst output
 │   ├── cache.py             # fitness cache
 │   └── mj_matrix.csv        # MJ 1985 contact potential
 ├── tests/
 ├── scripts/
 │   ├── generate_trajectories.py     # bulk parallel trajectory generation
+│   ├── generate_phylogeny.py        # single phylogenetic tree generation
 │   ├── generate_viz_trajectory.py   # single trajectory for D3 dashboard
 │   ├── fold_sequence.py             # fold a single sequence
 │   ├── inspect_shard.py             # inspect / extract tar.zst shards

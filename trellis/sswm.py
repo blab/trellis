@@ -45,6 +45,58 @@ def fixation_probability(s: float, Ne: float) -> float:
     return (1.0 - exp(-2.0 * s)) / (1.0 - exp(-x))
 
 
+def compute_sswm_probabilities(
+    dna: str,
+    current_fitness: float,
+    ligand: Ligand,
+    mj_matrix: np.ndarray,
+    Ne: float,
+    temperature: float,
+    fitness_cache: FitnessCache,
+    db: ConformationDatabase | None = None,
+) -> tuple[list[tuple[str, int, str, str]], np.ndarray]:
+    """Enumerate single-nt mutations and compute fixation probabilities.
+
+    Returns (mutations, probabilities) where mutations is the output of
+    single_nt_mutations() and probabilities is a numpy array of fixation
+    probabilities (unnormalized).
+    """
+    aa_groups = mutant_aa_sequences(dna)
+
+    uncached = []
+    for aa_seq in aa_groups:
+        if aa_seq not in fitness_cache:
+            if "*" in aa_seq:
+                fitness_cache.put(aa_seq, FitnessResult(
+                    fitness=-inf, fold_result=None,
+                    aa_sequence=aa_seq, dna_sequence="",
+                ))
+            else:
+                uncached.append(aa_seq)
+
+    if uncached and db is not None:
+        batch_results = compute_fitness_batch(
+            uncached, ligand, mj_matrix, temperature, db=db,
+        )
+        for aa_seq, result in zip(uncached, batch_results):
+            fitness_cache.put(aa_seq, result)
+    elif uncached:
+        for aa_seq in uncached:
+            r = compute_fitness_aa(
+                aa_seq, ligand, mj_matrix, temperature, db=db,
+            )
+            fitness_cache.put(aa_seq, r)
+
+    mutations = single_nt_mutations(dna)
+    probs = np.array([
+        fixation_probability(
+            fitness_cache.get(translate(m)).fitness - current_fitness, Ne
+        )
+        for m, _, _, _ in mutations
+    ])
+    return mutations, probs
+
+
 def generate_trajectory(
     start_dna: str,
     ligand: Ligand,
@@ -76,46 +128,16 @@ def generate_trajectory(
     mut_types: list[str] = []
 
     for _ in range(n_steps):
-        aa_groups = mutant_aa_sequences(current_dna)
+        mutations, probs = compute_sswm_probabilities(
+            current_dna, current_fitness, ligand, mj_matrix,
+            Ne, temperature, fitness_cache, db,
+        )
 
-        uncached = []
-        for aa_seq in aa_groups:
-            if aa_seq not in fitness_cache:
-                if "*" in aa_seq:
-                    fitness_cache.put(aa_seq, FitnessResult(
-                        fitness=-inf, fold_result=None,
-                        aa_sequence=aa_seq, dna_sequence="",
-                    ))
-                else:
-                    uncached.append(aa_seq)
-
-        if uncached and db is not None:
-            batch_results = compute_fitness_batch(
-                uncached, ligand, mj_matrix, temperature, db=db,
-            )
-            for aa_seq, result in zip(uncached, batch_results):
-                fitness_cache.put(aa_seq, result)
-        elif uncached:
-            for aa_seq in uncached:
-                r = compute_fitness_aa(
-                    aa_seq, ligand, mj_matrix, temperature, db=db,
-                )
-                fitness_cache.put(aa_seq, r)
-
-        mutations = single_nt_mutations(current_dna)
-        weights = []
-        for mutant_dna, _, _, _ in mutations:
-            mutant_aa = translate(mutant_dna)
-            mutant_fitness = fitness_cache.get(mutant_aa).fitness
-            s = mutant_fitness - current_fitness
-            weights.append(fixation_probability(s, Ne))
-
-        total = sum(weights)
+        total = probs.sum()
         if total == 0:
             break
 
-        probs = np.array(weights)
-        probs /= probs.sum()
+        probs = probs / total
         idx = rng.choice(len(mutations), p=probs)
         chosen_dna = mutations[idx][0]
         chosen_aa = translate(chosen_dna)
