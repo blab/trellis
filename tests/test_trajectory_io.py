@@ -15,8 +15,8 @@ from trellis.trajectory_io import (
 )
 
 # Three-step trajectory with known Hamming distances:
-#   step 0→1: pos 15 G→A  (branch=1, cumulative=1)
-#   step 1→2: pos 9  G→A  (branch=1, cumulative=2)
+#   step 0→1: pos 15 G→A  (branch=1, direct=1)
+#   step 1→2: pos 9  G→A  (branch=1, direct=2)
 _TRAJ_DNA = [
     "GCTTGTGATGAATTTGGT",
     "GCTTGTGATGAATTTAGT",
@@ -94,11 +94,29 @@ def test_fasta_hamming_distances(tmp_path):
     write_trajectory_fasta(traj, path, "0")
     records = _parse_fasta(path.read_text())
     headers = [r[0] for r in records]
-    # NODE_0000|0|0
+    # NODE_0000|0|0  (branch=0, direct=0)
     assert headers[0].endswith("|0|0")
-    # NODE_0001|1|1
+    # NODE_0001|1|1  (branch=1, direct=1)
     assert "|1|1" in headers[1]
-    # TIP_0|2|1
+    # TIP_0|1|2  (branch=1, direct=2)
+    assert "|1|2" in headers[2]
+
+
+def test_fasta_reversion(tmp_path):
+    """Direct distance decreases when a mutation reverts to root."""
+    dna_seqs = [
+        "ATCGATCGAT",  # root
+        "ATCAATCGAT",  # pos 4 G->A (branch=1, direct=1)
+        "ATCGAGCGAT",  # pos 4 A->G reversion + pos 6 T->G (branch=2, direct=1)
+    ]
+    traj = _make_trajectory(dna_seqs=dna_seqs)
+    path = tmp_path / "traj.fasta"
+    write_trajectory_fasta(traj, path, "rev")
+    records = _parse_fasta(path.read_text())
+    headers = [r[0] for r in records]
+    assert headers[0].endswith("|0|0")
+    assert "|1|1" in headers[1]
+    # branch=2 (two changes from prev), direct=1 (only pos 6 differs from root)
     assert "|2|1" in headers[2]
 
 

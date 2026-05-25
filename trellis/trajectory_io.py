@@ -21,25 +21,25 @@ def write_trajectory_fasta(
 ) -> None:
     """Write a single trajectory as a FASTA file.
 
-    Each step becomes a record ``>NODE_XXXX|cumulative_hamming|branch_hamming``
+    Each step becomes a record ``>NODE_XXXX|branch_hamming|direct_hamming``
     with the DNA sequence.  The final node is named ``TIP_{trajectory_id}``.
     """
     output_path = Path(output_path)
     seqs = trajectory.dna_sequences
     n = len(seqs)
     lines: list[str] = []
-    cumulative = 0
+    root = seqs[0]
     for i, dna in enumerate(seqs):
         if i > 0:
             branch = _hamming_distance(seqs[i - 1], dna)
-            cumulative += branch
         else:
             branch = 0
+        direct = _hamming_distance(root, dna)
         if i == n - 1:
             name = f"TIP_{trajectory_id}"
         else:
             name = f"NODE_{i:04d}"
-        lines.append(f">{name}|{cumulative}|{branch}")
+        lines.append(f">{name}|{branch}|{direct}")
         lines.append(dna)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text("\n".join(lines) + "\n")
