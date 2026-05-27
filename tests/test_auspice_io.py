@@ -118,3 +118,12 @@ def test_node_count_matches(phy):
         return 1 + sum(count_nodes(c) for c in subtree.get("children", []))
 
     assert count_nodes(auspice["tree"]) == len(phy.nodes)
+
+
+def test_root_sequence(phy):
+    auspice = phylogeny_to_auspice(phy)
+    root = phy.nodes[phy.root_id]
+    rs = auspice["root_sequence"]
+    assert rs["nuc"] == root.dna
+    assert rs["protein"] == root.aa
+    assert len(rs["nuc"]) == auspice["meta"]["genome_annotations"]["nuc"]["end"]

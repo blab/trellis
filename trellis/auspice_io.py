@@ -94,6 +94,7 @@ def phylogeny_to_auspice(phy: Phylogeny, title: str | None = None) -> dict:
             },
             "extensions": {"trellis": phy.metadata},
         },
+        "root_sequence": {"nuc": root.dna, "protein": root.aa},
         "tree": build_subtree(phy.root_id),
     }
     return auspice
