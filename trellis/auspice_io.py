@@ -107,6 +107,10 @@ def write_auspice_json(
     auspice = phylogeny_to_auspice(phy, title=title)
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
+    n_tips = phy.metadata.get("n_tips", 0)
     with open(path, "w") as f:
-        json.dump(auspice, f, indent=2)
+        if n_tips > 100:
+            json.dump(auspice, f, separators=(",", ":"))
+        else:
+            json.dump(auspice, f, indent=2)
         f.write("\n")
