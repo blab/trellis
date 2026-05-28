@@ -10,14 +10,14 @@ A live example is at https://blab.github.io/trellis/viz/.
 1. Generate trajectory data:
 
    ```bash
-   python scripts/generate_viz_trajectory.py
+   python scripts/generate_viz_trajectory.py --ligand-sequence KEVT
    ```
 
-   This runs from defaults (`--n-codons 10 --n-steps 30 --Ne 100
-   --temperature 1.0 --seed 42 --ligand-sequence FWYL`) and writes
+   This runs from defaults (`--chain-length 10 --n-steps 30 --Ne 100
+   --temperature 1.0 --seed 42 --ligand-sequence KEVT`) and writes
    `viz/viz_trajectory_data.json`.
 
-   Shorter chains (`--n-codons 8`) run in seconds, while 12-codons takes a 
+   Shorter chains (`--chain-length 8`) run in seconds, while 18-mers takes a 
    few minutes because every unique AA neighbour of every step is folded.
 
 2. Serve the repo root over HTTP (needed because the dashboard fetches the

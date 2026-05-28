@@ -30,7 +30,7 @@ def parse_anchor(value: str) -> tuple[int, int]:
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--n-codons", type=int, default=10)
+    p.add_argument("--chain-length", type=int, default=10)
     p.add_argument("--ligand-sequence", type=str, default=None)
     p.add_argument("--ligand-anchor", type=parse_anchor, default=(0, -1))
     p.add_argument("--ligand-direction", type=str, default="horizontal",
@@ -92,11 +92,11 @@ def main() -> None:
         direction=args.ligand_direction,
     )
 
-    db = enumerate_conformations(args.n_codons, ligand, store_coordinates=True)
+    db = enumerate_conformations(args.chain_length, ligand, store_coordinates=True)
     print(f"enumerated {db.n_conformations:,} conformations")
 
     start_dna = generate_start_sequence(
-        args.n_codons, ligand, mj,
+        args.chain_length, ligand, mj,
         min_fitness=args.min_fitness,
         temperature=args.temperature,
         rng=rng,
@@ -128,7 +128,7 @@ def main() -> None:
 
     data = {
         "metadata": {
-            "n_codons": args.n_codons,
+            "chain_length": args.chain_length,
             "n_steps": trajectory.metadata["n_steps_completed"],
             "Ne": args.Ne,
             "temperature": args.temperature,

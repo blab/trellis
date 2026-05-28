@@ -57,7 +57,7 @@ at https://blab.github.io/trellis/viz/.
 python scripts/generate_viz_trajectory.py
 ```
 
-This runs with defaults (`--n-codons 10 --n-steps 100 --Ne 50
+This runs with defaults (`--chain-length 10 --n-steps 100 --Ne 50
 --temperature 1.0 --seed 42`) and writes `viz/viz_trajectory_data.json`.
 Serve the repo root and open `viz/index.html`:
 
