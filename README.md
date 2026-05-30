@@ -215,6 +215,3 @@ trellis/
 └── README.md
 ```
 
-## Todo
-
-1. Overview analysis of these 1000 trajectories, confirm that they don't converge
