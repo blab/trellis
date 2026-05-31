@@ -51,7 +51,7 @@ python scripts/fold_sequence.py --aa ACDEFG --json
 
 `scripts/generate_viz_trajectory.py` runs a short SSWM trajectory and
 writes a JSON snapshot for the interactive D3 dashboard. A live example is
-at https://blab.github.io/trellis/viz/.
+at [blab.github.io/trellis/viz](https://blab.github.io/trellis/viz/).
 
 ```bash
 python scripts/generate_viz_trajectory.py
