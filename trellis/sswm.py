@@ -54,12 +54,22 @@ def compute_sswm_probabilities(
     temperature: float,
     fitness_cache: FitnessCache,
     db: ConformationDatabase | None = None,
-) -> tuple[list[tuple[str, int, str, str]], np.ndarray]:
-    """Enumerate single-nt mutations and compute fixation probabilities.
+) -> tuple[list[str], np.ndarray]:
+    """Normalized SSWM fixation probabilities for all single-nt neighbors.
 
-    Returns (mutations, probabilities) where mutations is the output of
-    single_nt_mutations() and probabilities is a numpy array of fixation
-    probabilities (unnormalized).
+    Enumerates every single-nucleotide mutant of ``dna``, folds each
+    unique mutant AA sequence (consulting / populating ``fitness_cache``),
+    and computes the Kimura fixation probability for each mutant relative
+    to ``current_fitness``. Probabilities are normalized to sum to 1.
+
+    Returns
+    -------
+    mutant_dnas : list[str]
+        Mutant DNA sequences, one per single-nt neighbor (~3 * len(dna)).
+    probs : np.ndarray
+        Normalized fixation probability for each mutant. If every neighbor
+        is lethal, returns an all-zero array (caller can detect via
+        ``probs.sum() == 0``).
     """
     aa_groups = mutant_aa_sequences(dna)
 
@@ -87,14 +97,60 @@ def compute_sswm_probabilities(
             )
             fitness_cache.put(aa_seq, r)
 
-    mutations = single_nt_mutations(dna)
+    mutant_dnas = [m for m, _, _, _ in single_nt_mutations(dna)]
     probs = np.array([
         fixation_probability(
             fitness_cache.get(translate(m)).fitness - current_fitness, Ne
         )
-        for m, _, _, _ in mutations
+        for m in mutant_dnas
     ])
-    return mutations, probs
+    total = probs.sum()
+    if total > 0:
+        probs = probs / total
+    return mutant_dnas, probs
+
+
+def pfix_for_target(
+    reference_dna: str,
+    target_dna: str,
+    ligand: Ligand,
+    mj_matrix: np.ndarray,
+    Ne: float,
+    temperature: float,
+    fitness_cache: FitnessCache,
+    db: ConformationDatabase | None = None,
+) -> float | None:
+    """Normalized P_fix for the specific reference -> target mutation.
+
+    Returns the probability that ``target_dna`` would be the next
+    substitution under SSWM dynamics, i.e. its fixation probability
+    normalized by the sum over all single-nt neighbors of
+    ``reference_dna``.
+
+    Returns ``None`` if ``target_dna`` is not a single-nucleotide neighbor
+    of ``reference_dna``. Returns ``0.0`` if every neighbor is lethal.
+    """
+    if len(reference_dna) != len(target_dna):
+        return None
+    diffs = sum(1 for a, b in zip(reference_dna, target_dna) if a != b)
+    if diffs != 1:
+        return None
+
+    ref_aa = translate(reference_dna)
+    if ref_aa not in fitness_cache:
+        r = compute_fitness_aa(ref_aa, ligand, mj_matrix, temperature, db=db)
+        fitness_cache.put(ref_aa, r)
+    current_fitness = fitness_cache.get(ref_aa).fitness
+
+    mutant_dnas, probs = compute_sswm_probabilities(
+        reference_dna, current_fitness, ligand, mj_matrix,
+        Ne, temperature, fitness_cache, db,
+    )
+    try:
+        idx = mutant_dnas.index(target_dna)
+    except ValueError:
+        return None
+    return float(probs[idx])
 
 
 def generate_trajectory(
@@ -128,18 +184,16 @@ def generate_trajectory(
     mut_types: list[str] = []
 
     for _ in range(n_steps):
-        mutations, probs = compute_sswm_probabilities(
+        mutant_dnas, probs = compute_sswm_probabilities(
             current_dna, current_fitness, ligand, mj_matrix,
             Ne, temperature, fitness_cache, db,
         )
 
-        total = probs.sum()
-        if total == 0:
+        if probs.sum() == 0:
             break
 
-        probs = probs / total
-        idx = rng.choice(len(mutations), p=probs)
-        chosen_dna = mutations[idx][0]
+        idx = rng.choice(len(mutant_dnas), p=probs)
+        chosen_dna = mutant_dnas[idx]
         chosen_aa = translate(chosen_dna)
         chosen_fitness = fitness_cache.get(chosen_aa).fitness
         mut_type = classify_mutation(current_dna, chosen_dna)

@@ -97,7 +97,7 @@ def generate_phylogeny(
 
             n_daughters = 2 if rng.random() < beta else 1
 
-            mutations, probs = compute_sswm_probabilities(
+            mutant_dnas, probs = compute_sswm_probabilities(
                 parent.dna, parent.fitness, ligand, mj_matrix,
                 Ne, temperature, fitness_cache, db,
             )
@@ -106,11 +106,9 @@ def generate_phylogeny(
                 parent.is_tip = True
                 continue
 
-            normalized = probs / probs.sum()
-
             for _ in range(n_daughters):
-                idx = rng.choice(len(mutations), p=normalized)
-                child_dna = mutations[idx][0]
+                idx = rng.choice(len(mutant_dnas), p=probs)
+                child_dna = mutant_dnas[idx]
                 child_aa = translate(child_dna)
                 child_fitness = fitness_cache.get(child_aa).fitness
 

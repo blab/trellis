@@ -3,15 +3,25 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "trellis"
-version = "0.0.1"
+name = "trellis-protein"
+version = "0.1.0"
 description = "Lattice protein synthetic data for evolutionary trajectory models"
+readme = "README.md"
+license = {file = "LICENSE.md"}
 requires-python = ">=3.11"
-dependencies = ["numpy", "numba", "zstandard", "boto3"]
+authors = [
+    {name = "Trevor Bedford"},
+]
+dependencies = [
+    "numpy>=1.24",
+    "numba>=0.58",
+    "zstandard>=0.21",
+]
 
 [project.optional-dependencies]
-dev = ["pytest"]
-analysis = ["matplotlib"]
+aws = ["boto3>=1.28"]
+analysis = ["matplotlib>=3.7"]
+dev = ["pytest>=7.0"]
 
 [tool.setuptools.packages.find]
 include = ["trellis*"]

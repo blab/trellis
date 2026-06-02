@@ -21,13 +21,20 @@ The full design history is in [`notes/`](notes/).
 ## Install
 
 ```bash
+pip install trellis-protein
+```
+
+Downstream code imports as `trellis` (the PyPI distribution is published as
+`trellis-protein` because `trellis` is taken). For local development on
+this repo:
+
+```bash
 pip install -e ".[dev]"
 ```
 
-for local development, or `pip install .` for running existing code.
-
 Requires Python >= 3.11. Runtime dependencies: `numpy`, `numba`,
-`zstandard`. Dev dependency: `pytest`.
+`zstandard`. Optional extras: `[aws]` (boto3, for `scripts/s3.py`),
+`[analysis]` (matplotlib), `[dev]` (pytest).
 
 ## Fold a single sequence
 
@@ -136,12 +143,71 @@ Key parameters:
 - `--max-active`: cap on active lineages per step (default 100)
 - `--max-nodes`: hard cap on total tree size (default 5000)
 
+## Evaluation interface
+
+`trellis.sswm.compute_sswm_probabilities` exposes the ground-truth SSWM
+fixation-probability distribution over all single-nucleotide neighbors of
+a reference DNA sequence. Downstream evaluation code uses this as the
+oracle when scoring how well a learned model has recovered the fitness
+landscape.
+
+```python
+from trellis.cache import FitnessCache
+from trellis.energy import load_mj_matrix
+from trellis.fitness import compute_fitness_aa
+from trellis.fold_enum import enumerate_conformations
+from trellis.genetic_code import translate
+from trellis.ligand import create_ligand
+from trellis.sswm import compute_sswm_probabilities, pfix_for_target
+
+# One-time setup per ligand
+mj = load_mj_matrix()
+ligand = create_ligand("KEMN", anchor=(0, -1))
+db = enumerate_conformations(18, ligand)
+cache = FitnessCache()
+
+# Per-reference evaluation
+ref_aa = translate(ref_dna)
+if ref_aa not in cache:
+    cache.put(ref_aa, compute_fitness_aa(ref_aa, ligand, mj, 1.0, db=db))
+ref_fitness = cache.get(ref_aa).fitness
+
+mutant_dnas, ground_truth = compute_sswm_probabilities(
+    ref_dna, ref_fitness, ligand, mj, Ne=50.0, temperature=1.0,
+    fitness_cache=cache, db=db,
+)
+# ground_truth sums to 1 (or is all zeros if every neighbor is lethal)
+
+# Single mutation lookup
+p = pfix_for_target(ref_dna, target_dna, ligand, mj,
+                    Ne=50.0, temperature=1.0,
+                    fitness_cache=cache, db=db)
+```
+
+Share the `FitnessCache` across all evaluations for a given ligand —
+folding is the dominant cost, and the cache amortizes it.
+
+The CLI `scripts/pfix_distribution.py` exercises the same API for
+exploration:
+
+```bash
+# Full distribution for a reference sequence
+python scripts/pfix_distribution.py \
+    --reference CTCTGCAACACAACACGGCTCGATGTTCTCTATGGAGAATGTGACTGCGCGCTG \
+    --ligand KEMN --Ne 50
+
+# Single-mutation P_fix as JSON
+python scripts/pfix_distribution.py \
+    --reference <ref-dna> --target <neighbor-dna> \
+    --ligand KEMN --Ne 50 --json
+```
+
 ## Sync results with S3
 
 `scripts/s3.py` moves dataset directories between local `results/` and S3.
 Requires environment variables `S3_BUCKET`, `AWS_ACCESS_KEY_ID`, and
-`AWS_SECRET_ACCESS_KEY`. Install the optional S3 dependency with
-`pip install -e ".[s3]"`.
+`AWS_SECRET_ACCESS_KEY`. Install the optional AWS dependency with
+`pip install -e ".[aws]"`.
 
 ```bash
 # List available datasets on S3
@@ -197,6 +263,7 @@ trellis/
 │   ├── generate_trajectories.py     # bulk parallel trajectory generation
 │   ├── generate_phylogeny.py        # single phylogenetic tree generation
 │   ├── generate_viz_trajectory.py   # single trajectory for D3 dashboard
+│   ├── pfix_distribution.py         # SSWM fixation-probability distribution
 │   ├── fold_sequence.py             # fold a single sequence
 │   ├── inspect_shard.py             # inspect / extract tar.zst shards
 │   ├── s3.py                        # push/pull results to/from S3

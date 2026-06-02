@@ -3,6 +3,7 @@
 # Generated artifacts
 results/
 shards/
+dist/
 trellis-18aa/
 
 # Errors from tests
