@@ -19,7 +19,6 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-aws = ["boto3>=1.28"]
 analysis = ["matplotlib>=3.7"]
 dev = ["pytest>=7.0"]
 

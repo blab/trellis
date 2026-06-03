@@ -5,7 +5,7 @@
 Two changes to trellis:
 
 1. **Evaluation interface.** Expose the SSWM probability computation as a clean public API that downstream repos can import. This is the ground-truth oracle for evaluating how well a diffusion model has learned the fitness landscape.
-2. **PyPI packaging.** Publish trellis as a pip-installable package so downstream repos (pegasus-evals, diffusion-language-model) can declare it as a dependency.
+2. **PyPI packaging.** Publish trellis as a pip-installable package so downstream repos can declare it as a dependency.
 
 ## Part 1: Evaluation interface
 
@@ -306,7 +306,6 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-aws = ["boto3>=1.28"]
 viz = ["matplotlib>=3.7"]
 dev = ["pytest>=7.0"]
 
@@ -390,7 +389,7 @@ pip install git+https://github.com/blab/trellis.git@main
 
 ### Downstream usage in evaluation repos
 
-In `pegasus-evals/requirements.txt` or `pyproject.toml`:
+In a downstream repo's `requirements.txt` or `pyproject.toml`:
 
 ```
 trellis-lattice>=0.1.0

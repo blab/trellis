@@ -33,8 +33,7 @@ pip install -e ".[dev]"
 ```
 
 Requires Python >= 3.11. Runtime dependencies: `numpy`, `numba`,
-`zstandard`. Optional extras: `[aws]` (boto3, for `scripts/s3.py`),
-`[analysis]` (matplotlib), `[dev]` (pytest).
+`zstandard`. Optional extras: `[analysis]` (matplotlib), `[dev]` (pytest).
 
 ## Fold a single sequence
 
@@ -202,30 +201,6 @@ python scripts/pfix_distribution.py \
     --ligand KEMN --Ne 50 --json
 ```
 
-## Sync results with S3
-
-`scripts/s3.py` moves dataset directories between local `results/` and S3.
-Requires environment variables `S3_BUCKET`, `AWS_ACCESS_KEY_ID`, and
-`AWS_SECRET_ACCESS_KEY`. Install the optional AWS dependency with
-`pip install -e ".[aws]"`.
-
-```bash
-# List available datasets on S3
-python scripts/s3.py list
-
-# Download a specific dataset
-python scripts/s3.py pull trellis-18aa-KEMN
-
-# Download all datasets
-python scripts/s3.py pull --all
-
-# Upload a dataset to S3
-python scripts/s3.py push trellis-18aa-KEMN
-```
-
-Both subcommands prompt before overwriting existing data; pass `--force`
-to skip confirmation.
-
 ## Run tests
 
 ```bash
@@ -266,7 +241,6 @@ trellis/
 │   ├── pfix_distribution.py         # SSWM fixation-probability distribution
 │   ├── fold_sequence.py             # fold a single sequence
 │   ├── inspect_shard.py             # inspect / extract tar.zst shards
-│   ├── s3.py                        # push/pull results to/from S3
 │   ├── benchmark.py                 # single-worker pipeline benchmark
 │   └── benchmark_bb_vs_enum.py      # B&B vs pre-enumeration comparison
 ├── viz/
